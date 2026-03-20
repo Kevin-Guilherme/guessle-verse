@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { getUniverse } from '@/lib/constants/universes'
 import { GameClient } from '@/components/game/GameClient'
 
@@ -10,7 +10,7 @@ interface Props {
 }
 
 export async function generateStaticParams() {
-  const supabase = createClient()
+  const supabase = createServiceClient()
   const { data } = await supabase
     .from('themes')
     .select('slug, modes')

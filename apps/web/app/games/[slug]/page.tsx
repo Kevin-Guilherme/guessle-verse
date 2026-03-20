@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { getUniverse } from '@/lib/constants/universes'
 
 export const revalidate = 3600
@@ -47,7 +47,7 @@ const MODE_META: Record<string, { label: string; description: string; icon: stri
 }
 
 export async function generateStaticParams() {
-  const supabase = createClient()
+  const supabase = createServiceClient()
   const { data } = await supabase.from('themes').select('slug').eq('active', true)
   return data?.map(t => ({ slug: t.slug })) ?? []
 }
