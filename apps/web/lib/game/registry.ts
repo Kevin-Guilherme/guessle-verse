@@ -1,8 +1,10 @@
 import type { ComponentType } from 'react'
 
 export type ModeComponentProps = {
-  challenge:   any
-  config:      { slug: string; label: string; maxAttempts: number | null; lives?: number }
+  challenge:    any
+  config:       { slug: string; label: string; maxAttempts: number | null; lives?: number }
+  submitGuess?: (value: string) => Promise<any>
+  loading?:     boolean
 }
 
 const registry: Record<string, () => Promise<{ default: ComponentType<ModeComponentProps> }>> = {

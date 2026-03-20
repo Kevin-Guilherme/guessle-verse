@@ -1,9 +1,11 @@
 'use client'
 
-import { lazy, Suspense, useEffect } from 'react'
+import { lazy, Suspense, useEffect, useMemo } from 'react'
 import { useGameStore } from '@/lib/store/game-store'
 import { shouldRevealHint } from '@guessle/shared'
 import { getModeLoader, MODE_CONFIGS } from '@/lib/game/registry'
+import { useGameSession } from '@/hooks/useGameSession'
+import { useGuess } from '@/hooks/useGuess'
 import { GuessRow } from './GuessRow'
 import { HintReveal } from './HintReveal'
 import { ShareButton } from './ShareButton'
@@ -20,11 +22,15 @@ interface GameClientProps {
 
 export function GameClient({ challengeId, slug, mode, universeName, authenticated, challenge }: GameClientProps) {
   const config     = { slug: mode, ...MODE_CONFIGS[mode] ?? { label: mode, maxAttempts: null } }
-  const ModeLoader = lazy(getModeLoader(mode))
+  const ModeLoader = useMemo(() => lazy(getModeLoader(mode)), [mode])
 
   const store = useGameStore()
+  const reset = useGameStore((s) => s.reset)
 
-  useEffect(() => { store.reset() }, [challengeId])
+  useGameSession(challengeId, authenticated)
+  const { submitGuess, loading, error } = useGuess(challengeId)
+
+  useEffect(() => { reset() }, [challengeId, reset])
 
   const hint = shouldRevealHint(store.attempts)
 
@@ -39,9 +45,11 @@ export function GameClient({ challengeId, slug, mode, universeName, authenticate
         )}
       </div>
 
+      {error && <p className="text-sm text-red-400">{error}</p>}
+
       {!store.won && !store.lost && (
         <Suspense fallback={<Skeleton className="h-48 w-full rounded-xl" />}>
-          <ModeLoader challenge={challenge} config={config} />
+          <ModeLoader challenge={challenge} config={config} submitGuess={submitGuess} loading={loading} />
         </Suspense>
       )}
 

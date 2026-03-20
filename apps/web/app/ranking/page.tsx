@@ -3,11 +3,11 @@ import { createServiceClient } from '@/lib/supabase/server'
 export const revalidate = 300
 
 const TIERS: [number, string, string][] = [
-  [50000, 'Diamond',  '&#x1F48E;'],
-  [30000, 'Platinum', '&#x1F948;'],
-  [15000, 'Gold',     '&#x1F947;'],
-  [5000,  'Silver',   '&#x1FA99;'],
-  [0,     'Bronze',   '&#x1F949;'],
+  [50000, 'Diamond',  '💎'],
+  [30000, 'Platinum', '🥈'],
+  [15000, 'Gold',     '🥇'],
+  [5000,  'Silver',   '🪙'],
+  [0,     'Bronze',   '🥉'],
 ]
 
 function getTier(score: number) {
@@ -73,7 +73,7 @@ export default async function RankingPage() {
                     </div>
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <span className="text-xs" dangerouslySetInnerHTML={{ __html: `${tierIcon} ${tierName}` }} />
+                    <span className="text-xs">{tierIcon} {tierName}</span>
                   </td>
                   <td className="px-4 py-3 text-right text-white font-semibold">{row.score.toLocaleString()}</td>
                   <td className="px-4 py-3 text-right text-gray-400">{row.total_wins}</td>
