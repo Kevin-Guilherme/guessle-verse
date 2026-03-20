@@ -28,13 +28,25 @@ Deno.serve(async (req) => {
   // Verify service role authorization
   const auth = req.headers.get('authorization') ?? ''
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-  if (!auth.includes(serviceKey)) {
+  if (auth !== `Bearer ${serviceKey}`) {
     return new Response('Unauthorized', { status: 401 })
   }
 
-  const { language, modeVariant } = await req.json() as {
-    language: 'js' | 'ts' | 'python'
-    modeVariant: 'complete' | 'fix' | 'output'
+  let language: 'js' | 'ts' | 'python'
+  let modeVariant: 'complete' | 'fix' | 'output'
+  try {
+    const body = await req.json() as {
+      language: 'js' | 'ts' | 'python'
+      modeVariant: 'complete' | 'fix' | 'output'
+    }
+    language = body.language
+    modeVariant = body.modeVariant
+  } catch {
+    return new Response(JSON.stringify({ error: 'Invalid JSON body' }), { status: 400 })
+  }
+
+  if (!language || !modeVariant) {
+    return new Response(JSON.stringify({ error: 'language and modeVariant required' }), { status: 400 })
   }
 
   const prompt = PROMPTS[modeVariant]?.[language]

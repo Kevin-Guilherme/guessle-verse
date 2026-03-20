@@ -105,7 +105,7 @@ async function refreshPokemon(themeId: number): Promise<number> {
       count++
 
       // Be polite to PokeAPI
-      await new Promise(r => setTimeout(r, 50))
+      await new Promise(r => setTimeout(r, 700))
     } catch (err) {
       console.error(`Pokemon error (${entry.name}):`, err)
     }

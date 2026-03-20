@@ -262,12 +262,15 @@ async function fetchCodePuzzle(
   today: string
 ): Promise<string> {
   // Check for duplicate content_hash in last 60 days
+  const since = new Date()
+  since.setDate(since.getDate() - LOOKBACK_DAYS)
   const { data: recentHashes } = await supabase
     .from('daily_challenges')
     .select('content_hash')
     .eq('theme_id', themeId)
     .eq('mode', mode)
     .not('content_hash', 'is', null)
+    .gte('date', since.toISOString().split('T')[0])
 
   const usedHashes = new Set((recentHashes ?? []).map((r: { content_hash: string }) => r.content_hash))
 
