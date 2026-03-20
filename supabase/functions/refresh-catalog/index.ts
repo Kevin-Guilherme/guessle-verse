@@ -189,11 +189,12 @@ const WIKI_CONFIGS: Record<string, WikiConfig> = {
   },
   onepiece: {
     host:     'onepiece.fandom.com',
-    category: 'Characters',
+    category: 'Male Characters',  // Female Characters handled in separate pass
     attributeMap: {
       affiliation: 'afiliacao', devil_fruit: 'fruta_do_diabo',
       bounty: 'recompensa', haki: 'haki',
       species: 'raca', origin: 'ilha_natal', gender: 'genero',
+      occupation: 'ocupacao', status: 'status',
     },
   },
   jujutsu: {
@@ -206,7 +207,7 @@ const WIKI_CONFIGS: Record<string, WikiConfig> = {
   },
   smash: {
     host:     'supersmashbros.fandom.com',
-    category: 'Fighters',
+    category: 'Playable Characters',
     attributeMap: {
       universe: 'universe', weight_class: 'weight_class',
       tier: 'tier', first_appearance: 'first_appearance',
@@ -235,7 +236,7 @@ const WIKI_CONFIGS: Record<string, WikiConfig> = {
   },
   monsterhunter: {
     host:     'monsterhunter.fandom.com',
-    category: 'Monsters',
+    category: 'Large Monsters',
     attributeMap: {
       type: 'type', element: 'element', weakness: 'weakness',
       size: 'size', threat_level: 'threat_level',
