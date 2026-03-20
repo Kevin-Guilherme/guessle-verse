@@ -1,6 +1,32 @@
+@import "tw-animate-css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    --radius: 0.625rem;
+    --background: 222 47% 5%;
+    --foreground: 210 40% 95%;
+    --card: 224 47% 8%;
+    --card-foreground: 210 40% 95%;
+    --popover: 224 47% 8%;
+    --popover-foreground: 210 40% 95%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 222 47% 5%;
+    --secondary: 268 75% 63%;
+    --secondary-foreground: 210 40% 95%;
+    --muted: 223 47% 15%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 223 47% 15%;
+    --accent-foreground: 210 40% 95%;
+    --destructive: 0 84% 60%;
+    --border: 218 30% 18%;
+    --input: 218 30% 18%;
+    --ring: 217 91% 60%;
+  }
+}
 
 :root {
   --background: #0F1117;

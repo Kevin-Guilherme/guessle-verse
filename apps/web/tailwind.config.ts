@@ -14,7 +14,7 @@ const config: Config = {
           primary: '#0F1117',
           surface: '#1A1D2E',
         },
-        border:  '#2D3148',
+        'game-border': '#2D3148',
         correct: '#22C55E',
         partial: '#EAB308',
         wrong:   '#374151',
