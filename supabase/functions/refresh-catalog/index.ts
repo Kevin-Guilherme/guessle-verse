@@ -27,19 +27,34 @@ async function upsertCharacter(
 }
 
 function extractInfobox(html: string): Record<string, string> {
-  const root = parse(html)
+  const root   = parse(html)
   const result: Record<string, string> = {}
 
-  // Standard fandom infobox: <aside class="portable-infobox"> or <table class="infobox">
-  const aside = root.querySelector('aside.portable-infobox, table.infobox, .pi-item')
-  if (!aside) return result
+  // Format 1: Fandom portable-infobox (newer wikis)
+  const aside = root.querySelector('aside.portable-infobox')
+  if (aside) {
+    const rows = aside.querySelectorAll('.pi-item[data-source], .pi-data')
+    for (const row of rows) {
+      const key = row.getAttribute('data-source')
+        ?? row.querySelector('.pi-data-label')?.text?.trim().toLowerCase().replace(/\s+/g, '_')
+      const val = row.querySelector('.pi-data-value')?.text?.trim()
+      if (key && val) result[key] = val
+    }
+    return result
+  }
 
-  const rows = aside.querySelectorAll('.pi-item[data-source], .pi-data')
-  for (const row of rows) {
-    const key = row.getAttribute('data-source')
-      ?? row.querySelector('.pi-data-label')?.text?.trim().toLowerCase().replace(/\s+/g, '_')
-    const val = row.querySelector('.pi-data-value')?.text?.trim()
-    if (key && val) result[key] = val
+  // Format 2: Old MediaWiki table.infobox (Naruto wiki style)
+  const table = root.querySelector('table.infobox')
+  if (table) {
+    for (const tr of table.querySelectorAll('tr')) {
+      const th = tr.querySelector('th')
+      const td = tr.querySelector('td')
+      if (!th || !td) continue
+      const key = th.text.trim().toLowerCase().replace(/\s+/g, '_')
+      const val = td.text.trim().replace(/\s+/g, ' ')
+      if (key && val) result[key] = val
+    }
+    return result
   }
 
   return result
@@ -53,15 +68,15 @@ async function fetchWikiPage(url: string): Promise<string> {
   return res.text()
 }
 
-// ─── Pokemon (PokeAPI) ────────────────────────────────────────────────────────
+// ─── Pokemon (PokeAPI — chunked) ─────────────────────────────────────────────
 
-async function refreshPokemon(themeId: number): Promise<number> {
+async function refreshPokemon(themeId: number, offset = 0, chunkSize = 100): Promise<number> {
   let count = 0
-  // Gen 1-9 (up to #1025)
-  const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1025')
+  const res  = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${chunkSize}&offset=${offset}`)
   const data = await res.json()
+  const entries = data.results as Array<{ name: string; url: string }>
 
-  for (const entry of (data.results as Array<{ name: string; url: string }>)) {
+  for (const entry of entries) {
     try {
       const pokeRes  = await fetch(entry.url)
       const pokemon  = await pokeRes.json()
@@ -74,38 +89,24 @@ async function refreshPokemon(themeId: number): Promise<number> {
       const color        = species.color?.name ?? ''
       const type1        = pokemon.types[0]?.type.name ?? ''
       const type2        = pokemon.types[1]?.type.name ?? null
-      const heightDm     = pokemon.height   // decimetres
-      const weightHg     = pokemon.weight   // hectograms
-      const heightM      = (heightDm / 10).toFixed(1)
-      const weightKg     = (weightHg / 10).toFixed(1)
+      const heightM      = (pokemon.height  / 10).toFixed(1)
+      const weightKg     = (pokemon.weight  / 10).toFixed(1)
       const isLegendary  = species.is_legendary ? 'Sim' : 'Nao'
       const isMythical   = species.is_mythical  ? 'Sim' : 'Nao'
       const evolvedFrom  = species.evolves_from_species?.name ?? null
       const spriteUrl    = pokemon.sprites.other?.['official-artwork']?.front_default
         ?? pokemon.sprites.front_default
 
-      const attributes: Record<string, unknown> = {
+      await upsertCharacter(themeId, name, spriteUrl, {
         pokedex_number: pokemon.id,
-        type1,
-        type2,
-        generation,
-        height_m:       heightM,
-        weight_kg:      weightKg,
-        color,
-        is_legendary:   isLegendary,
-        is_mythical:    isMythical,
-        evolves_from:   evolvedFrom,
-      }
+        type1, type2, generation,
+        height_m: heightM, weight_kg: weightKg,
+        color, is_legendary: isLegendary, is_mythical: isMythical,
+        evolves_from: evolvedFrom,
+      }, { sprite_url: spriteUrl })
 
-      const extra: Record<string, unknown> = {
-        sprite_url: spriteUrl,
-      }
-
-      await upsertCharacter(themeId, name, spriteUrl, attributes, extra)
       count++
-
-      // Be polite to PokeAPI
-      await new Promise(r => setTimeout(r, 700))
+      await new Promise(r => setTimeout(r, 300)) // polite, but faster than 700ms
     } catch (err) {
       console.error(`Pokemon error (${entry.name}):`, err)
     }
@@ -160,135 +161,132 @@ async function refreshLoL(themeId: number): Promise<number> {
   return count
 }
 
-// ─── Generic wiki scraper ─────────────────────────────────────────────────────
+// ─── Generic wiki scraper (MediaWiki JSON API) ───────────────────────────────
 
 type WikiConfig = {
-  listUrl:    string       // URL to the character list page
-  nameSelector: string     // CSS selector for character name links
-  attributeMap: Record<string, string> // infobox data-source key -> our attribute key
-  extraKeys:  string[]     // infobox keys to put in extra (e.g., image)
+  host:         string                   // e.g. "naruto.fandom.com"
+  category:     string                   // category for character list
+  attributeMap: Record<string, string>   // infobox data-source key -> our attr key
 }
 
 const WIKI_CONFIGS: Record<string, WikiConfig> = {
   naruto: {
-    listUrl:      'https://naruto.fandom.com/wiki/Special:AllPages?namespace=0',
-    nameSelector: '.mw-allpages-chunk li a',
+    host:     'naruto.fandom.com',
+    category: 'Characters',
     attributeMap: {
-      species:         'especie',
-      affiliation:     'afiliacao',
-      clan:            'cla',
-      kekkei_genkai:   'kekkei_genkai',
-      classification:  'rank',
-      village:         'vila',
-      gender:          'genero',
-    },
-    extraKeys: [],
-  },
-  onepiece: {
-    listUrl:      'https://onepiece.fandom.com/wiki/Special:AllPages?namespace=0',
-    nameSelector: '.mw-allpages-chunk li a',
-    attributeMap: {
+      // table.infobox keys (lowercase underscored)
+      sex:          'genero',
+      clan:         'cla',
       affiliation:  'afiliacao',
-      devil_fruit:  'fruta_do_diabo',
-      bounty:       'recompensa',
-      haki:         'haki',
-      species:      'raca',
-      origin:       'ilha_natal',
+      kekkei_genkai: 'kekkei_genkai',
+      classification: 'rank',
+      ninja_rank:   'ninja_rank',
+      // portable-infobox keys (fallback)
+      species:      'especie',
+      village:      'vila',
       gender:       'genero',
     },
-    extraKeys: ['wanted_url'],
+  },
+  onepiece: {
+    host:     'onepiece.fandom.com',
+    category: 'Characters',
+    attributeMap: {
+      affiliation: 'afiliacao', devil_fruit: 'fruta_do_diabo',
+      bounty: 'recompensa', haki: 'haki',
+      species: 'raca', origin: 'ilha_natal', gender: 'genero',
+    },
   },
   jujutsu: {
-    listUrl:      'https://jujutsu-kaisen.fandom.com/wiki/Special:AllPages?namespace=0',
-    nameSelector: '.mw-allpages-chunk li a',
+    host:     'jujutsu-kaisen.fandom.com',
+    category: 'Characters',
     attributeMap: {
-      cursed_technique: 'tecnica_maldita',
-      grade:            'grau',
-      affiliation:      'afiliacao',
-      gender:           'genero',
-      status:           'status',
+      cursed_technique: 'tecnica_maldita', grade: 'grau',
+      affiliation: 'afiliacao', gender: 'genero', status: 'status',
     },
-    extraKeys: [],
   },
   smash: {
-    listUrl:      'https://supersmashbros.fandom.com/wiki/Special:AllPages?namespace=0',
-    nameSelector: '.mw-allpages-chunk li a',
+    host:     'supersmashbros.fandom.com',
+    category: 'Fighters',
     attributeMap: {
-      universe:         'universe',
-      weight_class:     'weight_class',
-      tier:             'tier',
-      first_appearance: 'first_appearance',
-      fighter_type:     'fighter_type',
+      universe: 'universe', weight_class: 'weight_class',
+      tier: 'tier', first_appearance: 'first_appearance',
     },
-    extraKeys: ['kirby_url'],
   },
   zelda: {
-    listUrl:      'https://zelda.fandom.com/wiki/Special:AllPages?namespace=0',
-    nameSelector: '.mw-allpages-chunk li a',
+    host:     'zelda.fandom.com',
+    category: 'Characters',
     attributeMap: {
-      race:        'race',
-      game:        'games',
-      gender:      'gender',
-      affiliation: 'affiliation',
+      race: 'race', game: 'games', gender: 'gender', affiliation: 'affiliation',
     },
-    extraKeys: [],
   },
   mario: {
-    listUrl:      'https://mario.fandom.com/wiki/Special:AllPages?namespace=0',
-    nameSelector: '.mw-allpages-chunk li a',
+    host:     'mario.fandom.com',
+    category: 'Characters',
     attributeMap: {
-      species:          'species',
-      first_appearance: 'first_appearance',
-      affiliation:      'affiliation',
+      species: 'species', first_appearance: 'first_appearance', affiliation: 'affiliation',
     },
-    extraKeys: [],
   },
   gow: {
-    listUrl:      'https://godofwar.fandom.com/wiki/Special:AllPages?namespace=0',
-    nameSelector: '.mw-allpages-chunk li a',
+    host:     'godofwar.fandom.com',
+    category: 'Characters',
     attributeMap: {
-      realm:       'realm',
-      affiliation: 'affiliation',
-      weapon:      'weapon',
-      gender:      'gender',
+      realm: 'realm', affiliation: 'affiliation', weapon: 'weapon', gender: 'gender',
     },
-    extraKeys: ['voice_url'],
   },
   monsterhunter: {
-    listUrl:      'https://monsterhunter.fandom.com/wiki/Special:AllPages?namespace=0',
-    nameSelector: '.mw-allpages-chunk li a',
+    host:     'monsterhunter.fandom.com',
+    category: 'Monsters',
     attributeMap: {
-      type:         'type',
-      element:      'element',
-      weakness:     'weakness',
-      size:         'size',
-      threat_level: 'threat_level',
+      type: 'type', element: 'element', weakness: 'weakness',
+      size: 'size', threat_level: 'threat_level',
     },
-    extraKeys: ['roar_url'],
   },
 }
 
-async function refreshWikiUniverse(slug: string, themeId: number): Promise<number> {
+async function fetchMediaWikiApi(host: string, params: Record<string, string>): Promise<unknown> {
+  const qs  = new URLSearchParams({ ...params, format: 'json' })
+  const res = await fetch(`https://${host}/api.php?${qs}`, {
+    headers: { 'User-Agent': 'GuessleBot/1.0 (daily game platform; non-commercial)' },
+  })
+  if (!res.ok) throw new Error(`MediaWiki API ${res.status} at ${host}`)
+  return res.json()
+}
+
+async function getWikiCategoryMembers(host: string, category: string, chunkSize: number, offset: string): Promise<{ titles: string[]; nextOffset: string | null }> {
+  const params: Record<string, string> = {
+    action: 'query', list: 'categorymembers',
+    cmtitle: `Category:${category}`, cmtype: 'page',
+    cmlimit: String(chunkSize), cmnamespace: '0',
+  }
+  if (offset) params.cmcontinue = offset
+
+  const data = await fetchMediaWikiApi(host, params) as Record<string, unknown>
+  const members = ((data as Record<string, Record<string, Array<{ title: string }>>>).query?.categorymembers ?? [])
+  const titles  = members.map((m: { title: string }) => m.title)
+  const nextOffset = (data as Record<string, Record<string, Record<string, string>>>)?.['query-continue']?.categorymembers?.cmcontinue
+    ?? (data as Record<string, Record<string, string>>)?.continue?.cmcontinue
+    ?? null
+  return { titles, nextOffset }
+}
+
+async function getWikiPageHtml(host: string, title: string): Promise<string> {
+  const data = await fetchMediaWikiApi(host, { action: 'parse', page: title, prop: 'text' }) as Record<string, Record<string, Record<string, string>>>
+  return data?.parse?.text?.['*'] ?? ''
+}
+
+async function refreshWikiUniverse(slug: string, themeId: number, cmcontinue = '', chunkSize = 50): Promise<{ count: number; nextOffset: string | null }> {
   const config = WIKI_CONFIGS[slug]
   if (!config) throw new Error(`No wiki config for ${slug}`)
 
-  const listHtml = await fetchWikiPage(config.listUrl)
-  const listRoot = parse(listHtml)
-  const links    = listRoot.querySelectorAll(config.nameSelector)
-
+  const { titles, nextOffset } = await getWikiCategoryMembers(config.host, config.category, chunkSize, cmcontinue)
   let count = 0
 
-  for (const link of links) {
-    const name    = link.text.trim()
-    const href    = link.getAttribute('href')
-    if (!name || !href || name.includes(':')) continue // skip meta pages
-
+  for (const title of titles) {
     try {
-      const pageUrl  = `https://${new URL(config.listUrl).hostname}${href}`
-      const pageHtml = await fetchWikiPage(pageUrl)
-      const infobox  = extractInfobox(pageHtml)
+      const html    = await getWikiPageHtml(config.host, title)
+      const infobox = extractInfobox(html)
 
-      if (!Object.keys(infobox).length) continue // skip pages with no infobox
+      if (!Object.keys(infobox).length) continue
 
       const attributes: Record<string, unknown> = {}
       for (const [infoboxKey, attrKey] of Object.entries(config.attributeMap)) {
@@ -296,69 +294,77 @@ async function refreshWikiUniverse(slug: string, themeId: number): Promise<numbe
         if (val) attributes[attrKey] = val
       }
 
-      const extra: Record<string, unknown> = {}
-      for (const key of config.extraKeys) {
-        const val = infobox[key]
-        if (val) extra[key] = val
-      }
-
-      // Try to find the main image
-      const pageRoot = parse(pageHtml)
-      const img      = pageRoot.querySelector('.pi-image-thumbnail, .infobox img')
+      const pageRoot = parse(html)
+      const img      = pageRoot.querySelector('.pi-image-thumbnail, .infobox img, .pi-image img')
       const imageUrl = img?.getAttribute('src') ?? null
 
-      await upsertCharacter(themeId, name, imageUrl, attributes, extra)
+      await upsertCharacter(themeId, title, imageUrl, attributes, {})
       count++
 
-      // Rate limit: 1 request per 300ms
-      await new Promise(r => setTimeout(r, 300))
+      await new Promise(r => setTimeout(r, 250))
     } catch (err) {
-      console.error(`Wiki error (${slug}/${name}):`, err)
+      console.error(`Wiki error (${slug}/${title}):`, err)
     }
   }
 
-  return count
+  return { count, nextOffset }
 }
 
 // ─── Main handler ─────────────────────────────────────────────────────────────
+
+const WIKI_SLUGS = ['naruto', 'onepiece', 'jujutsu', 'smash', 'zelda', 'mario', 'gow', 'monsterhunter']
+
+type RefreshBody = {
+  universe?:   string
+  offset?:     number   // Pokemon: numeric offset (0-based)
+  cmcontinue?: string   // Wiki: MediaWiki category-continue token
+  chunkSize?:  number   // items per call (default: 100 pokemon / 50 wiki)
+}
+
+async function refreshOne(slug: string, body: RefreshBody): Promise<Record<string, unknown>> {
+  const themeId = await getThemeId(slug)
+  if (!themeId) return { result: 'error: theme not found' }
+
+  if (slug === 'pokemon') {
+    const count = await refreshPokemon(themeId, body.offset ?? 0, body.chunkSize ?? 100)
+    return { result: `ok: ${count} upserted`, nextOffset: (body.offset ?? 0) + (body.chunkSize ?? 100) }
+  }
+  if (slug === 'lol') {
+    const count = await refreshLoL(themeId)
+    return { result: `ok: ${count} upserted` }
+  }
+  if (WIKI_SLUGS.includes(slug)) {
+    const { count, nextOffset } = await refreshWikiUniverse(slug, themeId, body.cmcontinue ?? '', body.chunkSize ?? 50)
+    return { result: `ok: ${count} upserted`, nextOffset }
+  }
+  return { result: 'error: unknown universe' }
+}
 
 Deno.serve(async (req) => {
   if (req.method !== 'POST') {
     return new Response('Method not allowed', { status: 405 })
   }
 
-  const log: Array<{ universe: string; result: string }> = []
+  let body: RefreshBody = {}
+  try { body = await req.json() } catch { /* no body = refresh all */ }
 
-  // Pokemon
-  try {
-    const themeId = await getThemeId('pokemon')
-    if (themeId) {
-      const count = await refreshPokemon(themeId)
-      log.push({ universe: 'pokemon', result: `ok: ${count} upserted` })
-    }
-  } catch (err) {
-    log.push({ universe: 'pokemon', result: `error: ${err instanceof Error ? err.message : String(err)}` })
-  }
+  const log: Array<Record<string, unknown>> = []
 
-  // LoL
-  try {
-    const themeId = await getThemeId('lol')
-    if (themeId) {
-      const count = await refreshLoL(themeId)
-      log.push({ universe: 'lol', result: `ok: ${count} upserted` })
-    }
-  } catch (err) {
-    log.push({ universe: 'lol', result: `error: ${err instanceof Error ? err.message : String(err)}` })
-  }
-
-  // Wiki universes
-  for (const slug of ['naruto', 'onepiece', 'jujutsu', 'smash', 'zelda', 'mario', 'gow', 'monsterhunter']) {
+  // Single universe mode — safe for 60s timeout
+  if (body.universe) {
     try {
-      const themeId = await getThemeId(slug)
-      if (themeId) {
-        const count = await refreshWikiUniverse(slug, themeId)
-        log.push({ universe: slug, result: `ok: ${count} upserted` })
-      }
+      const info = await refreshOne(body.universe, body)
+      log.push({ universe: body.universe, ...info })
+    } catch (err) {
+      log.push({ universe: body.universe, result: `error: ${err instanceof Error ? err.message : String(err)}` })
+    }
+    return new Response(JSON.stringify({ log }), { headers: { 'Content-Type': 'application/json' } })
+  }
+
+  // Full refresh (all universes) — use only when not time-constrained
+  for (const slug of ['lol', 'pokemon', ...WIKI_SLUGS]) {
+    try {
+      log.push({ universe: slug, ...(await refreshOne(slug, body)) })
     } catch (err) {
       log.push({ universe: slug, result: `error: ${err instanceof Error ? err.message : String(err)}` })
     }

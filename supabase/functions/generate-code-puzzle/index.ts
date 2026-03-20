@@ -25,13 +25,6 @@ Deno.serve(async (req) => {
     return new Response('Method not allowed', { status: 405 })
   }
 
-  // Verify service role authorization
-  const auth = req.headers.get('authorization') ?? ''
-  const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-  if (auth !== `Bearer ${serviceKey}`) {
-    return new Response('Unauthorized', { status: 401 })
-  }
-
   let language: 'js' | 'ts' | 'python'
   let modeVariant: 'complete' | 'fix' | 'output'
   try {
