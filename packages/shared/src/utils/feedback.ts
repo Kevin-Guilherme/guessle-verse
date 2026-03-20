@@ -19,8 +19,9 @@ export function computeFeedback(
       return guessValue === targetValue ? 'correct' : 'wrong'
 
     case 'arrow': {
-      const g = guessValue as number
-      const t = targetValue as number
+      const g = Number(guessValue)
+      const t = Number(targetValue)
+      if (isNaN(g) || isNaN(t)) return 'wrong'
       if (g === t) return 'correct'
       return g < t ? 'higher' : 'lower'
     }

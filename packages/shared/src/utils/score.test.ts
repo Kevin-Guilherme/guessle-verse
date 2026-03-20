@@ -29,4 +29,7 @@ describe('shouldRevealHint', () => {
   it('returns 2 at 10 attempts', () => {
     expect(shouldRevealHint(10)).toBe(2)
   })
+  it('returns 1 between 5 and 9 attempts', () => {
+    expect(shouldRevealHint(9)).toBe(1)
+  })
 })

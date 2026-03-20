@@ -25,6 +25,9 @@ describe('computeFeedback', () => {
     it('handles scalar equality', () => {
       expect(computeFeedback('red', 'red', 'partial')).toBe('correct')
     })
+    it('returns correct when guess is superset of target', () => {
+      expect(computeFeedback(['fire', 'flying', 'poison'], ['fire', 'flying'], 'partial')).toBe('correct')
+    })
   })
 
   describe('arrow', () => {
@@ -36,6 +39,9 @@ describe('computeFeedback', () => {
     })
     it('returns lower when guess is greater than target', () => {
       expect(computeFeedback(9, 5, 'arrow')).toBe('lower')
+    })
+    it('returns wrong for non-numeric input', () => {
+      expect(computeFeedback('abc', 5, 'arrow')).toBe('wrong')
     })
   })
 })
