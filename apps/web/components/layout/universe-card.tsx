@@ -47,7 +47,6 @@ export function UniverseCard({ universe }: UniverseCardProps) {
     <Link href={`/games/${universe.slug}`}>
       <div
         className="group relative bg-bg-surface border border-border rounded-xl p-5 hover:border-gray-500 transition-all duration-300 hover:-translate-y-1 cursor-pointer h-full"
-        style={{ '--universe-color': universe.color } as React.CSSProperties}
       >
         <div
           className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-5 transition-opacity duration-300"

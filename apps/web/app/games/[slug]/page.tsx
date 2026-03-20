@@ -98,36 +98,41 @@ export default async function UniverseHubPage({ params }: Props) {
           const meta      = MODE_META[mode]
           const available = modesWithChallenge.has(mode)
 
-          return (
-            <Link
-              key={mode}
-              href={available ? `/games/${universe.slug}/${mode}` : '#'}
-              aria-disabled={!available}
-              className={`group relative bg-bg-surface border rounded-xl p-5 transition-all duration-300 ${
-                available
-                  ? 'border-border hover:border-gray-500 hover:-translate-y-0.5 cursor-pointer'
-                  : 'border-border opacity-50 cursor-not-allowed'
-              }`}
-            >
-              <div className="flex items-start gap-4">
-                <span className="text-3xl">{meta?.icon ?? '🎮'}</span>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-semibold text-white">
-                      {meta?.label ?? mode}
-                    </h3>
-                    {!available && (
-                      <span className="text-xs text-gray-600 bg-gray-800 px-2 py-0.5 rounded-full">
-                        Em breve
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-sm text-gray-400 mt-0.5">
-                    {meta?.description ?? ''}
-                  </p>
+          const content = (
+            <div className="flex items-start gap-4">
+              <span className="text-3xl">{meta?.icon ?? '🎮'}</span>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <h3 className="font-semibold text-white">
+                    {meta?.label ?? mode}
+                  </h3>
+                  {!available && (
+                    <span className="text-xs text-gray-600 bg-gray-800 px-2 py-0.5 rounded-full">
+                      Em breve
+                    </span>
+                  )}
                 </div>
+                <p className="text-sm text-gray-400 mt-0.5">
+                  {meta?.description ?? ''}
+                </p>
               </div>
+            </div>
+          )
+
+          const cardClass = `group relative bg-bg-surface border rounded-xl p-5 transition-all duration-300 ${
+            available
+              ? 'border-border hover:border-gray-500 hover:-translate-y-0.5 cursor-pointer'
+              : 'border-border opacity-50 cursor-not-allowed'
+          }`
+
+          return available ? (
+            <Link key={mode} href={`/games/${universe.slug}/${mode}`} className={cardClass}>
+              {content}
             </Link>
+          ) : (
+            <div key={mode} className={cardClass}>
+              {content}
+            </div>
           )
         })}
       </div>
