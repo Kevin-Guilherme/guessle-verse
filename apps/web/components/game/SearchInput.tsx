@@ -13,7 +13,7 @@ interface SearchInputProps {
 export function SearchInput({ themeId, onSubmit, disabled, placeholder }: SearchInputProps) {
   const supabase = createClient()
   const [query,        setQuery]        = useState('')
-  const [results,      setResults]      = useState<string[]>([])
+  const [results,      setResults]      = useState<Array<{ name: string; image_url: string | null }>>([])
   const [open,         setOpen]         = useState(false)
   const [highlighted,  setHighlighted]  = useState(0)
   const ref = useRef<HTMLDivElement>(null)
@@ -24,14 +24,14 @@ export function SearchInput({ themeId, onSubmit, disabled, placeholder }: Search
     const timer = setTimeout(async () => {
       const { data } = await supabase
         .from('characters')
-        .select('name')
+        .select('name, image_url')
         .eq('theme_id', themeId)
         .ilike('name', `%${query}%`)
         .limit(8)
 
-      const names = data?.map((d) => d.name) ?? []
-      setResults(names)
-      setOpen(names.length > 0)
+      const items = (data ?? []).map((d) => ({ name: d.name as string, image_url: d.image_url as string | null }))
+      setResults(items)
+      setOpen(items.length > 0)
       setHighlighted(0)
     }, 200)
 
@@ -55,7 +55,7 @@ export function SearchInput({ themeId, onSubmit, disabled, placeholder }: Search
   const onKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowDown') { e.preventDefault(); setHighlighted((h) => Math.min(h + 1, results.length - 1)) }
     if (e.key === 'ArrowUp')   { e.preventDefault(); setHighlighted((h) => Math.max(h - 1, 0)) }
-    if (e.key === 'Enter' && results[highlighted]) select(results[highlighted])
+    if (e.key === 'Enter' && results[highlighted]) select(results[highlighted].name)
     if (e.key === 'Escape') setOpen(false)
   }
 
@@ -116,15 +116,15 @@ export function SearchInput({ themeId, onSubmit, disabled, placeholder }: Search
           role="listbox"
           className="absolute top-full left-0 right-0 z-30 mt-1.5 rounded-xl border border-game-border bg-surface overflow-hidden shadow-2xl shadow-black/50"
         >
-          {results.map((name, i) => (
+          {results.map((item, i) => (
             <button
-              key={name}
+              key={item.name}
               role="option"
               aria-selected={i === highlighted}
               type="button"
-              onClick={() => select(name)}
+              onClick={() => select(item.name)}
               onMouseEnter={() => setHighlighted(i)}
-              className={`w-full text-left px-4 py-2.5 text-sm font-sans flex items-center gap-3 transition-colors duration-100 cursor-pointer
+              className={`w-full text-left px-3 py-2 text-sm font-sans flex items-center gap-3 transition-colors duration-100 cursor-pointer
                 ${i === highlighted
                   ? 'bg-neon-purple/15 text-white'
                   : 'text-slate-300 hover:bg-white/[0.04]'
@@ -132,13 +132,25 @@ export function SearchInput({ themeId, onSubmit, disabled, placeholder }: Search
                 ${i < results.length - 1 ? 'border-b border-white/[0.04]' : ''}
               `}
             >
-              {/* Character initial dot */}
-              <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-display shrink-0
-                ${i === highlighted ? 'bg-neon-purple/30 text-neon-purple-light' : 'bg-white/5 text-slate-500'}
+              {/* Character avatar */}
+              <span className={`w-8 h-8 rounded-lg shrink-0 overflow-hidden border flex items-center justify-center text-[10px] font-display
+                ${i === highlighted ? 'border-neon-purple/40' : 'border-white/10'}
               `}>
-                {name[0]?.toUpperCase()}
+                {item.image_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={item.image_url}
+                    alt={item.name}
+                    className="w-full h-full object-cover object-top"
+                    loading="lazy"
+                  />
+                ) : (
+                  <span className={i === highlighted ? 'text-neon-purple-light' : 'text-slate-500'}>
+                    {item.name[0]?.toUpperCase()}
+                  </span>
+                )}
               </span>
-              {name}
+              {item.name}
             </button>
           ))}
         </div>
