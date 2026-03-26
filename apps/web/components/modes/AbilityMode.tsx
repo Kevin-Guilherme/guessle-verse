@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import Image from 'next/image'
 import { useGameStore } from '@/lib/store/game-store'
 import { useGuess } from '@/hooks/useGuess'
@@ -27,23 +27,36 @@ export default function AbilityMode({ challenge }: ModeComponentProps) {
   const [slotPhase, setSlotPhase]   = useState(false)
   const [slotResult, setSlotResult] = useState<'correct' | 'wrong' | null>(null)
   const [triedSlots, setTriedSlots] = useState<Set<string>>(new Set())
+  const hasHydrated = useRef(false)
 
   // All 5 slots tried and none correct → bonus phase failed
   const slotFailed = triedSlots.size >= SLOTS.length
 
-  // Check if last non-slot guess was a correct champion
-  const lastGuess  = guesses[guesses.length - 1]
+  // Any correct champion guess in history (not just lastGuess — handles reload after slot attempts)
   const champWasCorrect =
-    lastGuess?.feedback?.[0]?.key === 'champion' &&
-    lastGuess?.feedback?.[0]?.feedback === 'correct' &&
-    !won
+    guesses.some(
+      g => g.feedback?.[0]?.key === 'champion' && g.feedback?.[0]?.feedback === 'correct'
+    ) && !won
 
-  // Activate slot phase when champion was just correctly guessed
+  // Activate slot phase when champion was correctly guessed
   useEffect(() => {
     if (champWasCorrect && !slotPhase && !slotResult) {
       setSlotPhase(true)
     }
   }, [champWasCorrect, slotPhase, slotResult])
+
+  // Restore triedSlots from guess history on hydration
+  useEffect(() => {
+    if (hasHydrated.current || !guesses.length) return
+    hasHydrated.current = true
+
+    const tried = new Set<string>(
+      guesses
+        .filter(g => g.value?.startsWith('SLOT:'))
+        .map(g => g.value.replace('SLOT:', ''))
+    )
+    if (tried.size > 0) setTriedSlots(tried)
+  }, [guesses]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Fixed rotation per challenge: 0°, 90°, 180° or 270°
   const rotation = useMemo(() => [0, 90, 180, 270][challenge.id % 4], [challenge.id])
