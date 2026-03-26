@@ -113,7 +113,7 @@ export function UserAvatarButton({ name, avatarUrl: initialAvatarUrl }: Props) {
       <input
         ref={fileRef}
         type="file"
-        accept="image/*"
+        accept="image/*,image/gif,.gif"
         onChange={handleFileChange}
         className="hidden"
       />
