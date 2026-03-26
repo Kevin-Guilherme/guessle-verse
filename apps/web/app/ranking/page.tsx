@@ -37,12 +37,13 @@ export default async function RankingPage() {
     service.auth.admin.listUsers({ perPage: 1000 }),
   ])
 
-  const userMap: Record<string, { name: string; initials: string }> = {}
+  const userMap: Record<string, { name: string; initials: string; avatarUrl: string | null }> = {}
   for (const u of users ?? []) {
     const name = (u.user_metadata?.full_name as string | undefined)
       || (u.user_metadata?.name as string | undefined)
       || emailToDisplayName(u.email ?? '')
-    userMap[u.id] = { name, initials: getInitials(name) }
+    const avatarUrl = (u.user_metadata?.avatar_url as string | undefined) ?? null
+    userMap[u.id] = { name, initials: getInitials(name), avatarUrl }
   }
 
   if (!rows || rows.length === 0) {
@@ -80,7 +81,7 @@ export default async function RankingPage() {
             const row = (aggregated as any[])[pos]
             const [, tierName, tierIcon, tierColor] = getTier(row.score)
             const isFirst = pos === 0
-            const { name, initials } = userMap[row.user_id] ?? { name: row.user_id.slice(0, 8), initials: row.user_id.slice(0, 2).toUpperCase() }
+            const { name, initials, avatarUrl } = userMap[row.user_id] ?? { name: row.user_id.slice(0, 8), initials: row.user_id.slice(0, 2).toUpperCase(), avatarUrl: null }
             return (
               <div
                 key={pos}
@@ -89,12 +90,17 @@ export default async function RankingPage() {
                 {isFirst && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 text-yellow-400 text-lg">👑</div>
                 )}
-                <div
-                  className="w-10 h-10 rounded-full mx-auto mb-2 flex items-center justify-center text-sm font-bold text-white"
-                  style={{ background: `linear-gradient(135deg, ${tierColor}80, ${tierColor}40)`, border: `1px solid ${tierColor}40` }}
-                >
-                  {initials}
-                </div>
+                {avatarUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={avatarUrl} alt={name} className="w-10 h-10 rounded-full mx-auto mb-2 object-cover" style={{ border: `1px solid ${tierColor}40` }} />
+                ) : (
+                  <div
+                    className="w-10 h-10 rounded-full mx-auto mb-2 flex items-center justify-center text-sm font-bold text-white"
+                    style={{ background: `linear-gradient(135deg, ${tierColor}80, ${tierColor}40)`, border: `1px solid ${tierColor}40` }}
+                  >
+                    {initials}
+                  </div>
+                )}
                 <p className="text-xs text-slate-500 font-sans mb-1 truncate max-w-[120px] mx-auto">{name}</p>
                 <p className="font-display text-white text-sm font-bold">{row.score.toLocaleString()}</p>
                 <p className="text-xs mt-0.5" style={{ color: tierColor }}>{tierIcon} {tierName}</p>
@@ -116,7 +122,7 @@ export default async function RankingPage() {
         </div>
         {(aggregated as any[]).map((row, i) => {
           const [, tierName, tierIcon, tierColor] = getTier(row.score)
-          const { name, initials } = userMap[row.user_id] ?? { name: row.user_id.slice(0, 8), initials: row.user_id.slice(0, 2).toUpperCase() }
+          const { name, initials, avatarUrl } = userMap[row.user_id] ?? { name: row.user_id.slice(0, 8), initials: row.user_id.slice(0, 2).toUpperCase(), avatarUrl: null }
           return (
             <div
               key={row.user_id}
@@ -124,12 +130,17 @@ export default async function RankingPage() {
             >
               <span className="font-display text-slate-600 text-xs">{i + 1}</span>
               <div className="flex items-center gap-2 min-w-0">
-                <div
-                  className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
-                  style={{ background: `linear-gradient(135deg, ${tierColor}80, ${tierColor}30)` }}
-                >
-                  {initials}
-                </div>
+                {avatarUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={avatarUrl} alt={name} className="w-7 h-7 rounded-full object-cover shrink-0" />
+                ) : (
+                  <div
+                    className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
+                    style={{ background: `linear-gradient(135deg, ${tierColor}80, ${tierColor}30)` }}
+                  >
+                    {initials}
+                  </div>
+                )}
                 <span className="text-slate-300 font-sans text-sm truncate">{name}</span>
               </div>
               <span className="text-right text-xs font-display" style={{ color: tierColor }}>
