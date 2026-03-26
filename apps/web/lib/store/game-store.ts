@@ -2,8 +2,9 @@ import { create } from 'zustand'
 import type { AttributeFeedback } from '@guessle/shared'
 
 interface GuessEntry {
-  value: string
-  feedback: AttributeFeedback[]
+  value:     string
+  feedback:  AttributeFeedback[]
+  image_url?: string | null
 }
 
 interface GameState {

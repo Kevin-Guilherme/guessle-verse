@@ -15,6 +15,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR" className="dark">
+      <head>
+        {/* Suppress Referer for all resource loads — required for Fandom CDN images */}
+        <meta name="referrer" content="no-referrer" />
+      </head>
       <body className={`${inter.className} bg-bg-primary min-h-screen flex flex-col`}>
         <Providers>
           <Header />

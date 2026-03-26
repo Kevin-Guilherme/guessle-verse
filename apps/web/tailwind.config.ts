@@ -43,6 +43,24 @@ const config: Config = {
       backgroundSize: {
         'grid': '40px 40px',
       },
+      keyframes: {
+        shake: {
+          '0%, 100%': { transform: 'translateX(0)' },
+          '20%':      { transform: 'translateX(-6px)' },
+          '40%':      { transform: 'translateX(6px)' },
+          '60%':      { transform: 'translateX(-4px)' },
+          '80%':      { transform: 'translateX(4px)' },
+        },
+        'loading-bar': {
+          '0%':   { transform: 'translateX(-100%)' },
+          '50%':  { transform: 'translateX(150%)' },
+          '100%': { transform: 'translateX(400%)' },
+        },
+      },
+      animation: {
+        shake:         'shake 0.5s ease-in-out',
+        'loading-bar': 'loading-bar 1.2s ease-in-out infinite',
+      },
     },
   },
   plugins: [],

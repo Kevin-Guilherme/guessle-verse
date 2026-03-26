@@ -2,7 +2,7 @@ import type { Universe } from '@guessle/shared'
 
 export const UNIVERSES: Universe[] = [
   { slug: 'lol',           name: 'LoLdle',        icon: '⚔️',  color: '#C89B3C', type: 'character', modes: ['classic','quote','ability','splash','build','skill-order','quadra'] },
-  { slug: 'naruto',        name: 'Narutodle',      icon: '🍥',  color: '#FF6B2B', type: 'character', modes: ['classic','jutsu','quote','eye','voice'] },
+  { slug: 'naruto',        name: 'Narutodle',      icon: '🍥',  color: '#FF6B2B', type: 'character', modes: ['classic','jutsu','quote','eye'] },
   { slug: 'onepiece',      name: 'OnePiecedle',    icon: '🏴‍☠️', color: '#E8C84A', type: 'character', modes: ['classic','devil-fruit','wanted','laugh'] },
   { slug: 'jujutsu',       name: 'Jujutsudle',     icon: '🩸',  color: '#8B5CF6', type: 'character', modes: ['classic','cursed-technique','quote','eyes'] },
   { slug: 'pokemon',       name: 'Pokédle',         icon: '⚡',  color: '#FFCC02', type: 'character', modes: ['classic','silhouette','ability','cry'] },

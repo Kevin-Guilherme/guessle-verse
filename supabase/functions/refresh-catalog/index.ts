@@ -18,10 +18,11 @@ async function upsertCharacter(
   name: string,
   imageUrl: string | null,
   attributes: Record<string, unknown>,
-  extra: Record<string, unknown>
+  extra: Record<string, unknown>,
+  active = true
 ): Promise<void> {
   await supabase.from('characters').upsert(
-    { theme_id: themeId, name, image_url: imageUrl, attributes, extra, active: true },
+    { theme_id: themeId, name, image_url: imageUrl, attributes, extra, active },
     { onConflict: 'theme_id,name' }
   )
 }
@@ -30,17 +31,36 @@ function extractInfobox(html: string): Record<string, string> {
   const root   = parse(html)
   const result: Record<string, string> = {}
 
-  // Format 1: Fandom portable-infobox (newer wikis)
-  const aside = root.querySelector('aside.portable-infobox')
-  if (aside) {
-    const rows = aside.querySelectorAll('.pi-item[data-source], .pi-data')
-    for (const row of rows) {
-      const key = row.getAttribute('data-source')
-        ?? row.querySelector('.pi-data-label')?.text?.trim().toLowerCase().replace(/\s+/g, '_')
-      const val = row.querySelector('.pi-data-value')?.text?.trim()
+  // Format 1: Fandom portable-infobox — use [data-source] selector directly
+  // (avoids fragile aside.portable-infobox class matching)
+  const piItems = root.querySelectorAll('[data-source]')
+  if (piItems.length > 0) {
+    for (const item of piItems) {
+      const key     = item.getAttribute('data-source')
+      const valueEl = item.querySelector('.pi-data-value')
+      if (!key || !valueEl) continue
+
+      // Multi-value: extract individual <li> elements (strip strikethrough = former/past)
+      const listItems = valueEl.querySelectorAll('li')
+      let val: string
+      if (listItems.length > 0) {
+        val = listItems
+          .filter(li => !li.querySelector('s'))          // skip struck-through (former species etc.)
+          .map(li => {
+            const a = li.querySelector('a')
+            // Prefer link title attr (clean name without image alt text), then link text, then li text
+            return (a?.getAttribute('title') ?? a?.text ?? li.text).replace(/\[.*?\]/g, '').trim()
+          })
+          .filter(Boolean)
+          .join(', ')
+      } else {
+        // Single value — strip footnotes like [1], normalize whitespace
+        val = valueEl.text.replace(/\[.*?\]/g, '').replace(/\s+/g, ' ').trim()
+      }
+
       if (key && val) result[key] = val
     }
-    return result
+    if (Object.keys(result).length > 0) return result
   }
 
   // Format 2: Old MediaWiki table.infobox (Naruto wiki style)
@@ -51,7 +71,22 @@ function extractInfobox(html: string): Record<string, string> {
       const td = tr.querySelector('td')
       if (!th || !td) continue
       const key = th.text.trim().toLowerCase().replace(/\s+/g, '_')
-      const val = td.text.trim().replace(/\s+/g, ' ')
+
+      // Multi-value cells: extract individual <a> links and join with ', '
+      // (avoids "Uzumaki Clan Senju Clan" — merged without separator)
+      const anchors = td.querySelectorAll('a')
+      let val: string
+      if (anchors.length > 0) {
+        const parts: string[] = []
+        for (const a of anchors) {
+          const t = (a.getAttribute('title') ?? a.text).replace(/\[.*?\]/g, '').trim()
+          if (t && !parts.includes(t)) parts.push(t)
+        }
+        val = parts.join(', ')
+      } else {
+        val = td.text.trim().replace(/\s+/g, ' ')
+      }
+
       if (key && val) result[key] = val
     }
     return result
@@ -66,6 +101,53 @@ async function fetchWikiPage(url: string): Promise<string> {
   })
   if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`)
   return res.text()
+}
+
+// ─── Meraki helpers ───────────────────────────────────────────────────────────
+
+function toTitleCase(s: string): string {
+  if (!s) return ''
+  return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase()
+}
+
+const FACTION_MAP: Record<string, string> = {
+  'shadow-isles':       'Shadow Isles',
+  'bandle-city':        'Bandle City',
+  'mount-targon':       'Mount Targon',
+  'the-void':           'Void',
+  void:                 'Void',
+  demacia:              'Demacia',
+  noxus:                'Noxus',
+  freljord:             'Freljord',
+  piltover:             'Piltover',
+  zaun:                 'Zaun',
+  bilgewater:           'Bilgewater',
+  shurima:              'Shurima',
+  ionia:                'Ionia',
+  targon:               'Mount Targon',
+  ixtal:                'Ixtal',
+  'runeterra':          'Runeterra',
+}
+
+function normalizeFaction(slug: string): string {
+  const lower = slug.toLowerCase()
+  return FACTION_MAP[lower] ?? slug.split('-').map(toTitleCase).join(' ')
+}
+
+/** Normalize champion name to Meraki JSON key format:
+ *  strip spaces, apostrophes, dots; keep CamelCase as-is.
+ *  e.g. "Kai'Sa" → "KaiSa", "Miss Fortune" → "MissFortune" */
+function toMerakiKey(name: string): string {
+  return name.replace(/[' .]/g, '')
+}
+
+type MerakiChampion = {
+  attackType:  string
+  resource:    string
+  releaseDate: string
+  positions:   string[]
+  faction:     string
+  regions?:    string[]
 }
 
 // ─── Pokemon (PokeAPI — chunked) ─────────────────────────────────────────────
@@ -115,50 +197,188 @@ async function refreshPokemon(themeId: number, offset = 0, chunkSize = 100): Pro
   return count
 }
 
-// ─── LoL (Riot Data Dragon) ───────────────────────────────────────────────────
+// ─── LoL (Riot Data Dragon + LoL wiki) ───────────────────────────────────────
 
-async function refreshLoL(themeId: number): Promise<number> {
-  let count = 0
-
+async function refreshLoL(themeId: number, offset = 0, chunkSize = 5): Promise<{ count: number; nextOffset: number }> {
   const versRes  = await fetch('https://ddragon.leagueoflegends.com/api/versions.json')
   const versions = await versRes.json() as string[]
   const version  = versions[0]
 
-  const listRes  = await fetch(`https://ddragon.leagueoflegends.com/cdn/${version}/data/en_US/champion.json`)
-  const listData = await listRes.json()
+  const listRes   = await fetch(`https://ddragon.leagueoflegends.com/cdn/${version}/data/en_US/champion.json`)
+  const listData  = await listRes.json()
+  const allKeys   = Object.keys(listData.data)
+  const chunk     = allKeys.slice(offset, offset + chunkSize)
+  let count = 0
 
-  for (const key of Object.keys(listData.data)) {
+  // ── Meraki Analytics — fetch once per chunk call, fail gracefully ──────────
+  let merakiData: Record<string, MerakiChampion> = {}
+  try {
+    const merakiRes = await fetch('https://cdn.merakianalytics.com/riot/lol/resources/latest/en-US/champions.json', {
+      headers: { 'User-Agent': 'GuessleBot/1.0 (daily game platform; non-commercial)' },
+    })
+    if (merakiRes.ok) {
+      merakiData = await merakiRes.json() as Record<string, MerakiChampion>
+    } else {
+      console.warn(`Meraki fetch failed: HTTP ${merakiRes.status} — continuing without Meraki data`)
+    }
+  } catch (merakiErr) {
+    console.warn('Meraki fetch error — continuing without Meraki data:', merakiErr)
+  }
+
+  for (const key of chunk) {
     try {
       const champRes  = await fetch(`https://ddragon.leagueoflegends.com/cdn/${version}/data/en_US/champion/${key}.json`)
       const champData = await champRes.json()
       const champ     = champData.data[key]
 
       const name       = champ.name
-      const tags       = champ.tags as string[]
-      const resource   = champ.partype
-      const attackRange = Number(champ.stats?.attackrange ?? 0)
       const splashUrl  = `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${key}_0.jpg`
+      // Data Dragon fallbacks
+      const ddResource  = champ.partype as string
+      const ddRangeType = Number(champ.stats?.attackrange ?? 0) > 300 ? 'Ranged' : 'Melee'
 
+      // ── Meraki: look up champion by normalized name key ──────────────────
+      const merakiKey  = toMerakiKey(name)
+      const merakiChamp: MerakiChampion | undefined = merakiData[merakiKey]
+        // fallback: try Data Dragon key (e.g. "MonkeyKing" for Wukong)
+        ?? merakiData[key]
+
+      // Try LoL wiki for the 7 LoLdle-style attributes
+      let gender      = ''
+      let positions   = ''
+      let species     = ''
+      let resource    = ddResource
+      let rangeType   = ddRangeType
+      let regions     = ''
+      let releaseYear = ''
+
+      // Apply Meraki fields as initial values (wiki overrides below if present)
+      if (merakiChamp) {
+        // resource: "ENERGY" → "Energy", "NONE" → "None"
+        if (merakiChamp.resource) {
+          resource = toTitleCase(merakiChamp.resource)
+        }
+
+        // range_type: "MELEE" → "Melee", "RANGED" → "Ranged"
+        if (merakiChamp.attackType) {
+          rangeType = toTitleCase(merakiChamp.attackType)
+        }
+
+        // positions: ["TOP","JUNGLE"] → "Top, Jungle"; "BOTTOM" → "Bot"
+        if (merakiChamp.positions?.length) {
+          positions = merakiChamp.positions
+            .map((p: string) => {
+              const norm = p.toUpperCase()
+              if (norm === 'BOTTOM') return 'Bot'
+              return toTitleCase(p)
+            })
+            .join(', ')
+        }
+
+        // release_year: "2011-12-14" → "2011"
+        if (merakiChamp.releaseDate) {
+          releaseYear = merakiChamp.releaseDate.slice(0, 4)
+        }
+
+        // regions: normalize slug from faction field or regions array
+        const factionSlug = merakiChamp.faction ?? (merakiChamp.regions?.[0] ?? '')
+        if (factionSlug) {
+          regions = normalizeFaction(factionSlug)
+        }
+      }
+
+      try {
+        // Fetch lore page and game page in parallel
+        const [loreHtml, gameHtml] = await Promise.all([
+          getWikiPageHtml('leagueoflegends.fandom.com', name),
+          getWikiPageHtml('leagueoflegends.fandom.com', `${name}/LoL`),
+        ])
+        const lore = extractInfobox(loreHtml)
+        const game = extractInfobox(gameHtml)
+
+        // Gender: derive from pronoun field on lore page
+        const pronoun = (lore['pronoun'] ?? '').toLowerCase()
+        if      (pronoun.includes('she'))  gender = 'Female'
+        else if (pronoun.includes('he'))   gender = 'Male'
+        else if (pronoun.includes('they')) gender = 'Other'
+        else if (pronoun.includes('it'))   gender = 'Other'
+
+        // Species: already comma-separated by extractInfobox, just normalize spacing
+        species = (lore['species'] ?? lore['race'] ?? '')
+          .split(',').map((s: string) => s.trim()).filter(Boolean).join(', ')
+
+        // Regions: wiki overrides Meraki if present
+        const wikiRegions = (lore['region'] ?? lore['regions'] ?? lore['faction'] ?? '')
+          .replace(/\[\[([^\]|]+\|)?([^\]]+)\]\]/g, '$2')
+          .replace(/\s*\n\s*/g, ', ')
+          .trim()
+        if (wikiRegions) regions = wikiRegions
+
+        // Positions: wiki overrides Meraki if present (space-separated words "Top Middle Bottom")
+        const rawPos = game['position'] ?? game['positions'] ?? ''
+        if (rawPos.trim()) positions = rawPos.trim().replace(/\s+/g, ', ')
+
+        // Resource + Range type: wiki overrides Meraki, which already overrides DD
+        if (game['resource'])  resource  = game['resource']
+        if (game['rangetype']) rangeType = game['rangetype']
+
+        // Release year: wiki overrides Meraki if present
+        const rel = game['release'] ?? game['date'] ?? ''
+        const wikiYear = rel.match(/\d{4}/)?.[0] ?? ''
+        if (wikiYear) releaseYear = wikiYear
+      } catch (wikiErr) { console.error(`LoL wiki error (${name}):`, wikiErr) }
+
+      // Attributes stored in display order (matches LoLdle column order)
       const attributes: Record<string, unknown> = {
-        key,
-        class:         tags[0]  ?? '',
-        secondary_class: tags[1] ?? null,
+        gender,
+        positions,
+        species,
         resource,
-        range_type:    attackRange > 300 ? 'Ranged' : 'Melee',
+        range_type:   rangeType,
+        regions,
+        release_year: releaseYear,
       }
 
-      const extra: Record<string, unknown> = {
-        splash_url: splashUrl,
-      }
+      const skins = ((champ.skins ?? []) as Array<{ num: number; name: string }>)
+        .map(s => ({ num: s.num, name: s.num === 0 ? `${name} Default` : s.name }))
+        .filter(s => !s.name.includes('('))  // exclude chromas — no splash art in ddragon
 
-      await upsertCharacter(themeId, name, splashUrl, attributes, extra)
+      // Fetch in-game quotes from the LoL wiki Audio page ({Name}/LoL/Audio)
+      let quotes: string[] = []
+      try {
+        const quotesHtml = await getWikiPageHtml('leagueoflegends.fandom.com', `${name}/LoL/Audio`)
+        const qRoot      = parse(quotesHtml)
+        const nameLower  = name.toLowerCase()
+
+        for (const li of qRoot.querySelectorAll('li')) {
+          // Each li text looks like: 'Link▶️\u00a0\u00a0 "Quote text here."'
+          // Extract only the text inside straight double-quotes
+          const raw = li.text.replace(/\u00a0/g, ' ')
+          const match = raw.match(/"([^"]{10,200})"/)
+          if (!match) continue
+          const text = match[1].replace(/\s+/g, ' ').trim()
+
+          if (
+            !text.toLowerCase().includes(nameLower) &&
+            !text.startsWith('(')
+          ) {
+            quotes.push(text)
+          }
+        }
+
+        // Deduplicate
+        quotes = [...new Set(quotes)].slice(0, 40)
+      } catch { /* non-fatal — champion will just have no quotes pool */ }
+
+      await upsertCharacter(themeId, name, splashUrl, attributes, { splash_url: splashUrl, key, quotes, skins })
       count++
+      await new Promise(r => setTimeout(r, 100))
     } catch (err) {
       console.error(`LoL error (${key}):`, err)
     }
   }
 
-  return count
+  return { count, nextOffset: offset + chunkSize }
 }
 
 // ─── Generic wiki scraper (MediaWiki JSON API) ───────────────────────────────
@@ -174,17 +394,15 @@ const WIKI_CONFIGS: Record<string, WikiConfig> = {
     host:     'naruto.fandom.com',
     category: 'Characters',
     attributeMap: {
-      // table.infobox keys (lowercase underscored)
-      sex:          'genero',
-      clan:         'cla',
-      affiliation:  'afiliacao',
-      kekkei_genkai: 'kekkei_genkai',
-      classification: 'rank',
-      ninja_rank:   'ninja_rank',
-      // portable-infobox keys (fallback)
-      species:      'especie',
-      village:      'vila',
-      gender:       'genero',
+      sex:            'genero',
+      gender:         'genero',
+      affiliation:    'afiliacao',
+      kekkei_genkai:  'kekkei_genkai',
+      nature_type:    'nature_types',
+      classification: '_class_raw',   // split below into jutsu_types + classification
+      clan:           'cla',
+      debut_arc:      'debut_arc',
+      appears_in:     '_appears_in',  // used for manga/anime filter only, not stored as attr
     },
   },
   onepiece: {
@@ -284,6 +502,15 @@ async function refreshWikiUniverse(slug: string, themeId: number, cmcontinue = '
 
   for (const title of titles) {
     try {
+      // Skip variant/alternate-form pages — "(Part II)", "(Boruto)", "(Game)", etc.
+      if (slug === 'naruto' && title.includes(' (')) {
+        await supabase.from('characters').upsert(
+          { theme_id: themeId, name: title, active: false },
+          { onConflict: 'theme_id,name' }
+        )
+        continue
+      }
+
       const html    = await getWikiPageHtml(config.host, title)
       const infobox = extractInfobox(html)
 
@@ -296,10 +523,119 @@ async function refreshWikiUniverse(slug: string, themeId: number, cmcontinue = '
       }
 
       const pageRoot = parse(html)
-      const img      = pageRoot.querySelector('.pi-image-thumbnail, .infobox img, .pi-image img')
-      const imageUrl = img?.getAttribute('src') ?? null
+      // Skip SVG placeholders — find first real raster image inside infobox
+      const allImgs  = pageRoot.querySelectorAll('.infobox img, .pi-image-thumbnail, .pi-image img, figure img')
+      let imageUrl: string | null = null
+      for (const el of allImgs) {
+        const src = el.getAttribute('src') ?? ''
+        if (/\.(png|jpg|jpeg|webp)/i.test(src)) { imageUrl = src; break }
+      }
 
-      await upsertCharacter(themeId, title, imageUrl, attributes, {})
+      const extra: Record<string, unknown> = {}
+
+      // ── Naruto-specific post-processing ──────────────────────────────────
+      let active = true
+      if (slug === 'naruto') {
+        // Filter: only keep characters that appear in Manga or Anime
+        const appearsIn = String(attributes['_appears_in'] ?? '').toLowerCase()
+        if (appearsIn && !appearsIn.includes('manga') && !appearsIn.includes('anime')) {
+          active = false
+        }
+        delete attributes['_appears_in']
+
+        // Affiliations: keep only the first village/org (split by comma or space+capital)
+        if (attributes['afiliacao']) {
+          const raw    = String(attributes['afiliacao'])
+          const byComma = raw.split(/,\s*/).filter(Boolean)
+          if (byComma.length > 1) {
+            attributes['afiliacao'] = byComma[0].trim()
+          } else {
+            // space-separated list — split on capital letter after space boundary
+            const firstWord = raw.split(/\s+(?=[A-Z])/)[0].trim()
+            attributes['afiliacao'] = firstWord
+          }
+        }
+
+        // Split _class_raw: items containing 'jutsu' → jutsu_types; rest → classification
+        const rawClass = (attributes['_class_raw'] as string) ?? ''
+        if (rawClass) {
+          const items    = rawClass.split(',').map((s: string) => s.trim()).filter(Boolean)
+          const jutsuT   = items.filter((s: string) => s.toLowerCase().includes('jutsu'))
+          const charAttr = items.filter((s: string) => !s.toLowerCase().includes('jutsu'))
+          if (jutsuT.length)   attributes['jutsu_types']    = jutsuT.join(', ')
+          if (charAttr.length) attributes['classification'] = charAttr.join(', ')
+          delete attributes['_class_raw']
+        }
+
+        // Extract Nature Types and Jutsu from collapsible cellbox sections
+        const cellboxes  = pageRoot.querySelectorAll('table.cellbox')
+        let natureCb: typeof cellboxes[0] | null = null
+        let jutsuCb:  typeof cellboxes[0] | null = null
+        for (const tb of cellboxes) {
+          const label = tb.querySelector('th')?.text.trim()
+          if (label === 'Nature Type') natureCb = tb
+          if (label === 'Jutsu')       jutsuCb  = tb
+        }
+
+        if (natureCb) {
+          const natures: string[] = []
+          for (const a of natureCb.querySelectorAll('a')) {
+            const t = a.getAttribute('title') ?? ''
+            if (t && !natures.includes(t)) natures.push(t)
+          }
+          if (natures.length) attributes['nature_types'] = natures.join(', ')
+        }
+
+        let firstJutsu: string | null = null
+        if (jutsuCb) {
+          for (const a of jutsuCb.querySelectorAll('a')) {
+            firstJutsu = a.getAttribute('title') ?? null
+            if (firstJutsu) break
+          }
+        }
+
+        if (firstJutsu) {
+          try {
+            const jHtml    = await getWikiPageHtml(config.host, firstJutsu)
+            const jRoot    = parse(jHtml)
+            const videoSrc = jRoot.querySelector('video source, source[type*="video"]')
+              ?.getAttribute('src') ?? null
+            let jImgUrl: string | null = null
+            for (const el of jRoot.querySelectorAll('.infobox img, .pi-image-thumbnail, .pi-image img, figure img')) {
+              const src = el.getAttribute('src') ?? ''
+              if (/\.(png|jpg|jpeg|webp)/i.test(src)) { jImgUrl = src; break }
+            }
+            if (videoSrc) extra['jutsu_video_url'] = videoSrc
+            if (jImgUrl)  extra['jutsu_image_url'] = jImgUrl
+            extra['jutsu_name'] = firstJutsu
+          } catch { /* non-fatal */ }
+        }
+
+        // Fetch quotes — try /Quotes page first, then blockquotes on main page
+        let quotes: string[] = []
+        const quoteRegex = /[\u201c"\u00ab]([^\u201d"\u00bb]{15,250})[\u201d"\u00bb]/
+        const extractQuotes = (root: ReturnType<typeof parse>) => {
+          for (const el of root.querySelectorAll('blockquote, .quote-content, .cited-quote, p, li')) {
+            const text  = el.text.replace(/\s+/g, ' ').replace(/\u00a0/g, ' ').trim()
+            const match = text.match(quoteRegex)
+            if (match) quotes.push(match[1].trim())
+          }
+        }
+        try {
+          const qHtml = await getWikiPageHtml(config.host, `${title}/Quotes`)
+          extractQuotes(parse(qHtml))
+        } catch { /* /Quotes page may not exist — fall through */ }
+        // Fallback: extract blockquotes from the main character page
+        if (quotes.length === 0) {
+          try {
+            extractQuotes(pageRoot)
+          } catch { /* non-fatal */ }
+        }
+        quotes = [...new Set(quotes)].slice(0, 20)
+        extra['quotes'] = quotes
+      }
+
+      await upsertCharacter(themeId, title, imageUrl, attributes, extra, active)
       count++
 
       await new Promise(r => setTimeout(r, 250))
@@ -331,8 +667,8 @@ async function refreshOne(slug: string, body: RefreshBody): Promise<Record<strin
     return { result: `ok: ${count} upserted`, nextOffset: (body.offset ?? 0) + (body.chunkSize ?? 100) }
   }
   if (slug === 'lol') {
-    const count = await refreshLoL(themeId)
-    return { result: `ok: ${count} upserted` }
+    const { count, nextOffset } = await refreshLoL(themeId, body.offset ?? 0, body.chunkSize ?? 5)
+    return { result: `ok: ${count} upserted`, nextOffset }
   }
   if (WIKI_SLUGS.includes(slug)) {
     const { count, nextOffset } = await refreshWikiUniverse(slug, themeId, body.cmcontinue ?? '', body.chunkSize ?? 50)

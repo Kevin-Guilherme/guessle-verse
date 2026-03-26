@@ -9,7 +9,7 @@ interface UniverseCardProps {
 const MODE_LABELS: Record<string, string> = {
   classic: 'Classic', silhouette: 'Silhouette', quote: 'Quote',
   ability: 'Ability', splash: 'Splash', build: 'Build',
-  'skill-order': 'Skill', quadra: 'Quadra', 'devil-fruit': 'Devil Fruit',
+  'skill-order': 'Detective', quadra: 'Quadra', 'devil-fruit': 'Devil Fruit',
   wanted: 'Wanted', laugh: 'Laugh', jutsu: 'Jutsu', eye: 'Eye',
   voice: 'Voice', 'cursed-technique': 'Cursed', eyes: 'Eyes', cry: 'Cry',
   kirby: 'Kirby', 'final-smash': 'Final Smash', item: 'Item',

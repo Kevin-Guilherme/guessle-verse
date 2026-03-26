@@ -1,9 +1,11 @@
 'use client'
 
 import { lazy, Suspense, useEffect, useMemo } from 'react'
+import Link from 'next/link'
 import { useGameStore } from '@/lib/store/game-store'
 import { shouldRevealHint } from '@guessle/shared'
 import { getModeLoader, MODE_CONFIGS } from '@/lib/game/registry'
+import { getUniverse } from '@/lib/constants/universes'
 import { useGameSession } from '@/hooks/useGameSession'
 import { useGuess } from '@/hooks/useGuess'
 import { GuessRow } from './GuessRow'
@@ -18,6 +20,7 @@ interface GameClientProps {
   universeName:  string
   authenticated: boolean
   challenge:     any
+  modesStatus?:  Record<string, 'won' | 'lost'>
 }
 
 const MAX_VISIBLE_DOTS = 12
@@ -53,19 +56,31 @@ function AttemptDots({ count, max }: { count: number; max: number | null }) {
   )
 }
 
-export function GameClient({ challengeId, slug, mode, universeName, authenticated, challenge }: GameClientProps) {
+export function GameClient({ challengeId, slug, mode, universeName, authenticated, challenge, modesStatus = {} }: GameClientProps) {
   const config     = { slug: mode, ...MODE_CONFIGS[mode] ?? { label: mode, maxAttempts: null } }
   const ModeLoader = useMemo(() => lazy(getModeLoader(mode)), [mode])
+  const universe   = getUniverse(slug)
 
   const store = useGameStore()
   const reset = useGameStore((s) => s.reset)
 
-  useGameSession(challengeId, authenticated)
+  const { loading: sessionLoading } = useGameSession(challengeId, authenticated)
   const { submitGuess, loading, error } = useGuess(challengeId)
 
   useEffect(() => { reset() }, [challengeId, reset])
 
   const hint = shouldRevealHint(store.attempts)
+
+  if (sessionLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[70vh]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 rounded-full border-2 border-white/10 border-t-neon-purple animate-spin" />
+          <p className="text-[10px] font-display tracking-[0.2em] text-slate-600 uppercase">Carregando...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
@@ -87,6 +102,46 @@ export function GameClient({ challengeId, slug, mode, universeName, authenticate
 
       {/* Neon divider */}
       <div className="h-px bg-gradient-to-r from-transparent via-neon-purple/30 to-transparent" />
+
+      {/* Mode navigation */}
+      {universe && universe.modes.length > 1 && (
+        <div className="flex gap-1.5 overflow-x-auto pb-0.5 -mx-1 px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {universe.modes.map(m => {
+            const cfg      = MODE_CONFIGS[m]
+            const isActive = m === mode
+            const status   = m === mode
+              ? (store.won ? 'won' : store.lost ? 'lost' : null)
+              : (modesStatus[m] ?? null)
+            return (
+              <Link
+                key={m}
+                href={`/games/${slug}/${m}`}
+                className={`shrink-0 px-3 py-1.5 rounded-lg text-[10px] font-display tracking-widest uppercase transition-all duration-200 flex flex-col items-center gap-0.5 ${
+                  isActive
+                    ? 'bg-neon-purple text-white'
+                    : status === 'won'
+                      ? 'bg-correct/10 border border-correct/40 text-slate-300 hover:border-correct/60'
+                      : status === 'lost'
+                        ? 'bg-red-500/5 border border-red-500/30 text-slate-400 hover:border-red-500/50'
+                        : 'bg-surface border border-white/10 text-slate-400 hover:border-white/30 hover:text-white'
+                }`}
+              >
+                {cfg?.label ?? m}
+                {!isActive && status && (
+                  <span className={`w-1 h-1 rounded-full ${status === 'won' ? 'bg-correct' : 'bg-red-400'}`} />
+                )}
+              </Link>
+            )
+          })}
+        </div>
+      )}
+
+      {/* Guess submit loading bar */}
+      {loading && (
+        <div className="h-[2px] w-full overflow-hidden rounded-full bg-white/5">
+          <div className="h-full w-2/5 bg-neon-purple animate-loading-bar" />
+        </div>
+      )}
 
       {/* Error */}
       {error && (
@@ -155,28 +210,72 @@ export function GameClient({ challengeId, slug, mode, universeName, authenticate
         </div>
       )}
 
+      {/* Quadra Kill — reveal all groups on loss */}
+      {store.lost && mode === 'quadra' && (() => {
+        type QGroup = { category: string; color: string; champions: string[] }
+        const groups = ((challenge.attributes as Record<string, unknown>)?.groups ?? []) as QGroup[]
+        const colorMap: Record<string, string> = {
+          green:  'bg-green-600/80 border-green-400/50',
+          yellow: 'bg-yellow-600/80 border-yellow-400/50',
+          orange: 'bg-orange-600/80 border-orange-400/50',
+          purple: 'bg-purple-600/80 border-purple-400/50',
+        }
+        return (
+          <div className="space-y-2">
+            <p className="text-[10px] font-display tracking-widest text-slate-600 uppercase text-center">Respostas</p>
+            {groups.map(g => (
+              <div key={g.category} className={`rounded-xl border px-4 py-3 ${colorMap[g.color] ?? 'bg-surface border-white/10'}`}>
+                <p className="text-xs font-display font-bold uppercase tracking-widest mb-1 text-white/90">{g.category}</p>
+                <p className="text-[11px] text-white/70">{g.champions.join(' · ')}</p>
+              </div>
+            ))}
+          </div>
+        )
+      })()}
+
       {/* Hint */}
       <HintReveal hint={hint} extra={challenge.extra ?? {}} />
 
       {/* Guess history */}
-      {store.guesses.length > 0 && (
-        <div className="space-y-4">
-          {/* Section header */}
-          <div className="flex items-center gap-3">
-            <span className="text-[10px] font-display tracking-[0.2em] text-slate-700 uppercase">Histórico</span>
-            <div className="flex-1 h-px bg-white/[0.05]" />
-            <span className="text-[10px] text-slate-700 font-display tabular-nums">
-              {store.guesses.length} {store.guesses.length === 1 ? 'tentativa' : 'tentativas'}
-            </span>
-          </div>
+      {store.guesses.length > 0 && (() => {
+        const firstGuess = store.guesses[0]
+        const isSimple   = firstGuess.feedback.length === 1 && firstGuess.feedback[0].key === 'champion'
+        const cols       = firstGuess.feedback.length
+        return (
+          <div className="space-y-2">
+            {/* Section header */}
+            <div className="flex items-center gap-3 mb-3">
+              <span className="text-[10px] font-display tracking-[0.2em] text-slate-700 uppercase">Histórico</span>
+              <div className="flex-1 h-px bg-white/[0.05]" />
+              <span className="text-[10px] text-slate-700 font-display tabular-nums">
+                {store.guesses.length} {store.guesses.length === 1 ? 'tentativa' : 'tentativas'}
+              </span>
+            </div>
 
-          <div className="space-y-4">
-            {store.guesses.map((g, i) => (
-              <GuessRow key={i} guess={g as any} rowIndex={i} />
-            ))}
+            {/* Column headers — only for full attribute modes */}
+            {!isSimple && (
+              <div style={{ display: 'grid', gridTemplateColumns: `56px repeat(${cols}, 1fr)`, gap: '6px' }}>
+                <div className="flex items-center justify-center pb-1">
+                  <span className="text-[10px] font-display tracking-wider text-slate-400 uppercase text-center">Champion</span>
+                </div>
+                {firstGuess.feedback.map((f) => (
+                  <div key={f.key} className="flex items-center justify-center pb-1 px-1">
+                    <span className="text-[10px] font-display tracking-wider text-slate-400 uppercase text-center leading-tight">
+                      {f.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="space-y-2">
+              {[...store.guesses].reverse().map((g, i) => (
+                <GuessRow key={i} guess={g as any} rowIndex={i} />
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )
+      })()}
     </div>
   )
 }

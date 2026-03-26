@@ -1,9 +1,13 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
+import { UserAvatarButton } from './UserAvatarButton'
 
 export async function Header() {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
+
+  const name      = (user?.user_metadata?.name as string) || user?.email?.split('@')[0] || 'U'
+  const avatarUrl = (user?.user_metadata?.avatar_url as string) || null
 
   return (
     <header className="sticky top-0 z-50 border-b border-purple-500/10 bg-void/80 backdrop-blur-md">
@@ -17,7 +21,7 @@ export async function Header() {
           </span>
         </Link>
 
-        <nav className="flex items-center gap-2">
+        <nav className="flex items-center gap-3">
           <Link
             href="/ranking"
             className="text-sm text-slate-400 hover:text-neon-cyan transition-colors duration-200 px-3 py-2 rounded-lg hover:bg-neon-cyan/5 font-medium tracking-wide"
@@ -25,12 +29,7 @@ export async function Header() {
             RANKING
           </Link>
           {user ? (
-            <Link
-              href="/profile"
-              className="text-sm font-medium tracking-wide px-4 py-2 rounded-lg border border-neon-purple/40 text-neon-purple-light hover:border-neon-purple hover:bg-neon-purple/10 hover:shadow-neon-sm transition-all duration-200"
-            >
-              PERFIL
-            </Link>
+            <UserAvatarButton name={name} avatarUrl={avatarUrl} />
           ) : (
             <Link
               href="/login"

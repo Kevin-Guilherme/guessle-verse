@@ -14,12 +14,36 @@ function getTier(score: number) {
   return TIERS.find(([min]) => score >= min) ?? TIERS[TIERS.length - 1]
 }
 
+function emailToDisplayName(email: string): string {
+  const prefix = (email ?? '').split('@')[0]
+  return prefix
+    .replace(/[._-]+/g, ' ')
+    .replace(/\d+$/, '')
+    .trim()
+    .replace(/\b\w/g, c => c.toUpperCase()) || prefix
+}
+
+function getInitials(name: string): string {
+  const parts = name.trim().split(/\s+/)
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase()
+  return name.slice(0, 2).toUpperCase()
+}
+
 export default async function RankingPage() {
   const service = createServiceClient()
 
-  const { data: rows } = await service
-    .from('rankings')
-    .select('user_id, score, total_wins, total_games, best_streak')
+  const [{ data: rows }, { data: { users } }] = await Promise.all([
+    service.from('rankings').select('user_id, score, total_wins, total_games, best_streak'),
+    service.auth.admin.listUsers({ perPage: 1000 }),
+  ])
+
+  const userMap: Record<string, { name: string; initials: string }> = {}
+  for (const u of users ?? []) {
+    const name = (u.user_metadata?.full_name as string | undefined)
+      || (u.user_metadata?.name as string | undefined)
+      || emailToDisplayName(u.email ?? '')
+    userMap[u.id] = { name, initials: getInitials(name) }
+  }
 
   if (!rows || rows.length === 0) {
     return (
@@ -56,7 +80,7 @@ export default async function RankingPage() {
             const row = (aggregated as any[])[pos]
             const [, tierName, tierIcon, tierColor] = getTier(row.score)
             const isFirst = pos === 0
-            const initials = (row.user_id as string).slice(0, 2).toUpperCase()
+            const { name, initials } = userMap[row.user_id] ?? { name: row.user_id.slice(0, 8), initials: row.user_id.slice(0, 2).toUpperCase() }
             return (
               <div
                 key={pos}
@@ -71,7 +95,7 @@ export default async function RankingPage() {
                 >
                   {initials}
                 </div>
-                <p className="text-xs text-slate-500 font-mono mb-1">{(row.user_id as string).slice(0, 6)}...</p>
+                <p className="text-xs text-slate-500 font-sans mb-1 truncate max-w-[120px] mx-auto">{name}</p>
                 <p className="font-display text-white text-sm font-bold">{row.score.toLocaleString()}</p>
                 <p className="text-xs mt-0.5" style={{ color: tierColor }}>{tierIcon} {tierName}</p>
               </div>
@@ -92,7 +116,7 @@ export default async function RankingPage() {
         </div>
         {(aggregated as any[]).map((row, i) => {
           const [, tierName, tierIcon, tierColor] = getTier(row.score)
-          const initials = (row.user_id as string).slice(0, 2).toUpperCase()
+          const { name, initials } = userMap[row.user_id] ?? { name: row.user_id.slice(0, 8), initials: row.user_id.slice(0, 2).toUpperCase() }
           return (
             <div
               key={row.user_id}
@@ -106,7 +130,7 @@ export default async function RankingPage() {
                 >
                   {initials}
                 </div>
-                <span className="text-slate-400 font-mono text-xs truncate">{(row.user_id as string).slice(0, 8)}...</span>
+                <span className="text-slate-300 font-sans text-sm truncate">{name}</span>
               </div>
               <span className="text-right text-xs font-display" style={{ color: tierColor }}>
                 {tierIcon} {tierName}

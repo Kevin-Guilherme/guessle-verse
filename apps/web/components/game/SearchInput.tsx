@@ -13,29 +13,38 @@ interface SearchInputProps {
 export function SearchInput({ themeId, onSubmit, disabled, placeholder }: SearchInputProps) {
   const supabase = createClient()
   const [query,        setQuery]        = useState('')
-  const [results,      setResults]      = useState<Array<{ name: string; image_url: string | null }>>([])
+  const [results,      setResults]      = useState<Array<{ name: string; image_url: string | null; tile_url: string | null }>>([])
   const [open,         setOpen]         = useState(false)
   const [highlighted,  setHighlighted]  = useState(0)
+  const [searching,    setSearching]    = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (query.length < 2) { setResults([]); setOpen(false); return }
+    if (query.length < 2) { setResults([]); setOpen(false); setSearching(false); return }
 
+    setSearching(true)
     const timer = setTimeout(async () => {
       const { data } = await supabase
         .from('characters')
         .select('name, image_url')
         .eq('theme_id', themeId)
+        .eq('active', true)
         .ilike('name', `%${query}%`)
         .limit(8)
 
-      const items = (data ?? []).map((d) => ({ name: d.name as string, image_url: d.image_url as string | null }))
+      const items = (data ?? []).map((d) => {
+        const img  = d.image_url as string | null
+        // Keep splash as fallback; tile shown in <img onError>
+        const tile = img?.includes('/splash/') ? img.replace('/splash/', '/tiles/') : img
+        return { name: d.name as string, image_url: img, tile_url: tile ?? null }
+      })
       setResults(items)
       setOpen(items.length > 0)
       setHighlighted(0)
+      setSearching(false)
     }, 200)
 
-    return () => clearTimeout(timer)
+    return () => { clearTimeout(timer); setSearching(false) }
   }, [query, themeId, supabase])
 
   useEffect(() => {
@@ -85,24 +94,30 @@ export function SearchInput({ themeId, onSubmit, disabled, placeholder }: Search
           aria-autocomplete="list"
           aria-expanded={open}
           className={`
-            w-full pl-10 pr-24 py-3.5 rounded-xl border bg-surface
-            font-sans text-sm text-white placeholder:text-slate-600
+            w-full pl-10 pr-24 py-3.5 rounded-xl border appearance-none
+            font-sans text-sm placeholder:text-slate-600
             outline-none transition-all duration-200
             border-game-border
             focus:border-neon-purple/60
             focus:shadow-[0_0_0_2px_rgba(124,58,237,0.25),0_0_20px_rgba(124,58,237,0.15)]
             disabled:opacity-40 disabled:cursor-not-allowed
           `}
+          style={{ backgroundColor: '#13132B', color: '#f1f5f9' }}
         />
 
-        {/* Keyboard hint */}
-        {!disabled && (
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 hidden sm:flex items-center gap-1 pointer-events-none">
-            <kbd className="text-[10px] font-sans text-slate-600 bg-white/5 border border-white/10 rounded px-1.5 py-0.5 leading-none">↵</kbd>
-          </span>
-        )}
+        {/* Right side: searching spinner OR keyboard hint */}
+        <span className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 pointer-events-none">
+          {searching && !disabled ? (
+            <svg className="w-3.5 h-3.5 text-neon-purple/60 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden>
+              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" strokeOpacity="0.25"/>
+              <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+          ) : !disabled ? (
+            <kbd className="text-[10px] font-sans text-slate-600 bg-white/5 border border-white/10 rounded px-1.5 py-0.5 leading-none hidden sm:block">↵</kbd>
+          ) : null}
+        </span>
 
-        {/* Loading bar when disabled */}
+        {/* Loading bar when guess is being submitted */}
         {disabled && (
           <div className="absolute bottom-0 left-0 right-0 h-[2px] overflow-hidden rounded-b-xl">
             <div className="h-full bg-neon-purple animate-pulse" />
@@ -122,7 +137,7 @@ export function SearchInput({ themeId, onSubmit, disabled, placeholder }: Search
               role="option"
               aria-selected={i === highlighted}
               type="button"
-              onClick={() => select(item.name)}
+              onMouseDown={(e) => { e.preventDefault(); select(item.name) }}
               onMouseEnter={() => setHighlighted(i)}
               className={`w-full text-left px-3 py-2 text-sm font-sans flex items-center gap-3 transition-colors duration-100 cursor-pointer
                 ${i === highlighted
@@ -136,13 +151,14 @@ export function SearchInput({ themeId, onSubmit, disabled, placeholder }: Search
               <span className={`w-8 h-8 rounded-lg shrink-0 overflow-hidden border flex items-center justify-center text-[10px] font-display
                 ${i === highlighted ? 'border-neon-purple/40' : 'border-white/10'}
               `}>
-                {item.image_url ? (
+                {item.tile_url ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
-                    src={item.image_url}
+                    src={item.tile_url}
                     alt={item.name}
                     className="w-full h-full object-cover object-top"
-                    loading="lazy"
+                    loading="eager"
+                    referrerPolicy="no-referrer"
                   />
                 ) : (
                   <span className={i === highlighted ? 'text-neon-purple-light' : 'text-slate-500'}>

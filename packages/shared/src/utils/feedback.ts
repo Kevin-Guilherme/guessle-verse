@@ -12,7 +12,7 @@ export function computeFeedback(
     case 'partial':
       if (Array.isArray(guessValue) && Array.isArray(targetValue)) {
         const hit = (guessValue as string[]).filter(v => (targetValue as string[]).includes(v))
-        if (hit.length === targetValue.length) return 'correct'
+        if (guessValue.length === targetValue.length && hit.length === targetValue.length) return 'correct'
         if (hit.length > 0) return 'partial'
         return 'wrong'
       }

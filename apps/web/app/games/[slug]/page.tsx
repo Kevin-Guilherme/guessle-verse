@@ -2,6 +2,8 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { getUniverse } from '@/lib/constants/universes'
+import { getGameDay } from '@/lib/utils/gameDay'
+import { ModeGrid } from '@/components/game/ModeGrid'
 
 export const revalidate = 3600
 
@@ -16,7 +18,7 @@ const MODE_META: Record<string, { label: string; description: string }> = {
   ability:            { label: 'Ability',           description: 'Identifique pela habilidade'       },
   splash:             { label: 'Splash Art',        description: 'Adivinhe pelo splash art'          },
   build:              { label: 'Build',             description: 'Identifique pelos itens'           },
-  'skill-order':      { label: 'Skill Order',       description: 'Identifique pela ordem de skills' },
+  'skill-order':      { label: 'Detective',          description: 'Identifique pelos itens do build'  },
   quadra:             { label: 'Quadra Kill',       description: 'Classic com 4 vidas'              },
   'devil-fruit':      { label: 'Devil Fruit',       description: 'Identifique pela fruta'           },
   wanted:             { label: 'Wanted',            description: 'Poster de procurado'              },
@@ -57,7 +59,7 @@ export default async function UniverseHubPage({ params }: Props) {
   if (!universe) notFound()
 
   const supabase = createClient()
-  const today    = new Date().toISOString().split('T')[0]
+  const today    = getGameDay()
 
   const { data: theme } = await supabase
     .from('themes')
@@ -68,13 +70,17 @@ export default async function UniverseHubPage({ params }: Props) {
   const { data: challenges } = theme
     ? await supabase
         .from('daily_challenges')
-        .select('mode')
+        .select('id, mode')
         .eq('theme_id', theme.id)
         .eq('date', today)
         .in('mode', universe.modes)
     : { data: null }
 
   const modesWithChallenge = new Set(challenges?.map(c => c.mode) ?? [])
+  // Map mode → challenge id so the client component can check completion per mode
+  const challengeIds: Record<string, number> = Object.fromEntries(
+    (challenges ?? []).map(c => [c.mode, c.id])
+  )
   const color = universe.color ?? '#7C3AED'
 
   return (
@@ -107,66 +113,14 @@ export default async function UniverseHubPage({ params }: Props) {
         </div>
       </div>
 
-      {/* Modes grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {universe.modes.map(mode => {
-          const meta      = MODE_META[mode]
-          const available = modesWithChallenge.has(mode)
-
-          const content = (
-            <div className="flex items-center justify-between gap-3">
-              <div className="min-w-0">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <h3 className="font-display text-sm text-white tracking-wide">
-                    {(meta?.label ?? mode).toUpperCase()}
-                  </h3>
-                  {available && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-correct animate-pulse" />
-                  )}
-                </div>
-                <p className="text-xs text-slate-500">{meta?.description ?? ''}</p>
-              </div>
-              {available ? (
-                <span
-                  className="text-xs font-display font-bold px-3 py-1 rounded-full tracking-wider shrink-0"
-                  style={{
-                    background: `${color}20`,
-                    color: color,
-                    border: `1px solid ${color}40`,
-                  }}
-                >
-                  JOGAR
-                </span>
-              ) : (
-                <span className="text-xs text-slate-700 bg-white/3 px-3 py-1 rounded-full border border-white/5 shrink-0 font-display tracking-wider">
-                  BREVE
-                </span>
-              )}
-            </div>
-          )
-
-          const baseClass = `relative rounded-xl p-4 border transition-all duration-300 overflow-hidden`
-
-          return available ? (
-            <Link
-              key={mode}
-              href={`/games/${universe.slug}/${mode}`}
-              className={`${baseClass} bg-surface border-white/5 hover:border-white/20 cursor-pointer group`}
-              style={{ ['--mode-color' as string]: color }}
-            >
-              <div
-                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                style={{ background: `radial-gradient(ellipse at 100% 50%, ${color}10 0%, transparent 60%)` }}
-              />
-              <div className="relative">{content}</div>
-            </Link>
-          ) : (
-            <div key={mode} className={`${baseClass} bg-surface/50 border-white/3 opacity-40 cursor-not-allowed`}>
-              {content}
-            </div>
-          )
-        })}
-      </div>
+      {/* Modes grid — client component handles per-mode completion checkmarks */}
+      <ModeGrid
+        slug={universe.slug}
+        color={color}
+        modes={universe.modes}
+        challengeIds={challengeIds}
+        modeMeta={MODE_META}
+      />
     </div>
   )
 }

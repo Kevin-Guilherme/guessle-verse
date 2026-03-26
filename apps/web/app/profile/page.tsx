@@ -25,11 +25,22 @@ export default async function ProfilePage() {
       <div className="relative rounded-2xl border border-white/5 bg-surface overflow-hidden p-8 mb-8">
         <div className="absolute inset-0 opacity-20" style={{ background: 'radial-gradient(ellipse at 0% 50%, rgba(124,58,237,0.3) 0%, transparent 60%)' }} />
         <div className="relative flex items-center gap-5">
-          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-neon-purple to-neon-pink flex items-center justify-center text-xl font-bold text-white shadow-neon-purple">
-            {(user.email?.[0] ?? 'U').toUpperCase()}
-          </div>
+          {(user.user_metadata?.avatar_url as string) ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={user.user_metadata.avatar_url as string}
+              alt="avatar"
+              className="w-14 h-14 rounded-xl object-cover shadow-neon-purple"
+            />
+          ) : (
+            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-neon-purple to-neon-pink flex items-center justify-center text-xl font-bold text-white shadow-neon-purple">
+              {((user.user_metadata?.name as string) || user.email || 'U').charAt(0).toUpperCase()}
+            </div>
+          )}
           <div>
-            <h1 className="font-display text-2xl text-white tracking-wide">PERFIL</h1>
+            <h1 className="font-display text-2xl text-white tracking-wide">
+              {(user.user_metadata?.name as string) || 'PERFIL'}
+            </h1>
             <p className="text-slate-500 text-sm mt-0.5">{user.email}</p>
           </div>
         </div>
