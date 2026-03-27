@@ -11,10 +11,13 @@ export default function EyeMode({ challenge }: ModeComponentProps) {
   const { submitGuess, loading } = useGuess(challenge.id)
   const alreadyGuessed = guesses.map((g) => g.value.toLowerCase())
 
-  // Zoom starts at 500%, -60% per guess, minimum 100%
-  const zoom    = won ? 100 : Math.max(500 - guesses.length * 60, 100)
-  // Eye area: ~50% horizontal, ~35% vertical (upper face of portrait images)
-  const eyePos  = '50% 35%'
+  const eyeCrop   = (challenge.extra as Record<string, unknown> | null)?.eye_crop as { left: { x: number; y: number }; right: { x: number; y: number } } | undefined
+  const hasEyeCrop = !!eyeCrop
+  const eyeSide   = challenge.id % 2 === 0 ? 'left' : 'right'
+  const eyeCoords = eyeCrop?.[eyeSide]
+
+  const zoom   = won ? 100 : (hasEyeCrop ? 600 : Math.max(800 - guesses.length * 100, 100))
+  const eyePos = won ? 'center' : (hasEyeCrop && eyeCoords ? `${eyeCoords.x}% ${eyeCoords.y}%` : `${challenge.id % 2 === 0 ? '38%' : '62%'} 45%`)
 
   return (
     <div className="space-y-4">

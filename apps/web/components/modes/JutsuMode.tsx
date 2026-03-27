@@ -15,11 +15,10 @@ export default function JutsuMode({ challenge }: ModeComponentProps) {
   const imageUrl  = (challenge.extra?.jutsu_image_url ?? challenge.image_url) as string | null
   const jutsuName = (challenge.extra?.jutsu_name ?? '') as string
 
-  // Blur starts at 20px, -3px per guess, minimum 0
-  const blur = won ? 0 : Math.max(20 - guesses.length * 3, 0)
+  const blur = won ? 0 : Math.max(6 - guesses.length * 2, 0)
   const filterStyle: React.CSSProperties = {
-    filter:     `blur(${blur}px)${!won ? ' grayscale(50%)' : ''}`,
-    transition: 'filter 0.7s ease',
+    filter: won ? undefined : `blur(${blur}px) grayscale(100%)`,
+    transition: 'filter 0.8s ease',
   }
 
   return (
@@ -30,15 +29,13 @@ export default function JutsuMode({ challenge }: ModeComponentProps) {
 
       <div className="w-full max-w-sm mx-auto aspect-video overflow-hidden rounded-xl border border-white/10 bg-black">
         {videoUrl ? (
-          <video
-            src={videoUrl}
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="w-full h-full object-cover"
-            style={filterStyle}
-          />
+          /\.gif/i.test(videoUrl) ? (
+            // GIF (animated jutsu from Naruto wiki)
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={videoUrl} alt="Jutsu" className="w-full h-full object-cover" style={filterStyle} />
+          ) : (
+            <video src={videoUrl} autoPlay muted loop playsInline className="w-full h-full object-cover" style={filterStyle} />
+          )
         ) : imageUrl ? (
           <div className="relative w-full h-full" style={filterStyle}>
             <Image src={imageUrl} alt="Jutsu" fill className="object-cover" />
@@ -50,17 +47,29 @@ export default function JutsuMode({ challenge }: ModeComponentProps) {
         )}
       </div>
 
-      {won && challenge.image_url && (
-        <div className="flex flex-col items-center gap-2 mt-2">
-          <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-correct/40">
-            <Image
-              src={challenge.image_url as string}
-              alt={challenge.name}
-              fill
-              className="object-cover"
-            />
-          </div>
+      {won && (
+        <div className="flex flex-col items-center gap-3 mt-2">
+          {challenge.image_url && (
+            <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-correct/40">
+              <Image
+                src={challenge.image_url as string}
+                alt={challenge.name}
+                fill
+                className="object-cover"
+              />
+            </div>
+          )}
           <p className="text-correct font-display text-sm tracking-wide">{challenge.name}</p>
+          {videoUrl && (
+            <div className="w-full max-w-sm mx-auto aspect-video overflow-hidden rounded-xl border border-correct/20 bg-black">
+              {/\.gif/i.test(videoUrl) ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={videoUrl} alt={jutsuName} className="w-full h-full object-cover" />
+              ) : (
+                <video src={videoUrl} autoPlay muted loop playsInline className="w-full h-full object-cover" />
+              )}
+            </div>
+          )}
         </div>
       )}
 
