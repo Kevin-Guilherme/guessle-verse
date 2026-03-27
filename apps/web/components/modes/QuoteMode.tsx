@@ -9,8 +9,10 @@ import type { ModeComponentProps } from '@/lib/game/registry'
 export default function QuoteMode({ challenge }: ModeComponentProps) {
   const { won, lost, guesses } = useGameStore()
   const { submitGuess, loading } = useGuess(challenge.id)
-  const fullQuote: string  = (challenge.extra?.quote ?? '') as string
-  const alreadyGuessed     = guesses.map((g) => g.value.toLowerCase())
+  const fullQuote: string      = (challenge.extra?.quote ?? '') as string
+  const quoteSaidTo: string | undefined = (challenge.extra as Record<string, unknown> | null)?.quote_said_to_name as string | undefined
+  const alreadyGuessed         = guesses.map((g) => g.value.toLowerCase())
+  const showHint               = !won && guesses.length >= 5 && !!quoteSaidTo
 
   return (
     <div className="space-y-4">
@@ -29,6 +31,15 @@ export default function QuoteMode({ challenge }: ModeComponentProps) {
             />
           </div>
           <p className="text-correct font-display text-sm tracking-wide">{challenge.name}</p>
+        </div>
+      )}
+
+      {showHint && (
+        <div className="flex items-center gap-2 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3">
+          <span className="text-amber-400 text-base shrink-0">💡</span>
+          <p className="text-amber-300 text-sm font-sans">
+            Esta frase foi dita para <span className="font-semibold">{quoteSaidTo}</span>
+          </p>
         </div>
       )}
 
