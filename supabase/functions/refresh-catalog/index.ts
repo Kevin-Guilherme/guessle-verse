@@ -249,6 +249,38 @@ type MerakiChampion = {
   regions?:    string[]
 }
 
+// ─── Evolution stage helper ────────────────────────────────────────────────────
+
+interface EvoChainLink {
+  species:     { name: string }
+  evolves_to:  EvoChainLink[]
+}
+
+function findEvolutionStage(link: EvoChainLink, targetName: string, depth = 1): number {
+  if (link.species.name.toLowerCase() === targetName.toLowerCase()) return depth
+  for (const next of link.evolves_to) {
+    const found = findEvolutionStage(next, targetName, depth + 1)
+    if (found > 0) return found
+  }
+  return 0
+}
+
+// ─── Pokémon TCG card URL helper ───────────────────────────────────────────────
+
+async function fetchPokemonCardUrl(pokedexNumber: number): Promise<string | null> {
+  try {
+    const res = await fetch(
+      `https://api.pokemontcg.io/v2/cards?q=set.id:base1%20nationalPokedexNumbers:${pokedexNumber}`,
+      { headers: { 'User-Agent': 'GuessleBot/1.0' }, signal: AbortSignal.timeout(8_000) }
+    )
+    if (!res.ok) return null
+    const json = await res.json() as { data?: Array<{ images?: { large?: string } }> }
+    return json.data?.[0]?.images?.large ?? null
+  } catch {
+    return null
+  }
+}
+
 // ─── Pokemon (PokeAPI — chunked) ─────────────────────────────────────────────
 
 async function refreshPokemon(themeId: number, offset = 0, chunkSize = 100): Promise<number> {
@@ -268,6 +300,7 @@ async function refreshPokemon(themeId: number, offset = 0, chunkSize = 100): Pro
       const name         = species.names.find((n: { language: { name: string }; name: string }) => n.language.name === 'en')?.name ?? entry.name
       const generation   = Number(species.generation.url.match(/\/(\d+)\//)?.[1] ?? 1)
       const color        = species.color?.name ?? ''
+      const habitat      = species.habitat?.name ?? 'unknown'
       const type1        = pokemon.types[0]?.type.name ?? ''
       const type2        = pokemon.types[1]?.type.name ?? null
       const heightM      = (pokemon.height  / 10).toFixed(1)
@@ -278,16 +311,36 @@ async function refreshPokemon(themeId: number, offset = 0, chunkSize = 100): Pro
       const spriteUrl    = pokemon.sprites.other?.['official-artwork']?.front_default
         ?? pokemon.sprites.front_default
 
+      // Evolution stage — traverse evolution chain
+      let evolutionStage = 1
+      try {
+        const evoRes   = await fetch(species.evolution_chain.url)
+        const evoData  = await evoRes.json() as { chain: EvoChainLink }
+        const stage    = findEvolutionStage(evoData.chain, entry.name)
+        if (stage > 0) evolutionStage = stage
+      } catch { /* default to 1 */ }
+
+      // Card URL from pokemontcg.io Base Set 1
+      const cardUrl = await fetchPokemonCardUrl(pokemon.id)
+
       await upsertCharacter(themeId, name, spriteUrl, {
-        pokedex_number: pokemon.id,
+        pokedex_number:  pokemon.id,
         type1, type2, generation,
-        height_m: heightM, weight_kg: weightKg,
-        color, is_legendary: isLegendary, is_mythical: isMythical,
-        evolves_from: evolvedFrom,
-      }, { sprite_url: spriteUrl })
+        height_m:        heightM,
+        weight_kg:       weightKg,
+        color,
+        habitat,
+        evolution_stage: evolutionStage,
+        is_legendary:    isLegendary,
+        is_mythical:     isMythical,
+        evolves_from:    evolvedFrom,
+      }, {
+        sprite_url: spriteUrl,
+        card_url:   cardUrl,
+      })
 
       count++
-      await new Promise(r => setTimeout(r, 300)) // polite, but faster than 700ms
+      await new Promise(r => setTimeout(r, 500)) // polite delay (3 API calls per pokemon)
     } catch (err) {
       console.error(`Pokemon error (${entry.name}):`, err)
     }
