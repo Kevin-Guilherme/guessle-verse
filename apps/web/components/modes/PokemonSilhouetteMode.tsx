@@ -12,10 +12,11 @@ export default function PokemonSilhouetteMode({ challenge }: ModeComponentProps)
   const wrongGuesses = guesses.filter(g => g.feedback?.[0]?.feedback !== 'correct').length
   const alreadyGuessed = guesses.map((g) => g.value.toLowerCase())
 
-  // Deterministic crop — fixed per challenge, no refresh exploit
-  const cropX = (challenge.id * 37) % 60 + 20  // 20–80%
-  const cropY = (challenge.id * 53) % 60 + 20  // 20–80%
-  const scale = won ? 1 : Math.max(1.5 - wrongGuesses * 0.05, 1)
+  // Deterministic crop — always near the edge of the pokemon, not center
+  const edgeOffset = (challenge.id * 37) % 20 + 8   // 8–28%
+  const cropX = (challenge.id % 2 === 0) ? edgeOffset : 100 - edgeOffset  // left or right edge
+  const cropY = (challenge.id * 53) % 40 + 30        // 30–70% (mid-height)
+  const scale = won ? 1 : Math.max(1.8 - wrongGuesses * 0.08, 1)
 
   const imageUrl = challenge.image_url as string | undefined
 
