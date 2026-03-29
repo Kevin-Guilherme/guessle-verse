@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>👁 Eye Calibrator – Guessle</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #0d0d1a; color: #e2e8f0; font-family: system-ui, sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+/* ── Header ── */
+.header { background: #13132b; border-bottom: 1px solid #252540; padding: 10px 20px; display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
+.logo { font-size: 18px; font-weight: 800; color: #60a5fa; }
+.progress-wrap { flex: 1; max-width: 300px; }
+.progress-label { font-size: 11px; color: #64748b; margin-bottom: 4px; }
+.progress-bar { height: 5px; background: #252540; border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, #3b82f6, #8b5cf6); border-radius: 3px; transition: width 0.4s; }
+.nav-btns { display: flex; gap: 6px; margin-left: auto; }
+.btn { padding: 7px 14px; border-radius: 8px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.15s; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-ghost { background: #1e1e3a; color: #94a3b8; border: 1px solid #252540; }
+.btn-ghost:hover:not(:disabled) { background: #252545; color: #e2e8f0; }
+.btn-save { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; padding: 8px 20px; font-size: 14px; }
+.btn-save:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-1px); }
+.btn-skip { background: #1e1e3a; color: #64748b; border: 1px solid #252540; }
+.btn-skip:hover { color: #94a3b8; }
+
+/* ── Main layout ── */
+.main { flex: 1; display: flex; overflow: hidden; }
+
+/* ── Image panel ── */
+.image-panel { flex: 1; overflow: auto; display: flex; align-items: center; justify-content: center; background: #0a0a18; position: relative; padding: 20px; }
+.img-container { position: relative; display: inline-block; cursor: crosshair; user-select: none; }
+.img-container img { display: block; max-height: calc(100vh - 130px); max-width: 100%; object-fit: contain; }
+.marker { position: absolute; width: 22px; height: 22px; border-radius: 50%; border: 3px solid; transform: translate(-50%, -50%); pointer-events: none; box-shadow: 0 0 0 1px rgba(0,0,0,0.5); }
+.marker-left  { border-color: #60a5fa; background: rgba(96,165,250,0.35); }
+.marker-right { border-color: #f472b6; background: rgba(244,114,182,0.35); }
+.marker-label { position: absolute; font-size: 10px; font-weight: 700; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.8); top: -18px; left: 50%; transform: translateX(-50%); white-space: nowrap; pointer-events: none; }
+.img-hint { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); font-size: 11px; color: #334155; background: rgba(0,0,0,0.5); padding: 4px 10px; border-radius: 6px; pointer-events: none; white-space: nowrap; }
+
+/* ── Sidebar ── */
+.sidebar { width: 320px; background: #13132b; border-left: 1px solid #252540; display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; }
+.sidebar-section { padding: 16px; border-bottom: 1px solid #1e1e38; }
+
+.char-name { font-size: 17px; font-weight: 700; line-height: 1.2; }
+.char-sub   { font-size: 12px; color: #64748b; margin-top: 3px; }
+.badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-top: 5px; }
+.badge-done    { background: #14532d; color: #4ade80; border: 1px solid #166534; }
+.badge-missing { background: #451a03; color: #fb923c; border: 1px solid #7c2d12; }
+
+/* Eye mode toggle */
+.eye-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.eye-tab { padding: 8px; border-radius: 8px; border: 2px solid; font-size: 13px; font-weight: 700; cursor: pointer; background: transparent; text-align: center; transition: all 0.15s; }
+.eye-tab-left  { border-color: #1d4ed8; color: #60a5fa; }
+.eye-tab-left.active  { background: #1d4ed8; color: white; }
+.eye-tab-right { border-color: #9d174d; color: #f472b6; }
+.eye-tab-right.active { background: #9d174d; color: white; }
+
+/* Coords display */
+.coords-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.coord-card { background: #0a0a18; border: 1px solid #1e1e38; border-radius: 8px; padding: 10px; }
+.coord-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+.coord-val { font-size: 13px; font-family: 'Courier New', monospace; color: #e2e8f0; }
+
+/* Preview box */
+.preview-container { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.preview-label { font-size: 11px; color: #64748b; align-self: flex-start; }
+.preview-box {
+  width: 256px; height: 160px; border-radius: 10px;
+  border: 1px solid #252540; overflow: hidden;
+  background-color: #0a0a18; background-repeat: no-repeat;
+  cursor: grab; flex-shrink: 0;
+  transition: background-position 0s, background-size 0s;
+}
+.preview-box:active { cursor: grabbing; }
+.preview-box.has-image { border-color: #3b82f630; }
+
+/* Zoom control */
+.control-row { display: flex; align-items: center; gap: 10px; }
+.control-label { font-size: 11px; color: #64748b; white-space: nowrap; }
+.control-val { font-size: 12px; font-family: monospace; color: #94a3b8; min-width: 40px; text-align: right; }
+input[type=range] { flex: 1; accent-color: #3b82f6; height: 3px; }
+
+/* Actions */
+.actions { display: flex; flex-direction: column; gap: 8px; }
+
+/* Keyboard hint */
+.kbd-hint { font-size: 10px; color: #334155; line-height: 1.6; }
+kbd { background: #1e1e38; border: 1px solid #2d2d50; border-radius: 3px; padding: 1px 5px; font-size: 10px; font-family: monospace; }
+
+/* Filter */
+.filter-row { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #64748b; }
+.filter-row input { accent-color: #3b82f6; }
+
+/* Loading overlay */
+#loading-overlay { position: absolute; inset: 0; background: #0a0a18; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
+.spinner { width: 36px; height: 36px; border: 3px solid #1e1e38; border-top-color: #3b82f6; border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 12px; color: #334155; }
+.empty-state .icon { font-size: 48px; }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="logo">👁 Eye Calibrator</div>
+  <div class="progress-wrap">
+    <div class="progress-label" id="progress-label">Carregando...</div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+  <div style="font-size:12px;color:#475569" id="char-counter">—</div>
+  <div class="nav-btns">
+    <button class="btn btn-ghost" onclick="prev()">← Anterior</button>
+    <button class="btn btn-ghost" onclick="next()">Próximo →</button>
+  </div>
+</div>
+
+<!-- Main -->
+<div class="main">
+
+  <!-- Image panel -->
+  <div class="image-panel" id="image-panel">
+    <div id="loading-overlay">
+      <div class="spinner"></div>
+      <div style="font-size:13px;color:#475569">Carregando personagens...</div>
+    </div>
+    <div class="img-container" id="img-container" style="display:none">
+      <img id="main-img" src="" alt="" draggable="false">
+      <div class="marker marker-left"  id="marker-L" style="display:none"><span class="marker-label">L</span></div>
+      <div class="marker marker-right" id="marker-R" style="display:none"><span class="marker-label">R</span></div>
+    </div>
+    <div class="img-hint">Clique na imagem para marcar a posição do olho</div>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+
+    <!-- Char info -->
+    <div class="sidebar-section">
+      <div class="char-name" id="char-name">—</div>
+      <div class="char-sub" id="char-sub">ID: —</div>
+      <div id="char-badge"></div>
+      <div class="filter-row" style="margin-top:10px">
+        <input type="checkbox" id="filter-missing" onchange="applyFilter()" checked>
+        <label for="filter-missing">Mostrar apenas sem coords</label>
+      </div>
+    </div>
+
+    <!-- Eye tabs -->
+    <div class="sidebar-section">
+      <div style="font-size:11px;color:#64748b;margin-bottom:8px">EDITANDO OLHO:</div>
+      <div class="eye-tabs">
+        <button class="eye-tab eye-tab-left active" id="tab-left"  onclick="setMode('left')">👁 Esquerdo</button>
+        <button class="eye-tab eye-tab-right"       id="tab-right" onclick="setMode('right')">👁 Direito</button>
+      </div>
+    </div>
+
+    <!-- Coords -->
+    <div class="sidebar-section">
+      <div style="font-size:11px;color:#64748b;margin-bottom:8px">COORDENADAS SALVAS:</div>
+      <div class="coords-grid">
+        <div class="coord-card">
+          <div class="coord-title" style="color:#60a5fa">Esquerdo</div>
+          <div class="coord-val" id="coord-left">—</div>
+        </div>
+        <div class="coord-card">
+          <div class="coord-title" style="color:#f472b6">Direito</div>
+          <div class="coord-val" id="coord-right">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preview -->
+    <div class="sidebar-section">
+      <div class="preview-container">
+        <div class="preview-label">PREVIEW DO JOGO — arraste para ajustar</div>
+        <div class="preview-box" id="preview-box"></div>
+
+        <div style="width:100%;display:flex;flex-direction:column;gap:8px">
+          <div class="control-row">
+            <span class="control-label">Zoom</span>
+            <input type="range" id="zoom-slider" min="200" max="1200" value="600" step="50" oninput="onZoomChange(this.value)">
+            <span class="control-val" id="zoom-val">600%</span>
+          </div>
+          <div class="control-row">
+            <span class="control-label">Pos X</span>
+            <input type="range" id="pos-x-slider" min="0" max="100" value="50" step="0.5" oninput="onPosChange()">
+            <span class="control-val" id="pos-x-val">50%</span>
+          </div>
+          <div class="control-row">
+            <span class="control-label">Pos Y</span>
+            <input type="range" id="pos-y-slider" min="0" max="100" value="40" step="0.5" oninput="onPosChange()">
+            <span class="control-val" id="pos-y-val">40%</span>
+          </div>
+        </div>
+
+        <!-- Preview eye switcher -->
+        <div style="display:flex;gap:6px;width:100%">
+          <button class="btn btn-ghost" style="flex:1;font-size:11px;color:#60a5fa" onclick="showPreviewEye('left')">◀ Mostrar esq.</button>
+          <button class="btn btn-ghost" style="flex:1;font-size:11px;color:#f472b6" onclick="showPreviewEye('right')">Mostrar dir. ▶</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="sidebar-section actions">
+      <button class="btn btn-save" id="btn-save" onclick="save()">💾 Salvar e Próximo</button>
+      <button class="btn btn-skip" onclick="skip()">⏭ Pular sem salvar</button>
+    </div>
+
+    <!-- Keyboard hints -->
+    <div class="sidebar-section">
+      <div class="kbd-hint">
+        <kbd>← →</kbd> navegar &nbsp;
+        <kbd>S</kbd> salvar &nbsp;
+        <kbd>L</kbd> olho esq &nbsp;
+        <kbd>R</kbd> olho dir<br>
+        <kbd>+</kbd><kbd>-</kbd> zoom preview &nbsp;
+        <kbd>WASD</kbd> ajustar posição
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://yabxlaicllxqwaaqfnax.supabase.co'
+const SERVICE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlhYnhsYWljbGx4cXdhYXFmbmF4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDAxNTE4OSwiZXhwIjoyMDg5NTkxMTg5fQ.QnNxmwGApNNujp2y8nEEZSxGfe9r9JVnrJG1LMTMQqs'
+
+// ── State ────────────────────────────────────────────────────────────────────
+let allChars = []
+let filtered = []
+let currentIdx = 0
+let markMode = 'left'          // 'left' | 'right'
+let previewMode = 'left'       // which eye is shown in preview
+
+// Per-character working coords (reset on char load)
+let workCoords = { left: null, right: null }
+
+// Preview position state
+let previewZoom = 600
+let previewX = 50
+let previewY = 40
+
+// Drag state
+let isDragging = false
+let dragLast = { x: 0, y: 0 }
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+async function init() {
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/characters?theme_id=eq.2&image_url=not.is.null&select=id,name,image_url,extra&order=name`,
+    { headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` } }
+  )
+  allChars = await res.json()
+  applyFilter()
+}
+
+function applyFilter() {
+  const missingOnly = document.getElementById('filter-missing').checked
+  filtered = missingOnly
+    ? allChars.filter(c => !c.extra?.eye_coords)
+    : [...allChars]
+  currentIdx = 0
+  updateProgress()
+  loadChar(0)
+}
+
+function updateProgress() {
+  const done  = allChars.filter(c => c.extra?.eye_coords).length
+  const total = allChars.length
+  document.getElementById('progress-label').textContent = `${done} / ${total} calibrados`
+  document.getElementById('progress-fill').style.width = `${(done / total * 100).toFixed(1)}%`
+}
+
+// ── Load character ────────────────────────────────────────────────────────────
+function loadChar(idx) {
+  if (filtered.length === 0) {
+    document.getElementById('loading-overlay').style.display = 'flex'
+    document.getElementById('loading-overlay').innerHTML = '<div class="empty-state"><div class="icon">✅</div><div>Todos calibrados!</div></div>'
+    document.getElementById('img-container').style.display = 'none'
+    return
+  }
+
+  currentIdx = Math.max(0, Math.min(idx, filtered.length - 1))
+  const char = filtered[currentIdx]
+
+  document.getElementById('loading-overlay').style.display = 'flex'
+  document.getElementById('loading-overlay').innerHTML = '<div class="spinner"></div>'
+  document.getElementById('img-container').style.display = 'none'
+
+  document.getElementById('char-name').textContent    = char.name
+  document.getElementById('char-sub').textContent     = `ID: ${char.id}`
+  document.getElementById('char-counter').textContent = `${currentIdx + 1} / ${filtered.length}`
+
+  const hasCoords = !!char.extra?.eye_coords
+  document.getElementById('char-badge').innerHTML = hasCoords
+    ? '<span class="badge badge-done">✓ calibrado</span>'
+    : '<span class="badge badge-missing">sem coords</span>'
+
+  // Load existing coords
+  workCoords = char.extra?.eye_coords
+    ? { left: char.extra.eye_coords.left ? { ...char.extra.eye_coords.left } : null,
+        right: char.extra.eye_coords.right ? { ...char.extra.eye_coords.right } : null }
+    : { left: null, right: null }
+
+  updateCoordsDisplay()
+  hideMarkers()
+
+  // Try hi-res image URL (remove Fandom scale restriction)
+  const hiResUrl = (char.image_url || '')
+    .replace(/\/revision\/latest\/scale-to-width-down\/\d+/, '/revision/latest')
+    .replace(/\/smart\/width\/\d+\/height\/\d+/, '')
+
+  const img = document.getElementById('main-img')
+  img.onload = onImgLoad
+  img.onerror = () => { img.src = char.image_url }  // fallback
+  img.src = hiResUrl !== char.image_url ? hiResUrl : char.image_url
+
+  // Set preview to current mode eye
+  if (workCoords[previewMode]) {
+    previewX = workCoords[previewMode].x
+    previewY = workCoords[previewMode].y
+    syncSlidersToState()
+  } else {
+    previewX = 50; previewY = 40
+    syncSlidersToState()
+  }
+
+  updatePreviewBox(char.image_url)
+}
+
+function onImgLoad() {
+  document.getElementById('loading-overlay').style.display = 'none'
+  document.getElementById('img-container').style.display = 'inline-block'
+
+  const img = document.getElementById('main-img')
+
+  // Restore markers
+  if (workCoords.left)  placeMarker('L', workCoords.left.x,  workCoords.left.y)
+  if (workCoords.right) placeMarker('R', workCoords.right.x, workCoords.right.y)
+}
+
+// ── Marker placement ──────────────────────────────────────────────────────────
+function placeMarker(id, xPct, yPct) {
+  const m = document.getElementById(`marker-${id}`)
+  m.style.left    = `${xPct}%`
+  m.style.top     = `${yPct}%`
+  m.style.display = 'block'
+}
+
+function hideMarkers() {
+  document.getElementById('marker-L').style.display = 'none'
+  document.getElementById('marker-R').style.display = 'none'
+}
+
+// ── Click on image to set eye position ───────────────────────────────────────
+document.getElementById('img-container').addEventListener('click', e => {
+  const img  = document.getElementById('main-img')
+  const rect = img.getBoundingClientRect()
+
+  // Ignore if click is outside the image (on transparent letterbox area)
+  if (e.clientX < rect.left || e.clientX > rect.right ||
+      e.clientY < rect.top  || e.clientY > rect.bottom) return
+
+  const xPct = Math.round(((e.clientX - rect.left) / rect.width)  * 1000) / 10
+  const yPct = Math.round(((e.clientY - rect.top)  / rect.height) * 1000) / 10
+
+  workCoords[markMode] = { x: xPct, y: yPct }
+  updateCoordsDisplay()
+
+  placeMarker(markMode === 'left' ? 'L' : 'R', xPct, yPct)
+
+  // Sync to preview
+  if (markMode === previewMode) {
+    previewX = xPct; previewY = yPct
+    syncSlidersToState()
+    updatePreviewBox()
+  }
+
+  // Auto-switch mode
+  if (markMode === 'left') setMode('right')
+  else setMode('left')
+})
+
+// ── Mode ──────────────────────────────────────────────────────────────────────
+function setMode(side) {
+  markMode = side
+  document.getElementById('tab-left').classList.toggle('active',  side === 'left')
+  document.getElementById('tab-right').classList.toggle('active', side === 'right')
+}
+
+function showPreviewEye(side) {
+  previewMode = side
+  if (workCoords[side]) {
+    previewX = workCoords[side].x
+    previewY = workCoords[side].y
+    syncSlidersToState()
+    updatePreviewBox()
+  }
+}
+
+// ── Preview box ───────────────────────────────────────────────────────────────
+function updatePreviewBox(urlOverride) {
+  const char = filtered[currentIdx]
+  if (!char) return
+
+  const box = document.getElementById('preview-box')
+  const url = urlOverride || char.image_url
+
+  box.style.backgroundImage    = `url("${url}")`
+  box.style.backgroundSize     = `${previewZoom}%`
+  box.style.backgroundPosition = `${previewX}% ${previewY}%`
+  box.style.backgroundRepeat   = 'no-repeat'
+  box.classList.add('has-image')
+}
+
+// ── Sliders ───────────────────────────────────────────────────────────────────
+function onZoomChange(val) {
+  previewZoom = Number(val)
+  document.getElementById('zoom-val').textContent = `${val}%`
+  updatePreviewBox()
+}
+
+function onPosChange() {
+  previewX = Number(document.getElementById('pos-x-slider').value)
+  previewY = Number(document.getElementById('pos-y-slider').value)
+  document.getElementById('pos-x-val').textContent = `${previewX.toFixed(1)}%`
+  document.getElementById('pos-y-val').textContent = `${previewY.toFixed(1)}%`
+  // Update working coords for current preview mode
+  workCoords[previewMode] = { x: previewX, y: previewY }
+  updateCoordsDisplay()
+  // Update marker on image
+  placeMarker(previewMode === 'left' ? 'L' : 'R', previewX, previewY)
+  updatePreviewBox()
+}
+
+function syncSlidersToState() {
+  document.getElementById('zoom-slider').value       = previewZoom
+  document.getElementById('pos-x-slider').value      = previewX
+  document.getElementById('pos-y-slider').value      = previewY
+  document.getElementById('zoom-val').textContent    = `${previewZoom}%`
+  document.getElementById('pos-x-val').textContent   = `${previewX.toFixed(1)}%`
+  document.getElementById('pos-y-val').textContent   = `${previewY.toFixed(1)}%`
+}
+
+// ── Drag preview ──────────────────────────────────────────────────────────────
+const previewBox = document.getElementById('preview-box')
+
+previewBox.addEventListener('mousedown', e => {
+  isDragging = true
+  dragLast   = { x: e.clientX, y: e.clientY }
+  e.preventDefault()
+})
+
+document.addEventListener('mousemove', e => {
+  if (!isDragging) return
+
+  const dx = e.clientX - dragLast.x
+  const dy = e.clientY - dragLast.y
+  dragLast = { x: e.clientX, y: e.clientY }
+
+  // Convert pixel delta to background-position % delta
+  // imageDisplayW = 256 * previewZoom/100
+  const imgW = 256 * previewZoom / 100
+  const imgH = 160 * previewZoom / 100   // approximate (assumes square-ish images)
+
+  // Dragging right → image moves right → shows more left side → previewX decreases
+  const dxPct = (dx / (256 - imgW)) * 100  // denominator is negative → dxPct negative when dx positive ✓
+  const dyPct = (dy / (160 - imgH)) * 100
+
+  previewX = Math.max(0, Math.min(100, previewX + dxPct))
+  previewY = Math.max(0, Math.min(100, previewY + dyPct))
+
+  syncSlidersToState()
+  workCoords[previewMode] = { x: Math.round(previewX * 10) / 10, y: Math.round(previewY * 10) / 10 }
+  updateCoordsDisplay()
+  placeMarker(previewMode === 'left' ? 'L' : 'R', previewX, previewY)
+  updatePreviewBox()
+})
+
+document.addEventListener('mouseup', () => { isDragging = false })
+
+// Touch drag support
+previewBox.addEventListener('touchstart', e => {
+  isDragging = true
+  dragLast = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+  e.preventDefault()
+}, { passive: false })
+
+previewBox.addEventListener('touchmove', e => {
+  if (!isDragging) return
+  const dx = e.touches[0].clientX - dragLast.x
+  const dy = e.touches[0].clientY - dragLast.y
+  dragLast = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+  const imgW = 256 * previewZoom / 100
+  const imgH = 160 * previewZoom / 100
+  const dxPct = (dx / (256 - imgW)) * 100
+  const dyPct = (dy / (160 - imgH)) * 100
+  previewX = Math.max(0, Math.min(100, previewX + dxPct))
+  previewY = Math.max(0, Math.min(100, previewY + dyPct))
+  syncSlidersToState()
+  workCoords[previewMode] = { x: Math.round(previewX * 10) / 10, y: Math.round(previewY * 10) / 10 }
+  updateCoordsDisplay()
+  updatePreviewBox()
+  e.preventDefault()
+}, { passive: false })
+
+previewBox.addEventListener('touchend', () => { isDragging = false })
+
+// ── Coords display ────────────────────────────────────────────────────────────
+function updateCoordsDisplay() {
+  document.getElementById('coord-left').textContent  = workCoords.left
+    ? `${workCoords.left.x.toFixed(1)}%, ${workCoords.left.y.toFixed(1)}%`  : '—'
+  document.getElementById('coord-right').textContent = workCoords.right
+    ? `${workCoords.right.x.toFixed(1)}%, ${workCoords.right.y.toFixed(1)}%` : '—'
+}
+
+// ── Save ──────────────────────────────────────────────────────────────────────
+async function save() {
+  if (!workCoords.left && !workCoords.right) {
+    alert('Marque ao menos um olho antes de salvar.')
+    return
+  }
+
+  const char = filtered[currentIdx]
+  const eyeCoords = {}
+  if (workCoords.left)  eyeCoords.left  = workCoords.left
+  if (workCoords.right) eyeCoords.right = workCoords.right
+
+  const mergedExtra = { ...(char.extra ?? {}), eye_coords: eyeCoords }
+  const btn = document.getElementById('btn-save')
+  btn.textContent = '⏳ Salvando...'
+  btn.disabled    = true
+
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/characters?id=eq.${char.id}`, {
+      method:  'PATCH',
+      headers: {
+        apikey:           SERVICE_KEY,
+        Authorization:    `Bearer ${SERVICE_KEY}`,
+        'Content-Type':   'application/json',
+        Prefer:           'return=minimal',
+      },
+      body: JSON.stringify({ extra: mergedExtra }),
+    })
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+
+    // Update local state
+    char.extra = mergedExtra
+    updateProgress()
+
+    btn.textContent = '✅ Salvo!'
+    setTimeout(() => {
+      btn.textContent = '💾 Salvar e Próximo'
+      btn.disabled    = false
+      applyFilter()   // refilter (removes from "missing" list if filter is on) and load next
+    }, 600)
+  } catch (err) {
+    alert(`Erro ao salvar: ${err.message}`)
+    btn.textContent = '💾 Salvar e Próximo'
+    btn.disabled    = false
+  }
+}
+
+function skip() { loadChar(currentIdx + 1) }
+function prev() { loadChar(currentIdx - 1) }
+function next() { loadChar(currentIdx + 1) }
+
+// ── Keyboard ──────────────────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return
+  const STEP = 1.0
+
+  switch (e.key) {
+    case 'ArrowRight': next(); break
+    case 'ArrowLeft':  prev(); break
+    case 's': case 'S': save(); break
+    case 'l': case 'L': setMode('left');  showPreviewEye('left');  break
+    case 'r': case 'R': setMode('right'); showPreviewEye('right'); break
+    case '+': case '=':
+      previewZoom = Math.min(1200, previewZoom + 50)
+      document.getElementById('zoom-slider').value = previewZoom
+      onZoomChange(previewZoom); break
+    case '-':
+      previewZoom = Math.max(200, previewZoom - 50)
+      document.getElementById('zoom-slider').value = previewZoom
+      onZoomChange(previewZoom); break
+    case 'w': case 'W':
+      previewY = Math.max(0, previewY - STEP); syncSlidersToState()
+      workCoords[previewMode] = { x: previewX, y: previewY }
+      updateCoordsDisplay(); updatePreviewBox(); break
+    case 's': break  // handled above
+    case 'a': case 'A':
+      previewX = Math.max(0, previewX - STEP); syncSlidersToState()
+      workCoords[previewMode] = { x: previewX, y: previewY }
+      updateCoordsDisplay(); updatePreviewBox(); break
+    case 'd': case 'D':
+      previewX = Math.min(100, previewX + STEP); syncSlidersToState()
+      workCoords[previewMode] = { x: previewX, y: previewY }
+      updateCoordsDisplay(); updatePreviewBox(); break
+  }
+})
+
+init()
+</script>
+</body>
+</html>

@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jutsu GIF Picker — Guessle</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: sans-serif; background: #0f0f1a; color: #e2e8f0; min-height: 100vh; }
+
+    .header {
+      background: #1a1a2e;
+      border-bottom: 1px solid #2d2d4e;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header h1 { font-size: 16px; font-weight: 700; color: #a78bfa; }
+    .counter { font-size: 13px; color: #64748b; margin-left: auto; }
+    .filter-tabs { display: flex; gap: 6px; }
+    .filter-tab {
+      padding: 4px 12px; border-radius: 20px; font-size: 12px; cursor: pointer;
+      border: 1px solid transparent; transition: all 0.15s;
+    }
+    .filter-tab.active { background: #7c3aed; color: white; border-color: #7c3aed; }
+    .filter-tab.active.remove-tab { background: #991b1b; border-color: #ef4444; }
+    .filter-tab:not(.active) { background: #1e1e3a; color: #94a3b8; border-color: #2d2d4e; }
+    .filter-tab:not(.active):hover { border-color: #7c3aed; color: white; }
+    .filter-tab.remove-tab:not(.active):hover { border-color: #ef4444; color: #fca5a5; }
+
+    .layout { display: flex; height: calc(100vh - 53px); }
+
+    /* Left: character list */
+    .sidebar {
+      width: 280px;
+      border-right: 1px solid #2d2d4e;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+    .sidebar-search {
+      padding: 8px 10px;
+      border-bottom: 1px solid #2d2d4e;
+      flex-shrink: 0;
+    }
+    .sidebar-search input {
+      width: 100%; background: #0a0a14; border: 1px solid #2d2d4e;
+      border-radius: 6px; color: #e2e8f0; font-size: 12px; padding: 6px 10px;
+      outline: none;
+    }
+    .sidebar-search input:focus { border-color: #7c3aed; }
+    .sidebar-search input::placeholder { color: #334155; }
+    .sidebar-list { flex: 1; overflow-y: auto; }
+    .char-item {
+      padding: 10px 14px;
+      border-bottom: 1px solid #1a1a2e;
+      cursor: pointer;
+      transition: background 0.1s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .char-item:hover { background: #1e1e3a; }
+    .char-item.active { background: #2d1b5e; border-left: 3px solid #7c3aed; }
+    .char-avatar {
+      width: 36px; height: 36px; border-radius: 50%; object-fit: cover;
+      background: #2d2d4e; flex-shrink: 0;
+    }
+    .char-info { flex: 1; min-width: 0; }
+    .char-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .char-status { font-size: 11px; margin-top: 2px; }
+    .status-static { color: #ef4444; }
+    .status-giphy { color: #f59e0b; }
+    .status-done  { color: #22c55e; }
+    .status-empty { color: #64748b; }
+    .char-thumb { width: 40px; height: 28px; object-fit: cover; border-radius: 4px; background: #1a1a2e; flex-shrink: 0; }
+
+    /* Right: main panel */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .panel {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      gap: 20px;
+    }
+
+    /* Current GIF */
+    .current-section {
+      flex: 1;
+      min-width: 0;
+    }
+    .section-title {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.1em; color: #64748b; margin-bottom: 10px;
+    }
+    .char-header {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 14px;
+    }
+    .char-header img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid #7c3aed; }
+    .char-header-name { font-size: 18px; font-weight: 700; }
+    .char-header-jutsu { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+
+    .gif-preview {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #0a0a14;
+      border-radius: 10px;
+      border: 1px solid #2d2d4e;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+    .gif-preview img, .gif-preview video {
+      width: 100%; height: 100%; object-fit: contain;
+    }
+    .gif-preview .empty-state {
+      color: #334155; font-size: 14px; text-align: center;
+    }
+
+    .url-display {
+      font-size: 11px; color: #475569; word-break: break-all;
+      background: #0a0a14; border: 1px solid #1e1e3a; border-radius: 6px;
+      padding: 8px; margin-bottom: 10px;
+    }
+
+    /* Input section */
+    .input-section { flex: 1; min-width: 0; }
+
+    .search-links { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+    .search-link {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.15s;
+      border: 1px solid transparent;
+    }
+    .search-link.giphy { background: #1a0f2e; border-color: #7c3aed; color: #a78bfa; }
+    .search-link.giphy:hover { background: #2d1b5e; }
+    .search-link.google { background: #0f1a1a; border-color: #0e7490; color: #22d3ee; }
+    .search-link.google:hover { background: #0f2a2a; }
+    .search-link .icon { font-size: 16px; }
+
+    .paste-area {
+      margin-top: 16px;
+    }
+    .paste-area label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #64748b; display: block; margin-bottom: 8px; }
+    .paste-input {
+      width: 100%;
+      background: #0a0a14;
+      border: 1px solid #2d2d4e;
+      border-radius: 8px;
+      color: #e2e8f0;
+      font-size: 13px;
+      padding: 10px 12px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .paste-input:focus { border-color: #7c3aed; }
+    .paste-input::placeholder { color: #334155; }
+
+    .preview-pasted {
+      margin-top: 10px;
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #0a0a14;
+      border-radius: 10px;
+      border: 1px dashed #2d2d4e;
+      overflow: hidden;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .preview-pasted.visible { display: flex; }
+    .preview-pasted img { width: 100%; height: 100%; object-fit: contain; }
+
+    .actions {
+      display: flex; gap: 10px; margin-top: 14px;
+    }
+    .btn {
+      padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 700;
+      cursor: pointer; border: none; transition: all 0.15s;
+    }
+    .btn-save { background: #7c3aed; color: white; flex: 1; }
+    .btn-save:hover { background: #6d28d9; }
+    .btn-save:disabled { background: #2d2d4e; color: #64748b; cursor: not-allowed; }
+    .btn-skip { background: #1e1e3a; color: #94a3b8; border: 1px solid #2d2d4e; }
+    .btn-skip:hover { border-color: #94a3b8; color: white; }
+    .btn-next { background: #1e3a1e; color: #22c55e; border: 1px solid #166534; }
+    .btn-next:hover { background: #14532d; }
+    .btn-remove { background: #1a0808; color: #f87171; border: 1px solid #7f1d1d; }
+    .btn-remove:hover { background: #2a0a0a; border-color: #ef4444; }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 20px; right: 20px;
+      background: #1a2a1a; border: 1px solid #22c55e; color: #22c55e;
+      padding: 12px 18px; border-radius: 10px; font-size: 13px; font-weight: 600;
+      opacity: 0; transform: translateY(10px); transition: all 0.3s; pointer-events: none;
+    }
+    .toast.error { background: #2a1a1a; border-color: #ef4444; color: #ef4444; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    /* Progress bar */
+    .progress-bar { height: 3px; background: #1a1a2e; margin-top: 4px; }
+    .progress-fill { height: 100%; background: #7c3aed; transition: width 0.3s; }
+
+    .kbd {
+      display: inline-block; background: #1e1e3a; border: 1px solid #2d2d4e;
+      border-radius: 4px; padding: 1px 6px; font-size: 11px; color: #94a3b8;
+    }
+    .hotkeys { font-size: 11px; color: #475569; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🎯 Jutsu GIF Picker</h1>
+  <div class="filter-tabs">
+    <div class="filter-tab active" data-filter="static">🔴 Estáticas (36)</div>
+    <div class="filter-tab" data-filter="giphy">🟡 Giphy (~146)</div>
+    <div class="filter-tab" data-filter="all">Todos</div>
+    <div class="filter-tab" data-filter="done">✅ Atualizados</div>
+    <div class="filter-tab remove-tab" data-filter="remove">🗑️ Sem GIF</div>
+  </div>
+  <div class="counter" id="counter">Carregando...</div>
+</div>
+
+<div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-search">
+      <input id="sidebar-search" type="text" placeholder="🔍 Buscar por nome..." oninput="onSearchInput(this.value)" />
+    </div>
+    <div class="sidebar-list" id="sidebar">
+      <div style="padding:16px;color:#475569;font-size:13px;">Carregando personagens...</div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="panel" id="main-panel">
+      <div style="flex:1;display:flex;align-items:center;justify-content:center;color:#334155;font-size:14px;">
+        Selecione um personagem →
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Salvo!</div>
+
+<script>
+const SUPABASE_URL  = 'https://yabxlaicllxqwaaqfnax.supabase.co'
+const SERVICE_KEY   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlhYnhsYWljbGx4cXdhYXFmbmF4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDAxNTE4OSwiZXhwIjoyMDg5NTkxMTg5fQ.QnNxmwGApNNujp2y8nEEZSxGfe9r9JVnrJG1LMTMQqs'
+
+let allChars = []
+let filteredChars = []
+let currentIdx  = 0
+let currentFilter = 'static'
+let currentSearch = ''
+let updatedIds  = new Set()
+
+// ── helpers ──────────────────────────────────────────────────────────────────
+
+function gifType(url) {
+  if (!url) return 'empty'
+  if (url.includes('wikia') || url.includes('fandom') || url.endsWith('.png') || url.endsWith('.jpg') || url.endsWith('.jpeg')) return 'static'
+  if (url.includes('giphy.com')) return 'giphy'
+  return 'custom'
+}
+
+function isAnimated(url) {
+  if (!url) return false
+  return url.endsWith('.gif') || url.includes('giphy.com')
+}
+
+function buildSearchUrl(char, type) {
+  const jutsuName = char.extra?.jutsu_name || (char.extra?.jutsus?.[0] ?? '')
+  const q = `${char.name} ${jutsuName} naruto anime`
+  if (type === 'giphy') return `https://giphy.com/search/${encodeURIComponent(q)}`
+  return `https://www.google.com/search?q=${encodeURIComponent(q + ' site:giphy.com')}&tbm=isch`
+}
+
+function statusLabel(char) {
+  const url = char.extra?.jutsu_video_url
+  const type = gifType(url)
+  if (updatedIds.has(char.id)) return '<span class="status-done">✅ atualizado</span>'
+  if (type === 'empty') return '<span class="status-empty">⚫ sem GIF</span>'
+  if (type === 'static') return '<span class="status-static">🔴 imagem estática</span>'
+  if (type === 'giphy') return '<span class="status-giphy">🟡 giphy (verificar)</span>'
+  return '<span class="status-done">🟢 custom</span>'
+}
+
+function filterByBase(filter) {
+  if (filter === 'all')    return [...allChars]
+  if (filter === 'static') return allChars.filter(c => gifType(c.extra?.jutsu_video_url) === 'static' && !updatedIds.has(c.id))
+  if (filter === 'giphy')  return allChars.filter(c => gifType(c.extra?.jutsu_video_url) === 'giphy'  && !updatedIds.has(c.id))
+  if (filter === 'done')   return allChars.filter(c => updatedIds.has(c.id))
+  if (filter === 'remove') return allChars.filter(c => { const t = gifType(c.extra?.jutsu_video_url); return (t === 'static' || t === 'empty') && !updatedIds.has(c.id) })
+  return [...allChars]
+}
+
+function applyFilter(filter) {
+  currentFilter = filter
+  const q = currentSearch.toLowerCase().trim()
+  filteredChars = filterByBase(filter).filter(c => !q || c.name.toLowerCase().includes(q))
+  renderSidebar()
+  if (filteredChars.length > 0) { currentIdx = 0; selectChar(0) }
+  updateCounter()
+}
+
+function onSearchInput(val) {
+  currentSearch = val
+  // When searching, temporarily switch to 'all' base so the result spans all characters
+  const base = val.trim() ? allChars : filterByBase(currentFilter)
+  const q = val.toLowerCase().trim()
+  filteredChars = q ? allChars.filter(c => c.name.toLowerCase().includes(q)) : filterByBase(currentFilter)
+  renderSidebar()
+  if (filteredChars.length > 0) { currentIdx = 0; selectChar(0) }
+  updateCounter()
+}
+
+// ── render ────────────────────────────────────────────────────────────────────
+
+function renderSidebar() {
+  const sb = document.getElementById('sidebar')
+  if (!filteredChars.length) {
+    sb.innerHTML = '<div style="padding:16px;color:#475569;font-size:13px;">Nenhum personagem neste filtro</div>'
+    return
+  }
+  sb.innerHTML = filteredChars.map((c, i) => {
+    const thumbUrl = c.extra?.jutsu_video_url
+    const thumbEl  = thumbUrl && !thumbUrl.includes('.gif') && !thumbUrl.includes('giphy')
+      ? `<img class="char-thumb" src="${thumbUrl}" onerror="this.style.display='none'" />`
+      : (thumbUrl ? `<img class="char-thumb" src="${thumbUrl.replace('/giphy.gif','100w.gif')}" onerror="this.src='${thumbUrl}'" />` : '<div class="char-thumb"></div>')
+    return `
+    <div class="char-item${i === currentIdx ? ' active' : ''}" onclick="selectChar(${i})">
+      <img class="char-avatar" src="${c.image_url || ''}" onerror="this.style.background='#2d2d4e'" />
+      <div class="char-info">
+        <div class="char-name">${c.name}</div>
+        <div class="char-status">${statusLabel(c)}</div>
+      </div>
+    </div>`
+  }).join('')
+}
+
+function renderMain(char) {
+  const url       = char.extra?.jutsu_video_url
+  const jutsuName = char.extra?.jutsu_name || char.extra?.jutsus?.[0] || '—'
+  const type      = gifType(url)
+  const animated  = isAnimated(url)
+  const giphySearch  = buildSearchUrl(char, 'giphy')
+  const googleSearch = buildSearchUrl(char, 'google')
+
+  const mediaEl = !url
+    ? '<div class="empty-state">⬜ Sem mídia</div>'
+    : animated
+      ? `<img src="${url}" alt="jutsu" />`
+      : `<img src="${url}" alt="jutsu" />`
+
+  document.getElementById('main-panel').innerHTML = `
+    <div class="current-section">
+      <div class="section-title">GIF Atual</div>
+      <div class="char-header">
+        <img src="${char.image_url || ''}" onerror="this.style.background='#2d2d4e'" />
+        <div>
+          <div class="char-header-name">${char.name}</div>
+          <div class="char-header-jutsu">${jutsuName}</div>
+        </div>
+      </div>
+
+      <div class="gif-preview">${mediaEl}</div>
+      <div class="url-display">${url || 'nenhum'}</div>
+      <div style="font-size:12px;color:${type==='static'?'#ef4444':type==='giphy'?'#f59e0b':'#22c55e'}">
+        ${type === 'static' ? '🔴 Imagem estática — precisa de GIF animado do anime' : type === 'giphy' ? '🟡 GIF Giphy — verifique se é do anime original' : '🟢 URL custom'}
+      </div>
+    </div>
+
+    <div class="input-section">
+      <div class="section-title">Trocar GIF</div>
+
+      <div class="search-links">
+        <a class="search-link giphy" href="${giphySearch}" target="_blank">
+          <span class="icon">🔍</span>
+          Buscar no Giphy: "${char.name} naruto anime"
+        </a>
+        <a class="search-link google" href="${googleSearch}" target="_blank">
+          <span class="icon">🌐</span>
+          Google Images + Giphy
+        </a>
+      </div>
+
+      <div style="font-size:11px;color:#475569;margin-bottom:12px;padding:10px;background:#0a0a14;border-radius:8px;line-height:1.6">
+        <strong style="color:#94a3b8">Como usar:</strong><br>
+        1. Clique em "Buscar no Giphy" acima<br>
+        2. Encontre um GIF <strong style="color:#a78bfa">do anime original</strong> mostrando o personagem<br>
+        3. Clique no GIF → "Copy Link" ou clique direito → copiar endereço da imagem<br>
+        4. Cole a URL abaixo e clique em Salvar
+      </div>
+
+      <div class="paste-area">
+        <label>URL do novo GIF (.gif ou link Giphy)</label>
+        <input
+          class="paste-input"
+          id="gif-url-input"
+          type="text"
+          placeholder="https://media.giphy.com/media/.../giphy.gif"
+          oninput="onPasteInput(this.value)"
+        />
+      </div>
+
+      <div class="preview-pasted" id="preview-pasted">
+        <img id="preview-pasted-img" src="" alt="preview" />
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-save" id="btn-save" disabled onclick="saveGif()">💾 Salvar</button>
+        <button class="btn btn-skip" onclick="skipChar()">Pular →</button>
+        <button class="btn btn-next" onclick="markOk()">✅ Está bom</button>
+        ${url ? `<button class="btn btn-remove" onclick="removeGif()" title="Limpa jutsu_video_url — jogo vai mostrar imagem do personagem">🗑️ Remover</button>` : ''}
+      </div>
+
+      <div class="hotkeys">
+        <span class="kbd">→</span> Próximo &nbsp;
+        <span class="kbd">S</span> Salvar &nbsp;
+        <span class="kbd">K</span> Está bom &nbsp;
+        <span class="kbd">D</span> Remover &nbsp;
+        <span class="kbd">↑↓</span> Navegar
+      </div>
+    </div>
+  `
+}
+
+function updateCounter() {
+  const done = updatedIds.size
+  const total = allChars.length
+  document.getElementById('counter').textContent = `${done} atualizados / ${total} total — ${filteredChars.length} no filtro`
+  const pct = total > 0 ? (done / total * 100).toFixed(1) : 0
+  document.getElementById('progress').style.width = pct + '%'
+}
+
+// ── actions ───────────────────────────────────────────────────────────────────
+
+function selectChar(idx) {
+  currentIdx = idx
+  const char = filteredChars[idx]
+  if (!char) return
+  renderMain(char)
+  // update active in sidebar
+  document.querySelectorAll('.char-item').forEach((el, i) => el.classList.toggle('active', i === idx))
+  // scroll into view
+  const items = document.querySelectorAll('.char-item')
+  if (items[idx]) items[idx].scrollIntoView({ block: 'nearest' })
+}
+
+function onPasteInput(val) {
+  const btn  = document.getElementById('btn-save')
+  const prev = document.getElementById('preview-pasted')
+  const img  = document.getElementById('preview-pasted-img')
+  const url  = val.trim()
+
+  // Convert giphy page URL to direct gif if needed
+  // https://giphy.com/gifs/xxxxx → https://media.giphy.com/media/xxxxx/giphy.gif
+  let resolved = url
+  const giphyMatch = url.match(/giphy\.com\/gifs\/([a-zA-Z0-9-]+)/)
+  if (giphyMatch) {
+    const id = giphyMatch[1].split('-').pop()
+    resolved = `https://media.giphy.com/media/${id}/giphy.gif`
+  }
+  window._resolvedGifUrl = resolved
+
+  if (resolved && (resolved.includes('.gif') || resolved.includes('giphy'))) {
+    btn.disabled = false
+    img.src = resolved
+    img.onload = () => { prev.classList.add('visible') }
+    img.onerror = () => { prev.classList.remove('visible') }
+  } else if (url.length > 5) {
+    // Try as-is
+    window._resolvedGifUrl = url
+    btn.disabled = false
+    img.src = url
+    img.onload = () => { prev.classList.add('visible') }
+    img.onerror = () => { prev.classList.remove('visible') }
+  } else {
+    btn.disabled = true
+    prev.classList.remove('visible')
+  }
+}
+
+async function saveGif() {
+  const char = filteredChars[currentIdx]
+  if (!char) return
+
+  const url = (window._resolvedGifUrl || document.getElementById('gif-url-input')?.value || '').trim()
+  if (!url) return
+
+  const btn = document.getElementById('btn-save')
+  btn.disabled = true
+  btn.textContent = '💾 Salvando...'
+
+  const newExtra = { ...char.extra, jutsu_video_url: url }
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/characters?id=eq.${char.id}`, {
+    method: 'PATCH',
+    headers: {
+      apikey: SERVICE_KEY,
+      Authorization: `Bearer ${SERVICE_KEY}`,
+      'Content-Type': 'application/json',
+      Prefer: 'return=minimal',
+    },
+    body: JSON.stringify({ extra: newExtra }),
+  })
+
+  if (res.ok || res.status === 204) {
+    char.extra = newExtra
+    updatedIds.add(char.id)
+    showToast('✅ Salvo!')
+    updateCounter()
+    // Re-render sidebar to update status
+    renderSidebar()
+    // Auto-advance
+    setTimeout(() => {
+      const next = filteredChars[currentIdx + 1]
+      if (next) selectChar(currentIdx + 1)
+      else if (currentFilter !== 'all') applyFilter(currentFilter)
+    }, 800)
+  } else {
+    const text = await res.text()
+    showToast('❌ Erro: ' + text.slice(0, 60), true)
+    btn.disabled = false
+    btn.textContent = '💾 Salvar'
+  }
+}
+
+async function removeGif() {
+  const char = filteredChars[currentIdx]
+  if (!char) return
+  if (!confirm(`Remover jutsu_video_url de "${char.name}"?\nO jogo vai mostrar a imagem do personagem como fallback.`)) return
+
+  const newExtra = { ...char.extra }
+  delete newExtra.jutsu_video_url
+  delete newExtra.jutsu_name
+
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/characters?id=eq.${char.id}`, {
+    method: 'PATCH',
+    headers: {
+      apikey: SERVICE_KEY,
+      Authorization: `Bearer ${SERVICE_KEY}`,
+      'Content-Type': 'application/json',
+      Prefer: 'return=minimal',
+    },
+    body: JSON.stringify({ extra: newExtra }),
+  })
+
+  if (res.ok || res.status === 204) {
+    char.extra = newExtra
+    updatedIds.add(char.id)
+    showToast('🗑️ Removido!')
+    updateCounter()
+    renderSidebar()
+    setTimeout(() => {
+      const next = filteredChars[currentIdx + 1]
+      if (next) selectChar(currentIdx + 1)
+      else if (currentFilter !== 'all') applyFilter(currentFilter)
+    }, 600)
+  } else {
+    const text = await res.text()
+    showToast('❌ Erro: ' + text.slice(0, 60), true)
+  }
+}
+
+function skipChar() {
+  const next = currentIdx + 1
+  if (next < filteredChars.length) selectChar(next)
+}
+
+function markOk() {
+  const char = filteredChars[currentIdx]
+  if (char) updatedIds.add(char.id)
+  renderSidebar()
+  updateCounter()
+  skipChar()
+}
+
+function showToast(msg, isError = false) {
+  const t = document.getElementById('toast')
+  t.textContent = msg
+  t.className = 'toast show' + (isError ? ' error' : '')
+  setTimeout(() => t.className = 'toast', 2200)
+}
+
+// ── keyboard shortcuts ────────────────────────────────────────────────────────
+
+document.addEventListener('keydown', e => {
+  const tag = document.activeElement.tagName.toLowerCase()
+  if (tag === 'input' || tag === 'textarea') {
+    if (e.key === 'Escape') document.activeElement.blur()
+    return
+  }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); skipChar() }
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   { e.preventDefault(); if (currentIdx > 0) selectChar(currentIdx - 1) }
+  if (e.key === 'k' || e.key === 'K') markOk()
+  if (e.key === 's' || e.key === 'S') { const btn = document.getElementById('btn-save'); if (!btn?.disabled) saveGif() }
+  if (e.key === 'd' || e.key === 'D') { const char = filteredChars[currentIdx]; if (char?.extra?.jutsu_video_url) removeGif() }
+})
+
+// ── filter tabs ───────────────────────────────────────────────────────────────
+
+document.querySelectorAll('.filter-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'))
+    tab.classList.add('active')
+    applyFilter(tab.dataset.filter)
+  })
+})
+
+// ── load data ─────────────────────────────────────────────────────────────────
+
+async function loadChars() {
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/characters?select=id,name,image_url,extra&theme_id=eq.2&active=eq.true&order=name.asc`,
+    { headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` } }
+  )
+  const data = await res.json()
+
+  // Keep only those with jutsus
+  allChars = (data || []).filter(c => c.extra?.jutsus?.length > 0)
+
+  // Sort: static first, then giphy, then custom
+  const order = { static: 0, empty: 1, giphy: 2, custom: 3 }
+  allChars.sort((a, b) => (order[gifType(a.extra?.jutsu_video_url)] ?? 4) - (order[gifType(b.extra?.jutsu_video_url)] ?? 4))
+
+  // Count for filter tabs
+  const staticCount = allChars.filter(c => gifType(c.extra?.jutsu_video_url) === 'static').length
+  const giphyCount  = allChars.filter(c => gifType(c.extra?.jutsu_video_url) === 'giphy').length
+  const removeCount = allChars.filter(c => { const t = gifType(c.extra?.jutsu_video_url); return t === 'static' || t === 'empty' }).length
+  document.querySelectorAll('.filter-tab').forEach(t => {
+    if (t.dataset.filter === 'static') t.textContent = `🔴 Estáticas (${staticCount})`
+    if (t.dataset.filter === 'giphy')  t.textContent = `🟡 Giphy (${giphyCount})`
+    if (t.dataset.filter === 'all')    t.textContent = `Todos (${allChars.length})`
+    if (t.dataset.filter === 'remove') t.textContent = `🗑️ Sem GIF (${removeCount})`
+  })
+
+  applyFilter('static')
+  updateCounter()
+}
+
+loadChars()
+</script>
+</body>
+</html>

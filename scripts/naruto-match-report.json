@@ -1,0 +1,6668 @@
+{
+  "matched": [
+    {
+      "canonical_name": "Naruto Uzumaki",
+      "db_id": 10897,
+      "db_name": "Naruto Uzumaki",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Sasuke Uchiha",
+      "db_id": 11045,
+      "db_name": "Sasuke Uchiha",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Sakura Haruno",
+      "db_id": 11022,
+      "db_name": "Sakura Haruno",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Kakashi Hatake",
+      "db_id": 10148,
+      "db_name": "Kakashi Hatake",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Iruka Umino",
+      "db_id": 9959,
+      "db_name": "Iruka Umino",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Hiruzen Sarutobi",
+      "db_id": 9846,
+      "db_name": "Hiruzen Sarutobi",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Konohamaru Sarutobi",
+      "db_id": 10417,
+      "db_name": "Konohamaru Sarutobi",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Mizuki",
+      "db_id": 10792,
+      "db_name": "Mizuki",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Kurama",
+      "db_id": 10460,
+      "db_name": "Kurama",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Ebisu",
+      "db_id": 8872,
+      "db_name": "Ebisu",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Tazuna",
+      "db_id": 11216,
+      "db_name": "Tazuna",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Inari",
+      "db_id": 9933,
+      "db_name": "Inari",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Tsunami",
+      "db_id": 11308,
+      "db_name": "Tsunami",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Zabuza Momochi",
+      "db_id": 11410,
+      "db_name": "Zabuza Momochi",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Haku",
+      "db_id": 9719,
+      "db_name": "Haku",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Gatoh",
+      "db_id": 9164,
+      "db_name": "Gatō",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": false
+    },
+    {
+      "canonical_name": "Meizu",
+      "db_id": 10637,
+      "db_name": "Meizu",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": false
+    },
+    {
+      "canonical_name": "Gouzu",
+      "db_id": 9684,
+      "db_name": "Gozu",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Kaiza",
+      "db_id": 10136,
+      "db_name": "Kaiza",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Hinata Hyuga",
+      "db_id": 9830,
+      "db_name": "Hinata Hyūga",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Kiba Inuzuka",
+      "db_id": 10267,
+      "db_name": "Kiba Inuzuka",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Shino Aburame",
+      "db_id": 11104,
+      "db_name": "Shino Aburame",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Kurenai Yuhi",
+      "db_id": 10463,
+      "db_name": "Kurenai Yūhi",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Rock Lee",
+      "db_id": 10985,
+      "db_name": "Rock Lee",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Neji Hyuga",
+      "db_id": 10906,
+      "db_name": "Neji Hyūga",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Tenten",
+      "db_id": 11234,
+      "db_name": "Tenten",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Might Guy",
+      "db_id": 10751,
+      "db_name": "Might Guy",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Ino Yamanaka",
+      "db_id": 9941,
+      "db_name": "Ino Yamanaka",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Shikamaru Nara",
+      "db_id": 11087,
+      "db_name": "Shikamaru Nara",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Choji Akimichi",
+      "db_id": 8814,
+      "db_name": "Chōji Akimichi",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Asuma Sarutobi",
+      "db_id": 8745,
+      "db_name": "Asuma Sarutobi",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Anko Mitarashi",
+      "db_id": 8723,
+      "db_name": "Anko Mitarashi",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Ibiki Morino",
+      "db_id": 9905,
+      "db_name": "Ibiki Morino",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Gaara",
+      "db_id": 9132,
+      "db_name": "Gaara",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Temari",
+      "db_id": 11224,
+      "db_name": "Temari",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Kankuro",
+      "db_id": 10189,
+      "db_name": "Kankurō",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Baki",
+      "db_id": 8756,
+      "db_name": "Baki",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Dosu Kinuta",
+      "db_id": 8863,
+      "db_name": "Dosu Kinuta",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Zaku Abumi",
+      "db_id": 11413,
+      "db_name": "Zaku Abumi",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Kin Tsuchi",
+      "db_id": 10298,
+      "db_name": "Kin Tsuchi",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Kabuto Yakushi",
+      "db_id": 10097,
+      "db_name": "Kabuto Yakushi",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Yoroi Akado",
+      "db_id": 11377,
+      "db_name": "Yoroi Akadō",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Misumi Tsurugi",
+      "db_id": 10783,
+      "db_name": "Misumi Tsurugi",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Hayate Gekko",
+      "db_id": 9776,
+      "db_name": "Hayate Gekkō",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Genma Shiranui",
+      "db_id": 9636,
+      "db_name": "Genma Shiranui",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Raido Namiashi",
+      "db_id": 10960,
+      "db_name": "Raidō Namiashi",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Izumo Kamizuki",
+      "db_id": 10017,
+      "db_name": "Izumo Kamizuki",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Kotetsu Hagane",
+      "db_id": 10431,
+      "db_name": "Kotetsu Hagane",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Hiashi Hyuga",
+      "db_id": 9793,
+      "db_name": "Hiashi Hyūga",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Hizashi Hyuga",
+      "db_id": 9854,
+      "db_name": "Hizashi Hyūga",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Hanabi Hyuga",
+      "db_id": 9750,
+      "db_name": "Hanabi Hyūga",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Koharu Utatane",
+      "db_id": 10368,
+      "db_name": "Koharu Utatane",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Homura Mitokado",
+      "db_id": 9864,
+      "db_name": "Homura Mitokado",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Aoba Yamashiro",
+      "db_id": 8726,
+      "db_name": "Aoba Yamashiro",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Orochimaru",
+      "db_id": 10943,
+      "db_name": "Orochimaru",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Shukaku",
+      "db_id": 11127,
+      "db_name": "Shukaku",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Itachi Uchiha",
+      "db_id": 9981,
+      "db_name": "Itachi Uchiha",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Kisame Hoshigaki",
+      "db_id": 10328,
+      "db_name": "Kisame Hoshigaki",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Jiraiya",
+      "db_id": 10066,
+      "db_name": "Jiraiya",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Tsunade",
+      "db_id": 11307,
+      "db_name": "Tsunade",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Shizune",
+      "db_id": 11125,
+      "db_name": "Shizune",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Dan Kato",
+      "db_id": 8838,
+      "db_name": "Dan Katō",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Nawaki",
+      "db_id": 10904,
+      "db_name": "Nawaki",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Yugao Uzuki",
+      "db_id": 11402,
+      "db_name": "Yūgao Uzuki",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Shikaku Nara",
+      "db_id": 11086,
+      "db_name": "Shikaku Nara",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Inoichi Yamanaka",
+      "db_id": 9945,
+      "db_name": "Inoichi Yamanaka",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": false
+    },
+    {
+      "canonical_name": "Choza Akimichi",
+      "db_id": 8819,
+      "db_name": "Chōza Akimichi",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Sakon",
+      "db_id": 11020,
+      "db_name": "Sakon and Ukon",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Tayuya",
+      "db_id": 11215,
+      "db_name": "Tayuya",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Jirobo",
+      "db_id": 10072,
+      "db_name": "Jirōbō",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Kidomaru",
+      "db_id": 10272,
+      "db_name": "Kidōmaru",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Kimimaro",
+      "db_id": 10294,
+      "db_name": "Kimimaro",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Black Zetsu",
+      "db_id": 8776,
+      "db_name": "Black Zetsu",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "White Zetsu",
+      "db_id": 11350,
+      "db_name": "White Zetsu",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Deidara",
+      "db_id": 8848,
+      "db_name": "Deidara",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Sasori",
+      "db_id": 11041,
+      "db_name": "Sasori",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Chiyo",
+      "db_id": 8808,
+      "db_name": "Chiyo",
+      "has_image": false,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Ebizo",
+      "db_id": 9072,
+      "db_name": "Ebizō",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Sai",
+      "db_id": 11013,
+      "db_name": "Sai",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Yamato",
+      "db_id": 11364,
+      "db_name": "Yamato",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Karin",
+      "db_id": 10214,
+      "db_name": "Karin",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Suigetsu Hozuki",
+      "db_id": 11145,
+      "db_name": "Suigetsu Hōzuki",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Jugo",
+      "db_id": 10088,
+      "db_name": "Jūgo",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Obito Uchiha",
+      "db_id": 10932,
+      "db_name": "Obito Uchiha",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Hidan",
+      "db_id": 9803,
+      "db_name": "Hidan",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Kakuzu",
+      "db_id": 10160,
+      "db_name": "Kakuzu",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Yugito Nii",
+      "db_id": 11385,
+      "db_name": "Yugito Nii",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Matatabi",
+      "db_id": 10614,
+      "db_name": "Matatabi",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Fukasaku",
+      "db_id": 9107,
+      "db_name": "Fukasaku",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Shima",
+      "db_id": 11090,
+      "db_name": "Shima",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Nagato",
+      "db_id": 10885,
+      "db_name": "Nagato",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Konan",
+      "db_id": 10405,
+      "db_name": "Konan",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Yahiko",
+      "db_id": 11356,
+      "db_name": "Yahiko",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Kushina Uzumaki",
+      "db_id": 10481,
+      "db_name": "Kushina Uzumaki",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Hanzo",
+      "db_id": 9758,
+      "db_name": "Hanzō",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Danzo Shimura",
+      "db_id": 8842,
+      "db_name": "Danzō Shimura",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "A (Fourth Raikage)",
+      "db_id": 8633,
+      "db_name": "A (Fourth Raikage)",
+      "has_image": false,
+      "has_jutsu_gif": false,
+      "has_quotes": false
+    },
+    {
+      "canonical_name": "Killer Bee",
+      "db_id": 10292,
+      "db_name": "Killer B",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "C",
+      "db_id": 8794,
+      "db_name": "C",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Darui",
+      "db_id": 8844,
+      "db_name": "Darui",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Mei Terumi",
+      "db_id": 10635,
+      "db_name": "Mei Terumī",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Ao",
+      "db_id": 8725,
+      "db_name": "Ao",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Chojuro",
+      "db_id": 8816,
+      "db_name": "Chōjūrō",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Onoki",
+      "db_id": 11426,
+      "db_name": "Ōnoki",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Kurotsuchi",
+      "db_id": 10473,
+      "db_name": "Kurotsuchi",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Akatsuchi",
+      "db_id": 8655,
+      "db_name": "Akatsuchi",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": false
+    },
+    {
+      "canonical_name": "Mifune",
+      "db_id": 10748,
+      "db_name": "Mifune",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Samui",
+      "db_id": 11026,
+      "db_name": "Samui",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Atsui",
+      "db_id": 8748,
+      "db_name": "Atsui",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Karui",
+      "db_id": 10221,
+      "db_name": "Karui",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Omoi",
+      "db_id": 10940,
+      "db_name": "Omoi",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Fu Yamanaka",
+      "db_id": 9128,
+      "db_name": "Fū Yamanaka",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Torune Aburame",
+      "db_id": 11285,
+      "db_name": "Torune Aburame",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": false
+    },
+    {
+      "canonical_name": "Mabui",
+      "db_id": 10553,
+      "db_name": "Mabui",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": false
+    },
+    {
+      "canonical_name": "Dodai",
+      "db_id": 8856,
+      "db_name": "Dodai",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Madara Uchiha",
+      "db_id": 10558,
+      "db_name": "Madara Uchiha",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Minato Namikaze",
+      "db_id": 10760,
+      "db_name": "Minato Namikaze",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Hashirama Senju",
+      "db_id": 9770,
+      "db_name": "Hashirama Senju",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Tobirama Senju",
+      "db_id": 11263,
+      "db_name": "Tobirama Senju",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Gengetsu Hozuki",
+      "db_id": 9632,
+      "db_name": "Gengetsu Hōzuki",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Mu",
+      "db_id": 10881,
+      "db_name": "Mū",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "A (Third Raikage)",
+      "db_id": 8635,
+      "db_name": "A (Third Raikage)",
+      "has_image": false,
+      "has_jutsu_gif": false,
+      "has_quotes": false
+    },
+    {
+      "canonical_name": "Rasa",
+      "db_id": 10971,
+      "db_name": "Rasa",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Han",
+      "db_id": 9742,
+      "db_name": "Han",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": false
+    },
+    {
+      "canonical_name": "Roshi",
+      "db_id": 11003,
+      "db_name": "Rōshi",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Yagura Karatachi",
+      "db_id": 11355,
+      "db_name": "Yagura Karatachi",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Utakata",
+      "db_id": 11339,
+      "db_name": "Utakata",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Fu",
+      "db_id": 9127,
+      "db_name": "Fū",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Pakura",
+      "db_id": 10950,
+      "db_name": "Pakura",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Gari",
+      "db_id": 9155,
+      "db_name": "Gari",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": false
+    },
+    {
+      "canonical_name": "Toroi",
+      "db_id": 11283,
+      "db_name": "Toroi",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Chukichi",
+      "db_id": 8822,
+      "db_name": "Chūkichi",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Mangetsu Hozuki",
+      "db_id": 10596,
+      "db_name": "Mangetsu Hōzuki",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Ameyuri Ringo",
+      "db_id": 8714,
+      "db_name": "Ameyuri Ringo",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Kushimaru Kuriarare",
+      "db_id": 10479,
+      "db_name": "Kushimaru Kuriarare",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Jinpachi Munashi",
+      "db_id": 10064,
+      "db_name": "Jinpachi Munashi",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Jinin Akebino",
+      "db_id": 10062,
+      "db_name": "Jinin Akebino",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Fuguki Suikazan",
+      "db_id": 9105,
+      "db_name": "Fuguki Suikazan",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Rin Nohara",
+      "db_id": 10983,
+      "db_name": "Rin Nohara",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Sakumo Hatake",
+      "db_id": 11021,
+      "db_name": "Sakumo Hatake",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Izuna Uchiha",
+      "db_id": 10020,
+      "db_name": "Izuna Uchiha",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": false
+    },
+    {
+      "canonical_name": "Tajima Uchiha",
+      "db_id": 11190,
+      "db_name": "Tajima Uchiha",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": false
+    },
+    {
+      "canonical_name": "Butsuma Senju",
+      "db_id": 8792,
+      "db_name": "Butsuma Senju",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Mito Uzumaki",
+      "db_id": 10786,
+      "db_name": "Mito Uzumaki",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Son Goku",
+      "db_id": 11135,
+      "db_name": "Son Gokū",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Gyuki",
+      "db_id": 9694,
+      "db_name": "Gyūki",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Isobu",
+      "db_id": 9976,
+      "db_name": "Isobu",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": false
+    },
+    {
+      "canonical_name": "Kokuo",
+      "db_id": 10384,
+      "db_name": "Kokuō",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Saiken",
+      "db_id": 11014,
+      "db_name": "Saiken",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Chomei",
+      "db_id": 8817,
+      "db_name": "Chōmei",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Indra Otsutsuki",
+      "db_id": 9936,
+      "db_name": "Indra Ōtsutsuki",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Hagoromo Otsutsuki",
+      "db_id": 9704,
+      "db_name": "Hagoromo Ōtsutsuki",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Hamura Otsutsuki",
+      "db_id": 9737,
+      "db_name": "Hamura Ōtsutsuki",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Kaguya Otsutsuki",
+      "db_id": 10126,
+      "db_name": "Kaguya Ōtsutsuki",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Sarada Uchiha",
+      "db_id": 11036,
+      "db_name": "Sarada Uchiha",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Shin Uchiha",
+      "db_id": 11094,
+      "db_name": "Shin Uchiha",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Boruto Uzumaki",
+      "db_id": 8781,
+      "db_name": "Boruto Uzumaki",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Mitsuki",
+      "db_id": 10788,
+      "db_name": "Mitsuki",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Kawaki",
+      "db_id": 10244,
+      "db_name": "Kawaki",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Himawari Uzumaki",
+      "db_id": 9819,
+      "db_name": "Himawari Uzumaki",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Shikadai Nara",
+      "db_id": 11085,
+      "db_name": "Shikadai Nara",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Inojin Yamanaka",
+      "db_id": 9947,
+      "db_name": "Inojin Yamanaka",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": false
+    },
+    {
+      "canonical_name": "Cho-Cho Akimichi",
+      "db_id": 8812,
+      "db_name": "Chōchō Akimichi",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Denki Kaminarimon",
+      "db_id": 8854,
+      "db_name": "Denki Kaminarimon",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Iwabe Yuino",
+      "db_id": 9996,
+      "db_name": "Iwabee Yuino",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Metal Lee",
+      "db_id": 10653,
+      "db_name": "Metal Lee",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": false
+    },
+    {
+      "canonical_name": "Sumire Kakei",
+      "db_id": 11159,
+      "db_name": "Sumire Kakei",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": false
+    },
+    {
+      "canonical_name": "Moegi Kazamatsuri",
+      "db_id": 10797,
+      "db_name": "Moegi Kazamatsuri",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Udon Ise",
+      "db_id": 11323,
+      "db_name": "Udon Ise",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Shinki",
+      "db_id": 11100,
+      "db_name": "Shinki",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": false
+    },
+    {
+      "canonical_name": "Araya",
+      "db_id": 8736,
+      "db_name": "Araya",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": false
+    },
+    {
+      "canonical_name": "Yodo",
+      "db_id": 11370,
+      "db_name": "Yodo",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": false
+    },
+    {
+      "canonical_name": "Momoshiki Otsutsuki",
+      "db_id": 10812,
+      "db_name": "Momoshiki Ōtsutsuki",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Kinshiki Otsutsuki",
+      "db_id": 10311,
+      "db_name": "Kinshiki Ōtsutsuki",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": false
+    },
+    {
+      "canonical_name": "Katasuke Tono",
+      "db_id": 10235,
+      "db_name": "Katasuke Tōno",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Jigen",
+      "db_id": 10045,
+      "db_name": "Jigen",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Isshiki Otsutsuki",
+      "db_id": 9979,
+      "db_name": "Isshiki Ōtsutsuki",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": false
+    },
+    {
+      "canonical_name": "Delta",
+      "db_id": 8850,
+      "db_name": "Delta",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Koji Kashin",
+      "db_id": 10370,
+      "db_name": "Koji Kashin",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Boro",
+      "db_id": 8780,
+      "db_name": "Boro",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": false
+    },
+    {
+      "canonical_name": "Code",
+      "db_id": 8825,
+      "db_name": "Code",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": false
+    },
+    {
+      "canonical_name": "Victor",
+      "db_id": 11342,
+      "db_name": "Victor",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": false
+    },
+    {
+      "canonical_name": "Deepa",
+      "db_id": 8847,
+      "db_name": "Deepa",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": false
+    },
+    {
+      "canonical_name": "Amado",
+      "db_id": 8706,
+      "db_name": "Amado Sanzu",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Eida",
+      "db_id": 8637,
+      "db_name": "Ada",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": false
+    },
+    {
+      "canonical_name": "Daemon",
+      "db_id": 8831,
+      "db_name": "Daemon",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": false
+    },
+    {
+      "canonical_name": "Shojoji",
+      "db_id": 11126,
+      "db_name": "Shojoji",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Kagura Karatachi",
+      "db_id": 10122,
+      "db_name": "Kagura Karatachi",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Shibai Otsutsuki",
+      "db_id": 11075,
+      "db_name": "Shibai Ōtsutsuki",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Fugaku Uchiha",
+      "db_id": 9103,
+      "db_name": "Fugaku Uchiha",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Mikoto Uchiha",
+      "db_id": 10757,
+      "db_name": "Mikoto Uchiha",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Shisui Uchiha",
+      "db_id": 11118,
+      "db_name": "Shisui Uchiha",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Kagami Uchiha",
+      "db_id": 10108,
+      "db_name": "Kagami Uchiha",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Shibi Aburame",
+      "db_id": 11076,
+      "db_name": "Shibi Aburame",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Tsume Inuzuka",
+      "db_id": 11306,
+      "db_name": "Tsume Inuzuka",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Hana Inuzuka",
+      "db_id": 9745,
+      "db_name": "Hana Inuzuka",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": false
+    },
+    {
+      "canonical_name": "Waraji",
+      "db_id": 11345,
+      "db_name": "Waraji",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": false
+    },
+    {
+      "canonical_name": "Zori",
+      "db_id": 11420,
+      "db_name": "Zōri",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": false
+    },
+    {
+      "canonical_name": "Teuchi",
+      "db_id": 11248,
+      "db_name": "Teuchi",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Ao (Boruto)",
+      "db_id": 8725,
+      "db_name": "Ao",
+      "has_image": true,
+      "has_jutsu_gif": true,
+      "has_quotes": true
+    },
+    {
+      "canonical_name": "Tentou Madoka",
+      "db_id": 11235,
+      "db_name": "Tentō Madoka",
+      "has_image": true,
+      "has_jutsu_gif": false,
+      "has_quotes": false
+    }
+  ],
+  "no_match_canonical": [
+    "Ashura Otsutsuki"
+  ],
+  "to_delete": [
+    {
+      "db_id": 8632,
+      "db_name": "A (First Raikage)"
+    },
+    {
+      "db_id": 8634,
+      "db_name": "A (Second Raikage)"
+    },
+    {
+      "db_id": 8636,
+      "db_name": "Abiru"
+    },
+    {
+      "db_id": 8638,
+      "db_name": "Agara"
+    },
+    {
+      "db_id": 8639,
+      "db_name": "Agari"
+    },
+    {
+      "db_id": 8640,
+      "db_name": "Agari Kaisen"
+    },
+    {
+      "db_id": 8641,
+      "db_name": "Ageha"
+    },
+    {
+      "db_id": 8642,
+      "db_name": "Agira Ryūdōin"
+    },
+    {
+      "db_id": 8643,
+      "db_name": "Ahiko"
+    },
+    {
+      "db_id": 8644,
+      "db_name": "Aho Bird"
+    },
+    {
+      "db_id": 8645,
+      "db_name": "Aino"
+    },
+    {
+      "db_id": 8646,
+      "db_name": "Ajisai"
+    },
+    {
+      "db_id": 8647,
+      "db_name": "Akaboshi"
+    },
+    {
+      "db_id": 8648,
+      "db_name": "Akahoshi"
+    },
+    {
+      "db_id": 8649,
+      "db_name": "Akamaru"
+    },
+    {
+      "db_id": 8650,
+      "db_name": "Akane"
+    },
+    {
+      "db_id": 8651,
+      "db_name": "Akane (Kunoichi)"
+    },
+    {
+      "db_id": 8652,
+      "db_name": "Akane's Father"
+    },
+    {
+      "db_id": 8653,
+      "db_name": "Akari"
+    },
+    {
+      "db_id": 8654,
+      "db_name": "Akari Tatsushiro"
+    },
+    {
+      "db_id": 8656,
+      "db_name": "Akebi Sanzu"
+    },
+    {
+      "db_id": 8657,
+      "db_name": "Akemaru"
+    },
+    {
+      "db_id": 8658,
+      "db_name": "Akino"
+    },
+    {
+      "db_id": 8702,
+      "db_name": "Akio"
+    },
+    {
+      "db_id": 8703,
+      "db_name": "Akita Inuzuka"
+    },
+    {
+      "db_id": 8704,
+      "db_name": "Akkun"
+    },
+    {
+      "db_id": 8705,
+      "db_name": "Amachi"
+    },
+    {
+      "db_id": 8707,
+      "db_name": "Amagi"
+    },
+    {
+      "db_id": 8708,
+      "db_name": "Amagi Izuno"
+    },
+    {
+      "db_id": 8709,
+      "db_name": "Amai"
+    },
+    {
+      "db_id": 8710,
+      "db_name": "Amaru"
+    },
+    {
+      "db_id": 8711,
+      "db_name": "Amayo"
+    },
+    {
+      "db_id": 8712,
+      "db_name": "Ameno"
+    },
+    {
+      "db_id": 8713,
+      "db_name": "Ameyuki"
+    },
+    {
+      "db_id": 8715,
+      "db_name": "Ami"
+    },
+    {
+      "db_id": 8716,
+      "db_name": "Amino"
+    },
+    {
+      "db_id": 8717,
+      "db_name": "Amuda"
+    },
+    {
+      "db_id": 8718,
+      "db_name": "Anaguma"
+    },
+    {
+      "db_id": 8719,
+      "db_name": "Anato"
+    },
+    {
+      "db_id": 8720,
+      "db_name": "Anbu Commander"
+    },
+    {
+      "db_id": 8721,
+      "db_name": "Aniki"
+    },
+    {
+      "db_id": 8722,
+      "db_name": "Aniki (missing-nin)"
+    },
+    {
+      "db_id": 8724,
+      "db_name": "Ankorodō Shop Owner"
+    },
+    {
+      "db_id": 8727,
+      "db_name": "Aoda"
+    },
+    {
+      "db_id": 8728,
+      "db_name": "Aoi (game)"
+    },
+    {
+      "db_id": 8729,
+      "db_name": "Aoi Rokushō"
+    },
+    {
+      "db_id": 8730,
+      "db_name": "Aoneko"
+    },
+    {
+      "db_id": 8731,
+      "db_name": "Aosa"
+    },
+    {
+      "db_id": 8732,
+      "db_name": "Arai"
+    },
+    {
+      "db_id": 8733,
+      "db_name": "Arashi"
+    },
+    {
+      "db_id": 8734,
+      "db_name": "Arashi Umeya"
+    },
+    {
+      "db_id": 8735,
+      "db_name": "Araumi Funato"
+    },
+    {
+      "db_id": 8737,
+      "db_name": "Armadiko"
+    },
+    {
+      "db_id": 8738,
+      "db_name": "Asaka"
+    },
+    {
+      "db_id": 8739,
+      "db_name": "Asaki"
+    },
+    {
+      "db_id": 8740,
+      "db_name": "Asami"
+    },
+    {
+      "db_id": 8741,
+      "db_name": "Ashimaru"
+    },
+    {
+      "db_id": 8742,
+      "db_name": "Ashina"
+    },
+    {
+      "db_id": 8743,
+      "db_name": "Ashina Uzumaki"
+    },
+    {
+      "db_id": 8744,
+      "db_name": "Ashitaba"
+    },
+    {
+      "db_id": 8747,
+      "db_name": "Asura Ōtsutsuki"
+    },
+    {
+      "db_id": 8746,
+      "db_name": "Asura Path (character)"
+    },
+    {
+      "db_id": 8749,
+      "db_name": "Awaji Unabara"
+    },
+    {
+      "db_id": 8750,
+      "db_name": "Ayame"
+    },
+    {
+      "db_id": 8751,
+      "db_name": "Azami"
+    },
+    {
+      "db_id": 8752,
+      "db_name": "Azure Fang"
+    },
+    {
+      "db_id": 8753,
+      "db_name": "Babu"
+    },
+    {
+      "db_id": 8754,
+      "db_name": "Baiu"
+    },
+    {
+      "db_id": 8755,
+      "db_name": "Baji"
+    },
+    {
+      "db_id": 8757,
+      "db_name": "Baku"
+    },
+    {
+      "db_id": 8758,
+      "db_name": "Baku (Anbu)"
+    },
+    {
+      "db_id": 8759,
+      "db_name": "Bakuto"
+    },
+    {
+      "db_id": 8760,
+      "db_name": "Bamboo Minister"
+    },
+    {
+      "db_id": 8761,
+      "db_name": "Bando"
+    },
+    {
+      "db_id": 8762,
+      "db_name": "Bandō"
+    },
+    {
+      "db_id": 8763,
+      "db_name": "Banna"
+    },
+    {
+      "db_id": 8764,
+      "db_name": "Bansai"
+    },
+    {
+      "db_id": 8765,
+      "db_name": "Baru Uchiha"
+    },
+    {
+      "db_id": 8766,
+      "db_name": "Batora Kuromori"
+    },
+    {
+      "db_id": 8767,
+      "db_name": "Batta"
+    },
+    {
+      "db_id": 8768,
+      "db_name": "Beekeeper"
+    },
+    {
+      "db_id": 8769,
+      "db_name": "Bekkō"
+    },
+    {
+      "db_id": 8770,
+      "db_name": "Benga"
+    },
+    {
+      "db_id": 8771,
+      "db_name": "Benten"
+    },
+    {
+      "db_id": 8772,
+      "db_name": "Bird-Masked Anbu Member"
+    },
+    {
+      "db_id": 8773,
+      "db_name": "Bisuke"
+    },
+    {
+      "db_id": 8774,
+      "db_name": "Biwako Sarutobi"
+    },
+    {
+      "db_id": 8775,
+      "db_name": "Black Shadow"
+    },
+    {
+      "db_id": 8777,
+      "db_name": "Blue B"
+    },
+    {
+      "db_id": 8778,
+      "db_name": "Boar-Masked Anbu Member"
+    },
+    {
+      "db_id": 8779,
+      "db_name": "Boiler Toad"
+    },
+    {
+      "db_id": 8782,
+      "db_name": "Boxing Kangaroos"
+    },
+    {
+      "db_id": 8783,
+      "db_name": "Breeze Dancer"
+    },
+    {
+      "db_id": 8784,
+      "db_name": "Bug"
+    },
+    {
+      "db_id": 8785,
+      "db_name": "Bull"
+    },
+    {
+      "db_id": 8786,
+      "db_name": "Buna"
+    },
+    {
+      "db_id": 8787,
+      "db_name": "Bunpuku"
+    },
+    {
+      "db_id": 8788,
+      "db_name": "Buntan Kurosuki"
+    },
+    {
+      "db_id": 8789,
+      "db_name": "Bunzō"
+    },
+    {
+      "db_id": 8790,
+      "db_name": "Burami"
+    },
+    {
+      "db_id": 8791,
+      "db_name": "Buriko Nekoka"
+    },
+    {
+      "db_id": 8793,
+      "db_name": "Byakuren"
+    },
+    {
+      "db_id": 8795,
+      "db_name": "Calm Seas Daimyō"
+    },
+    {
+      "db_id": 8796,
+      "db_name": "Captain of the Ghost Ship"
+    },
+    {
+      "db_id": 8797,
+      "db_name": "Chainya"
+    },
+    {
+      "db_id": 8798,
+      "db_name": "Chamaru"
+    },
+    {
+      "db_id": 8799,
+      "db_name": "Chamū"
+    },
+    {
+      "db_id": 8800,
+      "db_name": "Chen"
+    },
+    {
+      "db_id": 8801,
+      "db_name": "Chibi"
+    },
+    {
+      "db_id": 8802,
+      "db_name": "Chichiatsu"
+    },
+    {
+      "db_id": 8803,
+      "db_name": "Chihare Amano"
+    },
+    {
+      "db_id": 8804,
+      "db_name": "Chikara"
+    },
+    {
+      "db_id": 8805,
+      "db_name": "Chino"
+    },
+    {
+      "db_id": 8806,
+      "db_name": "Chiriku"
+    },
+    {
+      "db_id": 8807,
+      "db_name": "Chishima"
+    },
+    {
+      "db_id": 8809,
+      "db_name": "Chiyo (princess)"
+    },
+    {
+      "db_id": 8810,
+      "db_name": "Chiyomatsu"
+    },
+    {
+      "db_id": 8811,
+      "db_name": "Chōbee Akimichi"
+    },
+    {
+      "db_id": 8813,
+      "db_name": "Chōhan"
+    },
+    {
+      "db_id": 8815,
+      "db_name": "Chōji's Mother"
+    },
+    {
+      "db_id": 8818,
+      "db_name": "Chōseki"
+    },
+    {
+      "db_id": 8820,
+      "db_name": "Chūji"
+    },
+    {
+      "db_id": 8821,
+      "db_name": "Chūkaku"
+    },
+    {
+      "db_id": 8823,
+      "db_name": "Chūshin"
+    },
+    {
+      "db_id": 8824,
+      "db_name": "Claw Daimyō"
+    },
+    {
+      "db_id": 8826,
+      "db_name": "Conch King"
+    },
+    {
+      "db_id": 8827,
+      "db_name": "Condor"
+    },
+    {
+      "db_id": 8828,
+      "db_name": "Crimson Fist"
+    },
+    {
+      "db_id": 8829,
+      "db_name": "Curse Jutsu Master"
+    },
+    {
+      "db_id": 8830,
+      "db_name": "Cursed Warrior"
+    },
+    {
+      "db_id": 8832,
+      "db_name": "Daen Nara"
+    },
+    {
+      "db_id": 8833,
+      "db_name": "Daibutsu"
+    },
+    {
+      "db_id": 8834,
+      "db_name": "Daichi"
+    },
+    {
+      "db_id": 9033,
+      "db_name": "Daikoku Funeno"
+    },
+    {
+      "db_id": 8835,
+      "db_name": "Daimaru"
+    },
+    {
+      "db_id": 8836,
+      "db_name": "Daizen Matsushige"
+    },
+    {
+      "db_id": 8837,
+      "db_name": "Dajimu"
+    },
+    {
+      "db_id": 8840,
+      "db_name": "Dangō"
+    },
+    {
+      "db_id": 8839,
+      "db_name": "Dango Mitsuki"
+    },
+    {
+      "db_id": 8841,
+      "db_name": "Danjō"
+    },
+    {
+      "db_id": 8843,
+      "db_name": "Daore Dōtonbori"
+    },
+    {
+      "db_id": 8845,
+      "db_name": "Daruma Izuno"
+    },
+    {
+      "db_id": 8846,
+      "db_name": "Datsuji"
+    },
+    {
+      "db_id": 8849,
+      "db_name": "Dekai"
+    },
+    {
+      "db_id": 8851,
+      "db_name": "Demonic Statue of the Outer Path"
+    },
+    {
+      "db_id": 8852,
+      "db_name": "Dengaku"
+    },
+    {
+      "db_id": 8853,
+      "db_name": "Denka"
+    },
+    {
+      "db_id": 8855,
+      "db_name": "Disonasu"
+    },
+    {
+      "db_id": 8857,
+      "db_name": "Dokan"
+    },
+    {
+      "db_id": 8858,
+      "db_name": "Doki"
+    },
+    {
+      "db_id": 8859,
+      "db_name": "Dokku"
+    },
+    {
+      "db_id": 8860,
+      "db_name": "Don"
+    },
+    {
+      "db_id": 8861,
+      "db_name": "Doragu"
+    },
+    {
+      "db_id": 8862,
+      "db_name": "Doseki Ganryū"
+    },
+    {
+      "db_id": 8866,
+      "db_name": "Dōshin"
+    },
+    {
+      "db_id": 8867,
+      "db_name": "Dōshu Goetsu"
+    },
+    {
+      "db_id": 8868,
+      "db_name": "Dōtō Akimichi"
+    },
+    {
+      "db_id": 8864,
+      "db_name": "Dotō Kazahana"
+    },
+    {
+      "db_id": 8865,
+      "db_name": "Dread Lion"
+    },
+    {
+      "db_id": 8869,
+      "db_name": "Eagle-Masked Anbu Member"
+    },
+    {
+      "db_id": 8870,
+      "db_name": "Earth Daimyō"
+    },
+    {
+      "db_id": 8871,
+      "db_name": "Earth Prison Golem"
+    },
+    {
+      "db_id": 9073,
+      "db_name": "Edashi"
+    },
+    {
+      "db_id": 9074,
+      "db_name": "Ehō Norimaki"
+    },
+    {
+      "db_id": 9075,
+      "db_name": "Eiki Fūma"
+    },
+    {
+      "db_id": 9076,
+      "db_name": "Emi"
+    },
+    {
+      "db_id": 9077,
+      "db_name": "Emina"
+    },
+    {
+      "db_id": 9078,
+      "db_name": "Emiru"
+    },
+    {
+      "db_id": 9079,
+      "db_name": "En no Gyōja"
+    },
+    {
+      "db_id": 9080,
+      "db_name": "En Oyashiro"
+    },
+    {
+      "db_id": 9081,
+      "db_name": "Enchū Nara"
+    },
+    {
+      "db_id": 9082,
+      "db_name": "Enko Onikuma"
+    },
+    {
+      "db_id": 9083,
+      "db_name": "Enra"
+    },
+    {
+      "db_id": 9084,
+      "db_name": "Ensui Nara"
+    },
+    {
+      "db_id": 9085,
+      "db_name": "Enzo Tenrō"
+    },
+    {
+      "db_id": 9086,
+      "db_name": "Ereki Kaminarimon"
+    },
+    {
+      "db_id": 9087,
+      "db_name": "Erimaki Sharo"
+    },
+    {
+      "db_id": 9088,
+      "db_name": "Etoro Konjiki"
+    },
+    {
+      "db_id": 9089,
+      "db_name": "Evil Minister of the Tea Daimyō"
+    },
+    {
+      "db_id": 9090,
+      "db_name": "F"
+    },
+    {
+      "db_id": 9091,
+      "db_name": "Fang Daimyō"
+    },
+    {
+      "db_id": 9092,
+      "db_name": "Faz"
+    },
+    {
+      "db_id": 9093,
+      "db_name": "Fire Daimyō (Part I-II)"
+    },
+    {
+      "db_id": 9094,
+      "db_name": "First Animal Path (character)"
+    },
+    {
+      "db_id": 9095,
+      "db_name": "First Hoshikage"
+    },
+    {
+      "db_id": 9096,
+      "db_name": "Former Leader of Nadeshiko Village"
+    },
+    {
+      "db_id": 9097,
+      "db_name": "Fox-Masked Anbu Member"
+    },
+    {
+      "db_id": 9098,
+      "db_name": "Frost Daimyō"
+    },
+    {
+      "db_id": 9099,
+      "db_name": "Fubuki Kakuyoku"
+    },
+    {
+      "db_id": 9100,
+      "db_name": "Fudō"
+    },
+    {
+      "db_id": 9101,
+      "db_name": "Fuen"
+    },
+    {
+      "db_id": 9102,
+      "db_name": "Fugai"
+    },
+    {
+      "db_id": 9104,
+      "db_name": "Fugi"
+    },
+    {
+      "db_id": 9106,
+      "db_name": "Fugō"
+    },
+    {
+      "db_id": 9129,
+      "db_name": "Fūjin"
+    },
+    {
+      "db_id": 9130,
+      "db_name": "Fūka"
+    },
+    {
+      "db_id": 9108,
+      "db_name": "Fuki"
+    },
+    {
+      "db_id": 9109,
+      "db_name": "Fuki (Land of Sound)"
+    },
+    {
+      "db_id": 9110,
+      "db_name": "Fuku"
+    },
+    {
+      "db_id": 9111,
+      "db_name": "Fukuemon"
+    },
+    {
+      "db_id": 9112,
+      "db_name": "Fukurokumaru"
+    },
+    {
+      "db_id": 9113,
+      "db_name": "Fukusuke Hikyakuya"
+    },
+    {
+      "db_id": 9114,
+      "db_name": "Fukuyokana"
+    },
+    {
+      "db_id": 9115,
+      "db_name": "Funamushi"
+    },
+    {
+      "db_id": 9116,
+      "db_name": "Funari"
+    },
+    {
+      "db_id": 9117,
+      "db_name": "Funato Soldier Leader"
+    },
+    {
+      "db_id": 9118,
+      "db_name": "Fundaru"
+    },
+    {
+      "db_id": 9119,
+      "db_name": "Furie Kanhen"
+    },
+    {
+      "db_id": 9120,
+      "db_name": "Furofuki"
+    },
+    {
+      "db_id": 9121,
+      "db_name": "Furui"
+    },
+    {
+      "db_id": 9122,
+      "db_name": "Fusō"
+    },
+    {
+      "db_id": 9131,
+      "db_name": "Fūta Kagetsu"
+    },
+    {
+      "db_id": 9123,
+      "db_name": "Futaba"
+    },
+    {
+      "db_id": 9124,
+      "db_name": "Futami"
+    },
+    {
+      "db_id": 9125,
+      "db_name": "Futsu"
+    },
+    {
+      "db_id": 9126,
+      "db_name": "Fuyō"
+    },
+    {
+      "db_id": 9133,
+      "db_name": "Gaku Inuzuka"
+    },
+    {
+      "db_id": 9134,
+      "db_name": "Gama"
+    },
+    {
+      "db_id": 9135,
+      "db_name": "Gamabunta"
+    },
+    {
+      "db_id": 9136,
+      "db_name": "Gamaden"
+    },
+    {
+      "db_id": 9137,
+      "db_name": "Gamagorō"
+    },
+    {
+      "db_id": 9138,
+      "db_name": "Gamahiro"
+    },
+    {
+      "db_id": 9139,
+      "db_name": "Gamaken"
+    },
+    {
+      "db_id": 9140,
+      "db_name": "Gamakichi"
+    },
+    {
+      "db_id": 9141,
+      "db_name": "Gamamaru"
+    },
+    {
+      "db_id": 9142,
+      "db_name": "Gamamichi"
+    },
+    {
+      "db_id": 9143,
+      "db_name": "Gamariki"
+    },
+    {
+      "db_id": 9144,
+      "db_name": "Gamatama"
+    },
+    {
+      "db_id": 9145,
+      "db_name": "Gamatatsu"
+    },
+    {
+      "db_id": 9146,
+      "db_name": "Gameru"
+    },
+    {
+      "db_id": 9147,
+      "db_name": "Gandō"
+    },
+    {
+      "db_id": 9148,
+      "db_name": "Ganno"
+    },
+    {
+      "db_id": 9149,
+      "db_name": "Ganryū"
+    },
+    {
+      "db_id": 9150,
+      "db_name": "Gantetsu"
+    },
+    {
+      "db_id": 9151,
+      "db_name": "Gantetsu (Iwagakure)"
+    },
+    {
+      "db_id": 9152,
+      "db_name": "Garaga"
+    },
+    {
+      "db_id": 9153,
+      "db_name": "Garakuta Gang Leader"
+    },
+    {
+      "db_id": 9154,
+      "db_name": "Garashi Tōno"
+    },
+    {
+      "db_id": 9158,
+      "db_name": "Garō"
+    },
+    {
+      "db_id": 9156,
+      "db_name": "Garuda"
+    },
+    {
+      "db_id": 9157,
+      "db_name": "Garyō"
+    },
+    {
+      "db_id": 9159,
+      "db_name": "Gasuka"
+    },
+    {
+      "db_id": 9160,
+      "db_name": "Gatai"
+    },
+    {
+      "db_id": 9161,
+      "db_name": "Gataro"
+    },
+    {
+      "db_id": 9162,
+      "db_name": "Gatekeeper"
+    },
+    {
+      "db_id": 9163,
+      "db_name": "Gatsu"
+    },
+    {
+      "db_id": 9165,
+      "db_name": "Gazeru"
+    },
+    {
+      "db_id": 9166,
+      "db_name": "Gekkō"
+    },
+    {
+      "db_id": 9167,
+      "db_name": "Gekomatsu"
+    },
+    {
+      "db_id": 9168,
+      "db_name": "Gen Katsugi"
+    },
+    {
+      "db_id": 9169,
+      "db_name": "Gen'yūmaru"
+    },
+    {
+      "db_id": 9630,
+      "db_name": "Genbu"
+    },
+    {
+      "db_id": 9631,
+      "db_name": "Genbu (minister)"
+    },
+    {
+      "db_id": 9633,
+      "db_name": "Gengo"
+    },
+    {
+      "db_id": 9634,
+      "db_name": "Genie"
+    },
+    {
+      "db_id": 9635,
+      "db_name": "Genji"
+    },
+    {
+      "db_id": 9637,
+      "db_name": "Genmai"
+    },
+    {
+      "db_id": 9638,
+      "db_name": "Gennai"
+    },
+    {
+      "db_id": 9639,
+      "db_name": "Gennō"
+    },
+    {
+      "db_id": 9640,
+      "db_name": "Gennō's Son"
+    },
+    {
+      "db_id": 9641,
+      "db_name": "Genshō Ryūdōin"
+    },
+    {
+      "db_id": 9642,
+      "db_name": "Gensui Amagiri"
+    },
+    {
+      "db_id": 9643,
+      "db_name": "Genzō"
+    },
+    {
+      "db_id": 9644,
+      "db_name": "Gerotora"
+    },
+    {
+      "db_id": 9645,
+      "db_name": "Giant Anteater"
+    },
+    {
+      "db_id": 9646,
+      "db_name": "Giant Bee"
+    },
+    {
+      "db_id": 9647,
+      "db_name": "Giant Centipede"
+    },
+    {
+      "db_id": 9648,
+      "db_name": "Giant Clam"
+    },
+    {
+      "db_id": 9649,
+      "db_name": "Giant Corpse Crab"
+    },
+    {
+      "db_id": 9650,
+      "db_name": "Giant Crustacean"
+    },
+    {
+      "db_id": 9651,
+      "db_name": "Giant Drill-Beaked Bird"
+    },
+    {
+      "db_id": 9652,
+      "db_name": "Giant Eagle"
+    },
+    {
+      "db_id": 9653,
+      "db_name": "Giant Insect"
+    },
+    {
+      "db_id": 9654,
+      "db_name": "Giant Marlin"
+    },
+    {
+      "db_id": 9655,
+      "db_name": "Giant Multi-Headed Dog"
+    },
+    {
+      "db_id": 9656,
+      "db_name": "Giant Ox"
+    },
+    {
+      "db_id": 9657,
+      "db_name": "Giant Panda"
+    },
+    {
+      "db_id": 9658,
+      "db_name": "Giant Rhino"
+    },
+    {
+      "db_id": 9659,
+      "db_name": "Giant Snake-Tailed Chameleon"
+    },
+    {
+      "db_id": 9660,
+      "db_name": "Giant Squid"
+    },
+    {
+      "db_id": 9661,
+      "db_name": "Giichi"
+    },
+    {
+      "db_id": 9662,
+      "db_name": "Ginji"
+    },
+    {
+      "db_id": 9663,
+      "db_name": "Ginkaku"
+    },
+    {
+      "db_id": 9665,
+      "db_name": "Gitai"
+    },
+    {
+      "db_id": 9668,
+      "db_name": "Goji"
+    },
+    {
+      "db_id": 9671,
+      "db_name": "Gojō"
+    },
+    {
+      "db_id": 9673,
+      "db_name": "Gokai"
+    },
+    {
+      "db_id": 9675,
+      "db_name": "Gonbee"
+    },
+    {
+      "db_id": 9677,
+      "db_name": "Gongorō Kamakura"
+    },
+    {
+      "db_id": 9679,
+      "db_name": "Goshiki"
+    },
+    {
+      "db_id": 9696,
+      "db_name": "Gōshō"
+    },
+    {
+      "db_id": 9681,
+      "db_name": "Gosunkugi"
+    },
+    {
+      "db_id": 9682,
+      "db_name": "Gotta"
+    },
+    {
+      "db_id": 9697,
+      "db_name": "Gōza"
+    },
+    {
+      "db_id": 9699,
+      "db_name": "Gōzu"
+    },
+    {
+      "db_id": 9685,
+      "db_name": "Gozu (Root)"
+    },
+    {
+      "db_id": 9688,
+      "db_name": "Guren"
+    },
+    {
+      "db_id": 9689,
+      "db_name": "Guren (prisoner)"
+    },
+    {
+      "db_id": 9690,
+      "db_name": "Guruko"
+    },
+    {
+      "db_id": 9692,
+      "db_name": "Gyokurō Chabashira"
+    },
+    {
+      "db_id": 9700,
+      "db_name": "Hachidai"
+    },
+    {
+      "db_id": 9702,
+      "db_name": "Hagiri"
+    },
+    {
+      "db_id": 9706,
+      "db_name": "Haguruma"
+    },
+    {
+      "db_id": 9708,
+      "db_name": "Haido"
+    },
+    {
+      "db_id": 9709,
+      "db_name": "Haie"
+    },
+    {
+      "db_id": 9711,
+      "db_name": "Hainosuke"
+    },
+    {
+      "db_id": 9713,
+      "db_name": "Hakkaku"
+    },
+    {
+      "db_id": 9715,
+      "db_name": "Hako Kuroi"
+    },
+    {
+      "db_id": 9717,
+      "db_name": "Hakobe Shigaraki"
+    },
+    {
+      "db_id": 9722,
+      "db_name": "Haku's Father"
+    },
+    {
+      "db_id": 9723,
+      "db_name": "Haku's Mother"
+    },
+    {
+      "db_id": 9727,
+      "db_name": "Hakubi Shin"
+    },
+    {
+      "db_id": 9729,
+      "db_name": "Hakuhyō"
+    },
+    {
+      "db_id": 9730,
+      "db_name": "Hakui"
+    },
+    {
+      "db_id": 9731,
+      "db_name": "Hakui (medic)"
+    },
+    {
+      "db_id": 9733,
+      "db_name": "Hakuto"
+    },
+    {
+      "db_id": 9735,
+      "db_name": "Hamaki Mimura"
+    },
+    {
+      "db_id": 9739,
+      "db_name": "Hamura Ōtsutsuki Golem"
+    },
+    {
+      "db_id": 9743,
+      "db_name": "Hana (student)"
+    },
+    {
+      "db_id": 9747,
+      "db_name": "Hana Kaka"
+    },
+    {
+      "db_id": 9752,
+      "db_name": "Hanare"
+    },
+    {
+      "db_id": 9754,
+      "db_name": "Hanuma"
+    },
+    {
+      "db_id": 9756,
+      "db_name": "Hanzaki"
+    },
+    {
+      "db_id": 9760,
+      "db_name": "Haori"
+    },
+    {
+      "db_id": 9762,
+      "db_name": "Harika Aburame"
+    },
+    {
+      "db_id": 9764,
+      "db_name": "Harine"
+    },
+    {
+      "db_id": 9766,
+      "db_name": "Haruna"
+    },
+    {
+      "db_id": 9768,
+      "db_name": "Harusame"
+    },
+    {
+      "db_id": 9771,
+      "db_name": "Hassaku Onomichi"
+    },
+    {
+      "db_id": 9885,
+      "db_name": "Hāto"
+    },
+    {
+      "db_id": 9773,
+      "db_name": "Hayama Shirakumo"
+    },
+    {
+      "db_id": 9775,
+      "db_name": "Hayase"
+    },
+    {
+      "db_id": 9777,
+      "db_name": "Hazuki Uchiha"
+    },
+    {
+      "db_id": 9779,
+      "db_name": "Head Ninja of Kumogakure"
+    },
+    {
+      "db_id": 9782,
+      "db_name": "Headman's Granddaughter"
+    },
+    {
+      "db_id": 9783,
+      "db_name": "Hebihime"
+    },
+    {
+      "db_id": 9786,
+      "db_name": "Hebiichigo"
+    },
+    {
+      "db_id": 9788,
+      "db_name": "Heiji"
+    },
+    {
+      "db_id": 9790,
+      "db_name": "Heki"
+    },
+    {
+      "db_id": 9796,
+      "db_name": "Hibachi"
+    },
+    {
+      "db_id": 9798,
+      "db_name": "Hibari"
+    },
+    {
+      "db_id": 9799,
+      "db_name": "Hibari Kamakura"
+    },
+    {
+      "db_id": 9801,
+      "db_name": "Hibiki"
+    },
+    {
+      "db_id": 9805,
+      "db_name": "Hidari"
+    },
+    {
+      "db_id": 9806,
+      "db_name": "Hidari (missing-nin)"
+    },
+    {
+      "db_id": 9808,
+      "db_name": "Hidero"
+    },
+    {
+      "db_id": 9810,
+      "db_name": "Hikaku Uchiha"
+    },
+    {
+      "db_id": 9812,
+      "db_name": "Hikari Uchiha"
+    },
+    {
+      "db_id": 9814,
+      "db_name": "Hikaru"
+    },
+    {
+      "db_id": 9815,
+      "db_name": "Hikaru Tsuki"
+    },
+    {
+      "db_id": 9817,
+      "db_name": "Himatsu"
+    },
+    {
+      "db_id": 9821,
+      "db_name": "Himeno"
+    },
+    {
+      "db_id": 9823,
+      "db_name": "Himeyuri"
+    },
+    {
+      "db_id": 9824,
+      "db_name": "Himuka Suzukaze"
+    },
+    {
+      "db_id": 9825,
+      "db_name": "Himushi"
+    },
+    {
+      "db_id": 9826,
+      "db_name": "Hina"
+    },
+    {
+      "db_id": 9827,
+      "db_name": "Hinata and Hanabi's Mother"
+    },
+    {
+      "db_id": 9832,
+      "db_name": "Hinoe"
+    },
+    {
+      "db_id": 9834,
+      "db_name": "Hinoki"
+    },
+    {
+      "db_id": 9836,
+      "db_name": "Hinoko"
+    },
+    {
+      "db_id": 9838,
+      "db_name": "Hinoto"
+    },
+    {
+      "db_id": 9840,
+      "db_name": "Hippo Boss"
+    },
+    {
+      "db_id": 9841,
+      "db_name": "Hiruga"
+    },
+    {
+      "db_id": 9843,
+      "db_name": "Hiruko (missing-nin)"
+    },
+    {
+      "db_id": 9844,
+      "db_name": "Hiruko (shinobi)"
+    },
+    {
+      "db_id": 9848,
+      "db_name": "Hisame"
+    },
+    {
+      "db_id": 9849,
+      "db_name": "Hisen"
+    },
+    {
+      "db_id": 9850,
+      "db_name": "Hishaku"
+    },
+    {
+      "db_id": 9851,
+      "db_name": "Hitode"
+    },
+    {
+      "db_id": 9855,
+      "db_name": "Hoheto Hyūga"
+    },
+    {
+      "db_id": 9857,
+      "db_name": "Hohozuki"
+    },
+    {
+      "db_id": 9887,
+      "db_name": "Hōichi"
+    },
+    {
+      "db_id": 9889,
+      "db_name": "Hōki (Takigakure)"
+    },
+    {
+      "db_id": 9891,
+      "db_name": "Hōki (Takumi)"
+    },
+    {
+      "db_id": 9892,
+      "db_name": "Hōki (Watari)"
+    },
+    {
+      "db_id": 9895,
+      "db_name": "Hōki Taketori"
+    },
+    {
+      "db_id": 9860,
+      "db_name": "Hokushin"
+    },
+    {
+      "db_id": 9863,
+      "db_name": "Hokuto"
+    },
+    {
+      "db_id": 9865,
+      "db_name": "Honoka"
+    },
+    {
+      "db_id": 9897,
+      "db_name": "Hōsei"
+    },
+    {
+      "db_id": 9899,
+      "db_name": "Hōshō"
+    },
+    {
+      "db_id": 9866,
+      "db_name": "Hot Water Daimyō"
+    },
+    {
+      "db_id": 9869,
+      "db_name": "Hotaru"
+    },
+    {
+      "db_id": 9871,
+      "db_name": "Hotarubi"
+    },
+    {
+      "db_id": 9900,
+      "db_name": "Hōzuki Castle's Ninken"
+    },
+    {
+      "db_id": 9872,
+      "db_name": "Human Path (character)"
+    },
+    {
+      "db_id": 9876,
+      "db_name": "Hyō"
+    },
+    {
+      "db_id": 9878,
+      "db_name": "Hyōgo"
+    },
+    {
+      "db_id": 9880,
+      "db_name": "Hyōi Yorishiro"
+    },
+    {
+      "db_id": 9883,
+      "db_name": "Hyūga Elder"
+    },
+    {
+      "db_id": 9902,
+      "db_name": "Ibara"
+    },
+    {
+      "db_id": 9907,
+      "db_name": "Ibuse"
+    },
+    {
+      "db_id": 9909,
+      "db_name": "Ibushi"
+    },
+    {
+      "db_id": 9911,
+      "db_name": "Ichi"
+    },
+    {
+      "db_id": 9914,
+      "db_name": "Ichigen"
+    },
+    {
+      "db_id": 9915,
+      "db_name": "Ichikishimahime"
+    },
+    {
+      "db_id": 9917,
+      "db_name": "Ichirōta Oniyuzu"
+    },
+    {
+      "db_id": 9918,
+      "db_name": "Idate Morino"
+    },
+    {
+      "db_id": 9919,
+      "db_name": "Iggy"
+    },
+    {
+      "db_id": 9920,
+      "db_name": "Ikada Funato"
+    },
+    {
+      "db_id": 9922,
+      "db_name": "Ikanago"
+    },
+    {
+      "db_id": 9925,
+      "db_name": "Ikkaku Umino"
+    },
+    {
+      "db_id": 9926,
+      "db_name": "Ikkyū Madoka"
+    },
+    {
+      "db_id": 9928,
+      "db_name": "Inabi Uchiha"
+    },
+    {
+      "db_id": 9930,
+      "db_name": "Inagi"
+    },
+    {
+      "db_id": 9932,
+      "db_name": "Inaho"
+    },
+    {
+      "db_id": 9942,
+      "db_name": "Ino's Mother"
+    },
+    {
+      "db_id": 9949,
+      "db_name": "Inomatsu"
+    },
+    {
+      "db_id": 9950,
+      "db_name": "Inori"
+    },
+    {
+      "db_id": 9951,
+      "db_name": "Inori's Brother"
+    },
+    {
+      "db_id": 10022,
+      "db_name": "Iō"
+    },
+    {
+      "db_id": 10023,
+      "db_name": "Iō (Bamboo Village)"
+    },
+    {
+      "db_id": 10024,
+      "db_name": "Iō (medical-nin)"
+    },
+    {
+      "db_id": 9954,
+      "db_name": "Iori"
+    },
+    {
+      "db_id": 9955,
+      "db_name": "Iroha (Genin)"
+    },
+    {
+      "db_id": 9957,
+      "db_name": "Iroha Hyūga"
+    },
+    {
+      "db_id": 9961,
+      "db_name": "Isago"
+    },
+    {
+      "db_id": 9962,
+      "db_name": "Isago (anime)"
+    },
+    {
+      "db_id": 9965,
+      "db_name": "Isari Funato"
+    },
+    {
+      "db_id": 9967,
+      "db_name": "Isaribi"
+    },
+    {
+      "db_id": 9969,
+      "db_name": "Ise"
+    },
+    {
+      "db_id": 9971,
+      "db_name": "Ishidate"
+    },
+    {
+      "db_id": 9973,
+      "db_name": "Ishikawa"
+    },
+    {
+      "db_id": 9977,
+      "db_name": "Isono"
+    },
+    {
+      "db_id": 9983,
+      "db_name": "Itachi's Crow"
+    },
+    {
+      "db_id": 9985,
+      "db_name": "Itama Senju"
+    },
+    {
+      "db_id": 9987,
+      "db_name": "Ittan"
+    },
+    {
+      "db_id": 9989,
+      "db_name": "Ittetsu"
+    },
+    {
+      "db_id": 9991,
+      "db_name": "Iwa Doctor"
+    },
+    {
+      "db_id": 9994,
+      "db_name": "Iwa Kunoichi"
+    },
+    {
+      "db_id": 9998,
+      "db_name": "Iwaji"
+    },
+    {
+      "db_id": 10000,
+      "db_name": "Iwakyō"
+    },
+    {
+      "db_id": 10001,
+      "db_name": "Iwana (citizen)"
+    },
+    {
+      "db_id": 10002,
+      "db_name": "Iwana (Otogakure)"
+    },
+    {
+      "db_id": 10004,
+      "db_name": "Iwana Akame"
+    },
+    {
+      "db_id": 10006,
+      "db_name": "Iwashi Tatami"
+    },
+    {
+      "db_id": 10008,
+      "db_name": "Iwato"
+    },
+    {
+      "db_id": 10010,
+      "db_name": "Iwazō"
+    },
+    {
+      "db_id": 10012,
+      "db_name": "Iyashi"
+    },
+    {
+      "db_id": 10014,
+      "db_name": "Izumi Uchiha"
+    },
+    {
+      "db_id": 10026,
+      "db_name": "J"
+    },
+    {
+      "db_id": 10029,
+      "db_name": "Jaggy"
+    },
+    {
+      "db_id": 10031,
+      "db_name": "Jako"
+    },
+    {
+      "db_id": 10033,
+      "db_name": "Jakō Ryūdōin"
+    },
+    {
+      "db_id": 10035,
+      "db_name": "Janmāru-Tataru"
+    },
+    {
+      "db_id": 10037,
+      "db_name": "Jantō"
+    },
+    {
+      "db_id": 10039,
+      "db_name": "Jibachi"
+    },
+    {
+      "db_id": 10041,
+      "db_name": "Jibiki"
+    },
+    {
+      "db_id": 10044,
+      "db_name": "Jiga"
+    },
+    {
+      "db_id": 10049,
+      "db_name": "Jigumo"
+    },
+    {
+      "db_id": 10050,
+      "db_name": "Jiji"
+    },
+    {
+      "db_id": 10053,
+      "db_name": "Jimei"
+    },
+    {
+      "db_id": 10055,
+      "db_name": "Jin"
+    },
+    {
+      "db_id": 10056,
+      "db_name": "Jin Kaminari"
+    },
+    {
+      "db_id": 10060,
+      "db_name": "Jingo Kumano"
+    },
+    {
+      "db_id": 10070,
+      "db_name": "Jirō"
+    },
+    {
+      "db_id": 10074,
+      "db_name": "Jirōchō Wasabi"
+    },
+    {
+      "db_id": 10069,
+      "db_name": "Jiryū Sendō"
+    },
+    {
+      "db_id": 10076,
+      "db_name": "JJ"
+    },
+    {
+      "db_id": 10084,
+      "db_name": "Jōmae Village Head"
+    },
+    {
+      "db_id": 10086,
+      "db_name": "Jōseki"
+    },
+    {
+      "db_id": 10078,
+      "db_name": "Jujumaru"
+    },
+    {
+      "db_id": 10080,
+      "db_name": "Junsai"
+    },
+    {
+      "db_id": 10082,
+      "db_name": "Jura"
+    },
+    {
+      "db_id": 10089,
+      "db_name": "Jūzō Biwa"
+    },
+    {
+      "db_id": 10092,
+      "db_name": "K"
+    },
+    {
+      "db_id": 10094,
+      "db_name": "Kabure Tokisuki"
+    },
+    {
+      "db_id": 10099,
+      "db_name": "Kabuto's Sensei"
+    },
+    {
+      "db_id": 10101,
+      "db_name": "Kae Yukiwari"
+    },
+    {
+      "db_id": 10103,
+      "db_name": "Kaede"
+    },
+    {
+      "db_id": 10106,
+      "db_name": "Kaede Yoshino"
+    },
+    {
+      "db_id": 10111,
+      "db_name": "Kagari"
+    },
+    {
+      "db_id": 10112,
+      "db_name": "Kagari (cultist)"
+    },
+    {
+      "db_id": 10113,
+      "db_name": "Kage (Anbu)"
+    },
+    {
+      "db_id": 10116,
+      "db_name": "Kageki"
+    },
+    {
+      "db_id": 10117,
+      "db_name": "Kagen Uchiha"
+    },
+    {
+      "db_id": 10119,
+      "db_name": "Kagerō"
+    },
+    {
+      "db_id": 10120,
+      "db_name": "Kagura (game)"
+    },
+    {
+      "db_id": 10124,
+      "db_name": "Kaguya Clan Patriarch"
+    },
+    {
+      "db_id": 10127,
+      "db_name": "Kahiko"
+    },
+    {
+      "db_id": 10129,
+      "db_name": "Kahyō"
+    },
+    {
+      "db_id": 10131,
+      "db_name": "Kail"
+    },
+    {
+      "db_id": 10134,
+      "db_name": "Kaito Kawanami"
+    },
+    {
+      "db_id": 10138,
+      "db_name": "Kaji"
+    },
+    {
+      "db_id": 10141,
+      "db_name": "Kajika"
+    },
+    {
+      "db_id": 10143,
+      "db_name": "Kajiki"
+    },
+    {
+      "db_id": 10145,
+      "db_name": "Kajūra"
+    },
+    {
+      "db_id": 10150,
+      "db_name": "Kakeru Tsuki"
+    },
+    {
+      "db_id": 10152,
+      "db_name": "Kakesu"
+    },
+    {
+      "db_id": 10154,
+      "db_name": "Kakkō"
+    },
+    {
+      "db_id": 10164,
+      "db_name": "Kakō"
+    },
+    {
+      "db_id": 10155,
+      "db_name": "Kakoi"
+    },
+    {
+      "db_id": 10158,
+      "db_name": "Kakui"
+    },
+    {
+      "db_id": 10161,
+      "db_name": "Kakuzu's Partner"
+    },
+    {
+      "db_id": 10166,
+      "db_name": "Kamakiri Ikeno"
+    },
+    {
+      "db_id": 10168,
+      "db_name": "Kamata"
+    },
+    {
+      "db_id": 10170,
+      "db_name": "Kamatari"
+    },
+    {
+      "db_id": 10173,
+      "db_name": "Kamikiri"
+    },
+    {
+      "db_id": 10175,
+      "db_name": "Kamira"
+    },
+    {
+      "db_id": 10178,
+      "db_name": "Kanabun"
+    },
+    {
+      "db_id": 10179,
+      "db_name": "Kanchi"
+    },
+    {
+      "db_id": 10181,
+      "db_name": "Kandachi"
+    },
+    {
+      "db_id": 10183,
+      "db_name": "Kande Inabikari"
+    },
+    {
+      "db_id": 10185,
+      "db_name": "Kaneki"
+    },
+    {
+      "db_id": 10187,
+      "db_name": "Kankitsu Akitsuki"
+    },
+    {
+      "db_id": 10190,
+      "db_name": "Kanna"
+    },
+    {
+      "db_id": 10192,
+      "db_name": "Kanna (carpenter)"
+    },
+    {
+      "db_id": 10194,
+      "db_name": "Kanoe"
+    },
+    {
+      "db_id": 10196,
+      "db_name": "Kanoto"
+    },
+    {
+      "db_id": 10199,
+      "db_name": "Kanpō"
+    },
+    {
+      "db_id": 10197,
+      "db_name": "Kanpu"
+    },
+    {
+      "db_id": 10201,
+      "db_name": "Kanyū"
+    },
+    {
+      "db_id": 10203,
+      "db_name": "Kaori"
+    },
+    {
+      "db_id": 10205,
+      "db_name": "Karai"
+    },
+    {
+      "db_id": 10206,
+      "db_name": "Karashi"
+    },
+    {
+      "db_id": 10209,
+      "db_name": "Karasuki"
+    },
+    {
+      "db_id": 10211,
+      "db_name": "Karenbana"
+    },
+    {
+      "db_id": 10216,
+      "db_name": "Karin Kagura"
+    },
+    {
+      "db_id": 10219,
+      "db_name": "Karin's Mother"
+    },
+    {
+      "db_id": 10222,
+      "db_name": "Karura"
+    },
+    {
+      "db_id": 10225,
+      "db_name": "Karyū"
+    },
+    {
+      "db_id": 10226,
+      "db_name": "Kashike"
+    },
+    {
+      "db_id": 10228,
+      "db_name": "Kasuga Nara"
+    },
+    {
+      "db_id": 10230,
+      "db_name": "Kasumi"
+    },
+    {
+      "db_id": 10231,
+      "db_name": "Kasumi (Castle Dusk)"
+    },
+    {
+      "db_id": 10233,
+      "db_name": "Katara"
+    },
+    {
+      "db_id": 10236,
+      "db_name": "Katazu"
+    },
+    {
+      "db_id": 10238,
+      "db_name": "Katsura"
+    },
+    {
+      "db_id": 10242,
+      "db_name": "Katsuyu"
+    },
+    {
+      "db_id": 10246,
+      "db_name": "Kawarama Senju"
+    },
+    {
+      "db_id": 10248,
+      "db_name": "Kaya"
+    },
+    {
+      "db_id": 10249,
+      "db_name": "Kayo"
+    },
+    {
+      "db_id": 10251,
+      "db_name": "Kayui"
+    },
+    {
+      "db_id": 10253,
+      "db_name": "Kazabune"
+    },
+    {
+      "db_id": 10255,
+      "db_name": "Kazami"
+    },
+    {
+      "db_id": 10257,
+      "db_name": "Kazan"
+    },
+    {
+      "db_id": 10259,
+      "db_name": "Kazuma"
+    },
+    {
+      "db_id": 10261,
+      "db_name": "Kedama"
+    },
+    {
+      "db_id": 10263,
+      "db_name": "Kegon"
+    },
+    {
+      "db_id": 10264,
+      "db_name": "Keiri"
+    },
+    {
+      "db_id": 10269,
+      "db_name": "Kido Tsumiki"
+    },
+    {
+      "db_id": 10274,
+      "db_name": "Kie"
+    },
+    {
+      "db_id": 10276,
+      "db_name": "Kigiri"
+    },
+    {
+      "db_id": 10278,
+      "db_name": "Kihō"
+    },
+    {
+      "db_id": 10280,
+      "db_name": "Kiiro"
+    },
+    {
+      "db_id": 10282,
+      "db_name": "Kiji"
+    },
+    {
+      "db_id": 10284,
+      "db_name": "Kiki"
+    },
+    {
+      "db_id": 10286,
+      "db_name": "Kiku"
+    },
+    {
+      "db_id": 10288,
+      "db_name": "Kikuchiyo"
+    },
+    {
+      "db_id": 10290,
+      "db_name": "Kikunojō"
+    },
+    {
+      "db_id": 10295,
+      "db_name": "Kin (actor)"
+    },
+    {
+      "db_id": 10299,
+      "db_name": "Kina Kodon"
+    },
+    {
+      "db_id": 10301,
+      "db_name": "Kinetsu"
+    },
+    {
+      "db_id": 10303,
+      "db_name": "King"
+    },
+    {
+      "db_id": 10305,
+      "db_name": "King of Hell"
+    },
+    {
+      "db_id": 10307,
+      "db_name": "Kinkaku"
+    },
+    {
+      "db_id": 10309,
+      "db_name": "Kinoto"
+    },
+    {
+      "db_id": 10313,
+      "db_name": "Kintoki"
+    },
+    {
+      "db_id": 10315,
+      "db_name": "Kirara"
+    },
+    {
+      "db_id": 10316,
+      "db_name": "Kiri (ninja)"
+    },
+    {
+      "db_id": 10317,
+      "db_name": "Kiri (villager)"
+    },
+    {
+      "db_id": 10319,
+      "db_name": "Kirisaki"
+    },
+    {
+      "db_id": 10322,
+      "db_name": "Kirisame"
+    },
+    {
+      "db_id": 10324,
+      "db_name": "Kiruru"
+    },
+    {
+      "db_id": 10330,
+      "db_name": "Kiseru Gankubi"
+    },
+    {
+      "db_id": 10333,
+      "db_name": "Kisuke Maboroshi"
+    },
+    {
+      "db_id": 10335,
+      "db_name": "Kisuke's Wife"
+    },
+    {
+      "db_id": 10337,
+      "db_name": "Kitane"
+    },
+    {
+      "db_id": 10341,
+      "db_name": "Kitō"
+    },
+    {
+      "db_id": 10340,
+      "db_name": "Kitsuchi"
+    },
+    {
+      "db_id": 10343,
+      "db_name": "Kiyoi Yotsuki"
+    },
+    {
+      "db_id": 10345,
+      "db_name": "Kiyomu Fukuda"
+    },
+    {
+      "db_id": 10347,
+      "db_name": "Kiyoyasu Kagetsu"
+    },
+    {
+      "db_id": 10349,
+      "db_name": "Kizashi Haruno"
+    },
+    {
+      "db_id": 10506,
+      "db_name": "Kō (Anbu)"
+    },
+    {
+      "db_id": 10508,
+      "db_name": "Kō Hyūga"
+    },
+    {
+      "db_id": 10510,
+      "db_name": "Kō Kogare"
+    },
+    {
+      "db_id": 10351,
+      "db_name": "Kobanza"
+    },
+    {
+      "db_id": 10353,
+      "db_name": "Kobu"
+    },
+    {
+      "db_id": 10355,
+      "db_name": "Kobuna"
+    },
+    {
+      "db_id": 10356,
+      "db_name": "Kobushi Saiki"
+    },
+    {
+      "db_id": 10358,
+      "db_name": "Kodaka"
+    },
+    {
+      "db_id": 10360,
+      "db_name": "Kodama"
+    },
+    {
+      "db_id": 10362,
+      "db_name": "Kohada"
+    },
+    {
+      "db_id": 10364,
+      "db_name": "Kohan Yamanaka"
+    },
+    {
+      "db_id": 10366,
+      "db_name": "Kohari Umino"
+    },
+    {
+      "db_id": 10512,
+      "db_name": "Kōji"
+    },
+    {
+      "db_id": 10513,
+      "db_name": "Kōji (Suna)"
+    },
+    {
+      "db_id": 10373,
+      "db_name": "Kokage Yanagikage"
+    },
+    {
+      "db_id": 10374,
+      "db_name": "Kokatsu"
+    },
+    {
+      "db_id": 10376,
+      "db_name": "Kokuri"
+    },
+    {
+      "db_id": 10378,
+      "db_name": "Kokushi"
+    },
+    {
+      "db_id": 10380,
+      "db_name": "Kokuyō"
+    },
+    {
+      "db_id": 10382,
+      "db_name": "Kokuyō (puppeteer)"
+    },
+    {
+      "db_id": 10386,
+      "db_name": "Komachi"
+    },
+    {
+      "db_id": 10388,
+      "db_name": "Komame"
+    },
+    {
+      "db_id": 10390,
+      "db_name": "Komaza"
+    },
+    {
+      "db_id": 10515,
+      "db_name": "Kōmei"
+    },
+    {
+      "db_id": 10392,
+      "db_name": "Komichi"
+    },
+    {
+      "db_id": 10395,
+      "db_name": "Komitsu"
+    },
+    {
+      "db_id": 10396,
+      "db_name": "Komori"
+    },
+    {
+      "db_id": 10398,
+      "db_name": "Komugi"
+    },
+    {
+      "db_id": 10400,
+      "db_name": "Komushi"
+    },
+    {
+      "db_id": 10403,
+      "db_name": "Kona"
+    },
+    {
+      "db_id": 10407,
+      "db_name": "Konashi Nerikiri"
+    },
+    {
+      "db_id": 10409,
+      "db_name": "Konenmaru"
+    },
+    {
+      "db_id": 10411,
+      "db_name": "Kongō"
+    },
+    {
+      "db_id": 10414,
+      "db_name": "Konoha Astronomer"
+    },
+    {
+      "db_id": 10419,
+      "db_name": "Kontsuchi"
+    },
+    {
+      "db_id": 10421,
+      "db_name": "Korega"
+    },
+    {
+      "db_id": 10423,
+      "db_name": "Korobi"
+    },
+    {
+      "db_id": 10517,
+      "db_name": "Kōrogi"
+    },
+    {
+      "db_id": 10425,
+      "db_name": "Koshō"
+    },
+    {
+      "db_id": 10427,
+      "db_name": "Kosuke"
+    },
+    {
+      "db_id": 10519,
+      "db_name": "Kōsuke"
+    },
+    {
+      "db_id": 10520,
+      "db_name": "Kōsuke (Scientist)"
+    },
+    {
+      "db_id": 10429,
+      "db_name": "Kosuke Maruboshi"
+    },
+    {
+      "db_id": 10522,
+      "db_name": "Kōta"
+    },
+    {
+      "db_id": 10524,
+      "db_name": "Kōtarō Fūma"
+    },
+    {
+      "db_id": 10434,
+      "db_name": "Kotohime"
+    },
+    {
+      "db_id": 10435,
+      "db_name": "Koyuki Kazahana"
+    },
+    {
+      "db_id": 10528,
+      "db_name": "Kōza Kubisaki"
+    },
+    {
+      "db_id": 10437,
+      "db_name": "Kozuchi"
+    },
+    {
+      "db_id": 10530,
+      "db_name": "Kū"
+    },
+    {
+      "db_id": 10440,
+      "db_name": "Kuen"
+    },
+    {
+      "db_id": 10532,
+      "db_name": "Kūi Dōtonbori"
+    },
+    {
+      "db_id": 10442,
+      "db_name": "Kujaku"
+    },
+    {
+      "db_id": 10445,
+      "db_name": "Kuma Panda"
+    },
+    {
+      "db_id": 10447,
+      "db_name": "Kumade Toriichi"
+    },
+    {
+      "db_id": 10448,
+      "db_name": "Kumadori"
+    },
+    {
+      "db_id": 10450,
+      "db_name": "Kumo Reincarnated Shinobi"
+    },
+    {
+      "db_id": 10452,
+      "db_name": "Kunihisa"
+    },
+    {
+      "db_id": 10454,
+      "db_name": "Kunijirō"
+    },
+    {
+      "db_id": 10456,
+      "db_name": "Kunugi Mokume"
+    },
+    {
+      "db_id": 10458,
+      "db_name": "Kura Kageno"
+    },
+    {
+      "db_id": 10465,
+      "db_name": "Kurobachi"
+    },
+    {
+      "db_id": 10467,
+      "db_name": "Kurobane"
+    },
+    {
+      "db_id": 10469,
+      "db_name": "Kuroma Tatsushiro"
+    },
+    {
+      "db_id": 10471,
+      "db_name": "Kuromaru"
+    },
+    {
+      "db_id": 10475,
+      "db_name": "Kurozuka"
+    },
+    {
+      "db_id": 10477,
+      "db_name": "Kusabi"
+    },
+    {
+      "db_id": 10483,
+      "db_name": "Kussaku"
+    },
+    {
+      "db_id": 10485,
+      "db_name": "Kusuma"
+    },
+    {
+      "db_id": 10487,
+      "db_name": "Kusuna"
+    },
+    {
+      "db_id": 10489,
+      "db_name": "Kusune"
+    },
+    {
+      "db_id": 10492,
+      "db_name": "Kusushi"
+    },
+    {
+      "db_id": 10494,
+      "db_name": "Kuwa Yokohori"
+    },
+    {
+      "db_id": 10496,
+      "db_name": "Kyodaigumo"
+    },
+    {
+      "db_id": 10498,
+      "db_name": "Kyohō Fuefuki"
+    },
+    {
+      "db_id": 10501,
+      "db_name": "Kyōya"
+    },
+    {
+      "db_id": 10503,
+      "db_name": "Kyūroku Wagarashi"
+    },
+    {
+      "db_id": 10505,
+      "db_name": "Kyūsuke"
+    },
+    {
+      "db_id": 10533,
+      "db_name": "Lando"
+    },
+    {
+      "db_id": 10535,
+      "db_name": "Lars Alexandersson"
+    },
+    {
+      "db_id": 10537,
+      "db_name": "Leh"
+    },
+    {
+      "db_id": 10539,
+      "db_name": "Leo"
+    },
+    {
+      "db_id": 10541,
+      "db_name": "Lightning Daimyō"
+    },
+    {
+      "db_id": 10543,
+      "db_name": "Lily Himeno"
+    },
+    {
+      "db_id": 10545,
+      "db_name": "Lion-Turtle"
+    },
+    {
+      "db_id": 10546,
+      "db_name": "Log"
+    },
+    {
+      "db_id": 10549,
+      "db_name": "Lyla"
+    },
+    {
+      "db_id": 10551,
+      "db_name": "Mabo"
+    },
+    {
+      "db_id": 10555,
+      "db_name": "Madam Shijimi"
+    },
+    {
+      "db_id": 10560,
+      "db_name": "Maen Nara"
+    },
+    {
+      "db_id": 10562,
+      "db_name": "Magire"
+    },
+    {
+      "db_id": 10564,
+      "db_name": "Magire Kakuremino"
+    },
+    {
+      "db_id": 10567,
+      "db_name": "Mahiru"
+    },
+    {
+      "db_id": 10569,
+      "db_name": "Mai Kagetsu"
+    },
+    {
+      "db_id": 10571,
+      "db_name": "Makaro Akimichi"
+    },
+    {
+      "db_id": 10573,
+      "db_name": "Maki"
+    },
+    {
+      "db_id": 10574,
+      "db_name": "Makibi"
+    },
+    {
+      "db_id": 10576,
+      "db_name": "Makinami Senka"
+    },
+    {
+      "db_id": 10578,
+      "db_name": "Makino"
+    },
+    {
+      "db_id": 10581,
+      "db_name": "Malice"
+    },
+    {
+      "db_id": 10583,
+      "db_name": "Mamushi"
+    },
+    {
+      "db_id": 10585,
+      "db_name": "Mamushi (Genin)"
+    },
+    {
+      "db_id": 10587,
+      "db_name": "Manabu Akado"
+    },
+    {
+      "db_id": 10589,
+      "db_name": "Manari"
+    },
+    {
+      "db_id": 10591,
+      "db_name": "Manda"
+    },
+    {
+      "db_id": 10593,
+      "db_name": "Manda II"
+    },
+    {
+      "db_id": 10597,
+      "db_name": "Margo"
+    },
+    {
+      "db_id": 10600,
+      "db_name": "Maroi"
+    },
+    {
+      "db_id": 10602,
+      "db_name": "Marui"
+    },
+    {
+      "db_id": 10604,
+      "db_name": "Maruta"
+    },
+    {
+      "db_id": 10606,
+      "db_name": "Maruten Akimichi"
+    },
+    {
+      "db_id": 10608,
+      "db_name": "Masako"
+    },
+    {
+      "db_id": 10610,
+      "db_name": "Mashō"
+    },
+    {
+      "db_id": 10612,
+      "db_name": "Master Puppet"
+    },
+    {
+      "db_id": 10616,
+      "db_name": "Matsu"
+    },
+    {
+      "db_id": 10618,
+      "db_name": "Matsuba"
+    },
+    {
+      "db_id": 10620,
+      "db_name": "Matsuri"
+    },
+    {
+      "db_id": 10621,
+      "db_name": "Matsuri (God Tree)"
+    },
+    {
+      "db_id": 10623,
+      "db_name": "Matsuri (Konoha)"
+    },
+    {
+      "db_id": 10624,
+      "db_name": "Mawashi Dokuraku"
+    },
+    {
+      "db_id": 10626,
+      "db_name": "Mazuma Izuno"
+    },
+    {
+      "db_id": 10629,
+      "db_name": "Mebuki Haruno"
+    },
+    {
+      "db_id": 10631,
+      "db_name": "Mecha-Kurama"
+    },
+    {
+      "db_id": 10633,
+      "db_name": "Mecha-Naruto"
+    },
+    {
+      "db_id": 10638,
+      "db_name": "Menma (anime)"
+    },
+    {
+      "db_id": 10641,
+      "db_name": "Menma Namikaze"
+    },
+    {
+      "db_id": 10643,
+      "db_name": "Menma Uzumaki"
+    },
+    {
+      "db_id": 10645,
+      "db_name": "Menō"
+    },
+    {
+      "db_id": 10646,
+      "db_name": "Menō (ninja)"
+    },
+    {
+      "db_id": 10648,
+      "db_name": "Merz"
+    },
+    {
+      "db_id": 10650,
+      "db_name": "Messenger Lizard"
+    },
+    {
+      "db_id": 10655,
+      "db_name": "Metoro Konjiki"
+    },
+    {
+      "db_id": 10657,
+      "db_name": "Mezu"
+    },
+    {
+      "db_id": 10658,
+      "db_name": "Mezu (missing-nin)"
+    },
+    {
+      "db_id": 10660,
+      "db_name": "Mia"
+    },
+    {
+      "db_id": 10661,
+      "db_name": "Mibuna"
+    },
+    {
+      "db_id": 10663,
+      "db_name": "Michiru Tsuki"
+    },
+    {
+      "db_id": 10664,
+      "db_name": "Michizō Manaka"
+    },
+    {
+      "db_id": 10666,
+      "db_name": "Michy"
+    },
+    {
+      "db_id": 10668,
+      "db_name": "Midare"
+    },
+    {
+      "db_id": 10745,
+      "db_name": "Midnight Blade"
+    },
+    {
+      "db_id": 10746,
+      "db_name": "Midori"
+    },
+    {
+      "db_id": 10747,
+      "db_name": "Midori (game)"
+    },
+    {
+      "db_id": 10749,
+      "db_name": "Migaki"
+    },
+    {
+      "db_id": 10750,
+      "db_name": "Might Duy"
+    },
+    {
+      "db_id": 10752,
+      "db_name": "Miina"
+    },
+    {
+      "db_id": 10753,
+      "db_name": "Mijin"
+    },
+    {
+      "db_id": 10754,
+      "db_name": "Mikazuki"
+    },
+    {
+      "db_id": 10755,
+      "db_name": "Mikazuki Amaashi"
+    },
+    {
+      "db_id": 10756,
+      "db_name": "Mikoshi"
+    },
+    {
+      "db_id": 10758,
+      "db_name": "Mimi Inuzuka"
+    },
+    {
+      "db_id": 10759,
+      "db_name": "Minamo Funato"
+    },
+    {
+      "db_id": 10826,
+      "db_name": "Minoichi"
+    },
+    {
+      "db_id": 10779,
+      "db_name": "Minoji"
+    },
+    {
+      "db_id": 10780,
+      "db_name": "Mirai Sarutobi"
+    },
+    {
+      "db_id": 10781,
+      "db_name": "Miroku"
+    },
+    {
+      "db_id": 10782,
+      "db_name": "Miru"
+    },
+    {
+      "db_id": 10784,
+      "db_name": "Misuno"
+    },
+    {
+      "db_id": 10785,
+      "db_name": "Mitate"
+    },
+    {
+      "db_id": 10787,
+      "db_name": "Mitoku"
+    },
+    {
+      "db_id": 10789,
+      "db_name": "Mitsuo"
+    },
+    {
+      "db_id": 10790,
+      "db_name": "Mizore Fuyukuma"
+    },
+    {
+      "db_id": 10791,
+      "db_name": "Mizugoke"
+    },
+    {
+      "db_id": 10793,
+      "db_name": "Mizunoe"
+    },
+    {
+      "db_id": 10794,
+      "db_name": "Mizunoto"
+    },
+    {
+      "db_id": 10795,
+      "db_name": "Mizura"
+    },
+    {
+      "db_id": 10796,
+      "db_name": "Mo"
+    },
+    {
+      "db_id": 10846,
+      "db_name": "Moguranmaru"
+    },
+    {
+      "db_id": 10798,
+      "db_name": "Mogusa"
+    },
+    {
+      "db_id": 10799,
+      "db_name": "Mokume Arai"
+    },
+    {
+      "db_id": 10800,
+      "db_name": "Momiji"
+    },
+    {
+      "db_id": 10801,
+      "db_name": "Momiji (Tanzaku)"
+    },
+    {
+      "db_id": 10810,
+      "db_name": "Momo"
+    },
+    {
+      "db_id": 10811,
+      "db_name": "Momo (ninneko)"
+    },
+    {
+      "db_id": 10854,
+      "db_name": "Mondai"
+    },
+    {
+      "db_id": 10813,
+      "db_name": "Monga"
+    },
+    {
+      "db_id": 10856,
+      "db_name": "Monju"
+    },
+    {
+      "db_id": 10857,
+      "db_name": "Monkey King: Enma"
+    },
+    {
+      "db_id": 10858,
+      "db_name": "Monzaemon Chikamatsu"
+    },
+    {
+      "db_id": 10859,
+      "db_name": "Morio"
+    },
+    {
+      "db_id": 10860,
+      "db_name": "Moroi"
+    },
+    {
+      "db_id": 10880,
+      "db_name": "Mōryō"
+    },
+    {
+      "db_id": 10861,
+      "db_name": "Motoi"
+    },
+    {
+      "db_id": 10862,
+      "db_name": "Mozu Shitakiri"
+    },
+    {
+      "db_id": 10863,
+      "db_name": "Mozuku"
+    },
+    {
+      "db_id": 10864,
+      "db_name": "Mozuku (criminal)"
+    },
+    {
+      "db_id": 10865,
+      "db_name": "Mozuku (Land of Calm Seas)"
+    },
+    {
+      "db_id": 10866,
+      "db_name": "Mubi"
+    },
+    {
+      "db_id": 10867,
+      "db_name": "Mugino"
+    },
+    {
+      "db_id": 10868,
+      "db_name": "Mui"
+    },
+    {
+      "db_id": 10869,
+      "db_name": "Mujin"
+    },
+    {
+      "db_id": 10870,
+      "db_name": "Mujō"
+    },
+    {
+      "db_id": 10871,
+      "db_name": "Mukade"
+    },
+    {
+      "db_id": 10872,
+      "db_name": "Mukade (movie)"
+    },
+    {
+      "db_id": 10873,
+      "db_name": "Mukai Kohinata"
+    },
+    {
+      "db_id": 10874,
+      "db_name": "Muku"
+    },
+    {
+      "db_id": 10875,
+      "db_name": "Murakumo Kurama"
+    },
+    {
+      "db_id": 10876,
+      "db_name": "Murasame"
+    },
+    {
+      "db_id": 10877,
+      "db_name": "Musai"
+    },
+    {
+      "db_id": 10878,
+      "db_name": "Muta Aburame"
+    },
+    {
+      "db_id": 10879,
+      "db_name": "Muyami"
+    },
+    {
+      "db_id": 10882,
+      "db_name": "Nadare Rōga"
+    },
+    {
+      "db_id": 10883,
+      "db_name": "Nae"
+    },
+    {
+      "db_id": 10884,
+      "db_name": "Nagare"
+    },
+    {
+      "db_id": 10886,
+      "db_name": "Naho"
+    },
+    {
+      "db_id": 10887,
+      "db_name": "Naka Uchiha"
+    },
+    {
+      "db_id": 10888,
+      "db_name": "Namida Suzumeno"
+    },
+    {
+      "db_id": 10889,
+      "db_name": "Namua"
+    },
+    {
+      "db_id": 10890,
+      "db_name": "Nan"
+    },
+    {
+      "db_id": 10891,
+      "db_name": "Nanafushi"
+    },
+    {
+      "db_id": 10892,
+      "db_name": "Nanara"
+    },
+    {
+      "db_id": 10893,
+      "db_name": "Nangō"
+    },
+    {
+      "db_id": 10894,
+      "db_name": "Naori Uchiha"
+    },
+    {
+      "db_id": 10895,
+      "db_name": "Naraka Path (character)"
+    },
+    {
+      "db_id": 10896,
+      "db_name": "Naruto Musasabi"
+    },
+    {
+      "db_id": 10898,
+      "db_name": "Natori"
+    },
+    {
+      "db_id": 10899,
+      "db_name": "Natsu"
+    },
+    {
+      "db_id": 10900,
+      "db_name": "Natsu Hyūga"
+    },
+    {
+      "db_id": 10901,
+      "db_name": "Natsuhi"
+    },
+    {
+      "db_id": 10902,
+      "db_name": "Nattō Itohiki"
+    },
+    {
+      "db_id": 10903,
+      "db_name": "Nauma"
+    },
+    {
+      "db_id": 10905,
+      "db_name": "Nazuna"
+    },
+    {
+      "db_id": 10907,
+      "db_name": "Nejiri"
+    },
+    {
+      "db_id": 10908,
+      "db_name": "Nekobaa"
+    },
+    {
+      "db_id": 10909,
+      "db_name": "Nekomata"
+    },
+    {
+      "db_id": 10910,
+      "db_name": "Nemui"
+    },
+    {
+      "db_id": 10911,
+      "db_name": "Neon Asakusa"
+    },
+    {
+      "db_id": 10912,
+      "db_name": "Neon's Mother"
+    },
+    {
+      "db_id": 10913,
+      "db_name": "Nerugui"
+    },
+    {
+      "db_id": 10914,
+      "db_name": "Nezumi Kaitō"
+    },
+    {
+      "db_id": 10915,
+      "db_name": "Ni"
+    },
+    {
+      "db_id": 10916,
+      "db_name": "Ni's Dogs"
+    },
+    {
+      "db_id": 10917,
+      "db_name": "Nigai"
+    },
+    {
+      "db_id": 10918,
+      "db_name": "Nine-Tailed Naruto Clone"
+    },
+    {
+      "db_id": 10919,
+      "db_name": "Ningame"
+    },
+    {
+      "db_id": 10920,
+      "db_name": "Nishi"
+    },
+    {
+      "db_id": 10921,
+      "db_name": "Nishi (sensor)"
+    },
+    {
+      "db_id": 10922,
+      "db_name": "Nitora Take"
+    },
+    {
+      "db_id": 10923,
+      "db_name": "Nobori"
+    },
+    {
+      "db_id": 10924,
+      "db_name": "Noji"
+    },
+    {
+      "db_id": 10926,
+      "db_name": "Nonō Yakushi"
+    },
+    {
+      "db_id": 10925,
+      "db_name": "Nonota"
+    },
+    {
+      "db_id": 10927,
+      "db_name": "Noto Chōmen"
+    },
+    {
+      "db_id": 10928,
+      "db_name": "Nowaki"
+    },
+    {
+      "db_id": 10929,
+      "db_name": "Nue"
+    },
+    {
+      "db_id": 10930,
+      "db_name": "Nurari"
+    },
+    {
+      "db_id": 10931,
+      "db_name": "Nurui"
+    },
+    {
+      "db_id": 10933,
+      "db_name": "Obito's Grandmother"
+    },
+    {
+      "db_id": 10934,
+      "db_name": "Oboro"
+    },
+    {
+      "db_id": 11422,
+      "db_name": "Ōga"
+    },
+    {
+      "db_id": 10935,
+      "db_name": "Ohagi"
+    },
+    {
+      "db_id": 10936,
+      "db_name": "Okami"
+    },
+    {
+      "db_id": 11423,
+      "db_name": "Ōkei"
+    },
+    {
+      "db_id": 10937,
+      "db_name": "Okisuke"
+    },
+    {
+      "db_id": 10938,
+      "db_name": "Oko"
+    },
+    {
+      "db_id": 10939,
+      "db_name": "Okyō"
+    },
+    {
+      "db_id": 11424,
+      "db_name": "Ōmitsu"
+    },
+    {
+      "db_id": 11425,
+      "db_name": "Ōnami"
+    },
+    {
+      "db_id": 10941,
+      "db_name": "Onbu"
+    },
+    {
+      "db_id": 10942,
+      "db_name": "Oppo"
+    },
+    {
+      "db_id": 10944,
+      "db_name": "Osoi"
+    },
+    {
+      "db_id": 10945,
+      "db_name": "Osuka Kamakura"
+    },
+    {
+      "db_id": 10946,
+      "db_name": "Otoha"
+    },
+    {
+      "db_id": 10947,
+      "db_name": "Otokaze"
+    },
+    {
+      "db_id": 11427,
+      "db_name": "Ōtora"
+    },
+    {
+      "db_id": 11428,
+      "db_name": "Ōtsutsuki Clan Patriarch"
+    },
+    {
+      "db_id": 11429,
+      "db_name": "Ōwashi"
+    },
+    {
+      "db_id": 10948,
+      "db_name": "Oyone"
+    },
+    {
+      "db_id": 10949,
+      "db_name": "Pakkun"
+    },
+    {
+      "db_id": 10951,
+      "db_name": "Penjira"
+    },
+    {
+      "db_id": 10952,
+      "db_name": "Pochi"
+    },
+    {
+      "db_id": 10953,
+      "db_name": "Ponta"
+    },
+    {
+      "db_id": 10954,
+      "db_name": "Poochie"
+    },
+    {
+      "db_id": 10955,
+      "db_name": "Potcha"
+    },
+    {
+      "db_id": 10956,
+      "db_name": "Preta Path (character)"
+    },
+    {
+      "db_id": 10957,
+      "db_name": "Prime Minister"
+    },
+    {
+      "db_id": 10958,
+      "db_name": "Rahyō"
+    },
+    {
+      "db_id": 10959,
+      "db_name": "Rai Uchiha"
+    },
+    {
+      "db_id": 10961,
+      "db_name": "Raiga Kurosuki"
+    },
+    {
+      "db_id": 10962,
+      "db_name": "Raijin"
+    },
+    {
+      "db_id": 10963,
+      "db_name": "Raimei"
+    },
+    {
+      "db_id": 10964,
+      "db_name": "Rainenmaru"
+    },
+    {
+      "db_id": 10965,
+      "db_name": "Ran"
+    },
+    {
+      "db_id": 10966,
+      "db_name": "Ran (kunoichi)"
+    },
+    {
+      "db_id": 10967,
+      "db_name": "Ran Sōgi"
+    },
+    {
+      "db_id": 10968,
+      "db_name": "Ranka"
+    },
+    {
+      "db_id": 10969,
+      "db_name": "Ranke"
+    },
+    {
+      "db_id": 10970,
+      "db_name": "Ranmaru"
+    },
+    {
+      "db_id": 10972,
+      "db_name": "Rashii"
+    },
+    {
+      "db_id": 10973,
+      "db_name": "Reishi Kodon"
+    },
+    {
+      "db_id": 10974,
+      "db_name": "Reki"
+    },
+    {
+      "db_id": 10975,
+      "db_name": "Remon Yoimura"
+    },
+    {
+      "db_id": 10976,
+      "db_name": "Renga"
+    },
+    {
+      "db_id": 10977,
+      "db_name": "Renga Kokubō"
+    },
+    {
+      "db_id": 10978,
+      "db_name": "Renge Momoashi"
+    },
+    {
+      "db_id": 10979,
+      "db_name": "Reto"
+    },
+    {
+      "db_id": 10980,
+      "db_name": "Riichi"
+    },
+    {
+      "db_id": 10981,
+      "db_name": "Riichi (ninja)"
+    },
+    {
+      "db_id": 10982,
+      "db_name": "Rikumaru"
+    },
+    {
+      "db_id": 10984,
+      "db_name": "Rinji"
+    },
+    {
+      "db_id": 11001,
+      "db_name": "Rō"
+    },
+    {
+      "db_id": 11002,
+      "db_name": "Rōen"
+    },
+    {
+      "db_id": 10986,
+      "db_name": "Rokkaku Ryūdōin"
+    },
+    {
+      "db_id": 10987,
+      "db_name": "Rokuro"
+    },
+    {
+      "db_id": 10988,
+      "db_name": "Rokusuke"
+    },
+    {
+      "db_id": 10989,
+      "db_name": "Ruiga"
+    },
+    {
+      "db_id": 10990,
+      "db_name": "Ruka"
+    },
+    {
+      "db_id": 10992,
+      "db_name": "Ryōgi"
+    },
+    {
+      "db_id": 10993,
+      "db_name": "Ryōkan"
+    },
+    {
+      "db_id": 10994,
+      "db_name": "Ryū"
+    },
+    {
+      "db_id": 10995,
+      "db_name": "Ryūgan"
+    },
+    {
+      "db_id": 10991,
+      "db_name": "Ryuka Tenrō"
+    },
+    {
+      "db_id": 10996,
+      "db_name": "Ryūki"
+    },
+    {
+      "db_id": 10997,
+      "db_name": "Ryūrimaru"
+    },
+    {
+      "db_id": 10998,
+      "db_name": "Ryūsa"
+    },
+    {
+      "db_id": 10999,
+      "db_name": "Ryūsui"
+    },
+    {
+      "db_id": 11000,
+      "db_name": "Ryūzetsu"
+    },
+    {
+      "db_id": 11004,
+      "db_name": "Sabiru"
+    },
+    {
+      "db_id": 11005,
+      "db_name": "Sabu"
+    },
+    {
+      "db_id": 11006,
+      "db_name": "Sabure"
+    },
+    {
+      "db_id": 11007,
+      "db_name": "Sada"
+    },
+    {
+      "db_id": 11008,
+      "db_name": "Sadai"
+    },
+    {
+      "db_id": 11009,
+      "db_name": "Sadoru"
+    },
+    {
+      "db_id": 11010,
+      "db_name": "Sagan"
+    },
+    {
+      "db_id": 11011,
+      "db_name": "Sagi"
+    },
+    {
+      "db_id": 11012,
+      "db_name": "Sagiri"
+    },
+    {
+      "db_id": 11015,
+      "db_name": "Saisu Kamano"
+    },
+    {
+      "db_id": 11016,
+      "db_name": "Sajin"
+    },
+    {
+      "db_id": 11017,
+      "db_name": "Sajin (Genin)"
+    },
+    {
+      "db_id": 11018,
+      "db_name": "Sajō"
+    },
+    {
+      "db_id": 11019,
+      "db_name": "Sakanami"
+    },
+    {
+      "db_id": 11023,
+      "db_name": "Sakuya"
+    },
+    {
+      "db_id": 11024,
+      "db_name": "Samidare"
+    },
+    {
+      "db_id": 11025,
+      "db_name": "Samidare Amaashi"
+    },
+    {
+      "db_id": 11027,
+      "db_name": "San"
+    },
+    {
+      "db_id": 11028,
+      "db_name": "San's Bird"
+    },
+    {
+      "db_id": 11029,
+      "db_name": "Sana"
+    },
+    {
+      "db_id": 11030,
+      "db_name": "Sandayū Asama"
+    },
+    {
+      "db_id": 11031,
+      "db_name": "Sangorō"
+    },
+    {
+      "db_id": 11032,
+      "db_name": "Sansho"
+    },
+    {
+      "db_id": 11033,
+      "db_name": "Sanshō"
+    },
+    {
+      "db_id": 11034,
+      "db_name": "Santa Yamanaka"
+    },
+    {
+      "db_id": 11035,
+      "db_name": "Sanzui Unabara"
+    },
+    {
+      "db_id": 11054,
+      "db_name": "Saō"
+    },
+    {
+      "db_id": 11172,
+      "db_name": "Sāra"
+    },
+    {
+      "db_id": 11173,
+      "db_name": "Sāra's Daughter"
+    },
+    {
+      "db_id": 11037,
+      "db_name": "Sarai"
+    },
+    {
+      "db_id": 11038,
+      "db_name": "Sari"
+    },
+    {
+      "db_id": 11039,
+      "db_name": "Sasame"
+    },
+    {
+      "db_id": 11040,
+      "db_name": "Sasami"
+    },
+    {
+      "db_id": 11042,
+      "db_name": "Sasori's Father"
+    },
+    {
+      "db_id": 11043,
+      "db_name": "Sasori's Mother"
+    },
+    {
+      "db_id": 11044,
+      "db_name": "Sasuke Sarutobi"
+    },
+    {
+      "db_id": 11046,
+      "db_name": "Satetsu"
+    },
+    {
+      "db_id": 11048,
+      "db_name": "Satō"
+    },
+    {
+      "db_id": 11047,
+      "db_name": "Satori"
+    },
+    {
+      "db_id": 11049,
+      "db_name": "Saya"
+    },
+    {
+      "db_id": 11050,
+      "db_name": "Sayū Jōge"
+    },
+    {
+      "db_id": 11051,
+      "db_name": "Sazanami"
+    },
+    {
+      "db_id": 11052,
+      "db_name": "Sazanami Senka"
+    },
+    {
+      "db_id": 11053,
+      "db_name": "Sazanka"
+    },
+    {
+      "db_id": 11055,
+      "db_name": "Scarlet Blaze"
+    },
+    {
+      "db_id": 11056,
+      "db_name": "Seimei"
+    },
+    {
+      "db_id": 11057,
+      "db_name": "Seiren Funato"
+    },
+    {
+      "db_id": 11058,
+      "db_name": "Seito"
+    },
+    {
+      "db_id": 11059,
+      "db_name": "Sekiei"
+    },
+    {
+      "db_id": 11060,
+      "db_name": "Sekiei (spectator)"
+    },
+    {
+      "db_id": 11061,
+      "db_name": "Sekiei's Partner"
+    },
+    {
+      "db_id": 11062,
+      "db_name": "Sekka"
+    },
+    {
+      "db_id": 11063,
+      "db_name": "Sekki"
+    },
+    {
+      "db_id": 11064,
+      "db_name": "Sen"
+    },
+    {
+      "db_id": 11065,
+      "db_name": "Senji"
+    },
+    {
+      "db_id": 11066,
+      "db_name": "Senta"
+    },
+    {
+      "db_id": 11067,
+      "db_name": "Sentoki"
+    },
+    {
+      "db_id": 11174,
+      "db_name": "Sēramu"
+    },
+    {
+      "db_id": 11068,
+      "db_name": "Setsuna"
+    },
+    {
+      "db_id": 11069,
+      "db_name": "Setsuna Uchiha"
+    },
+    {
+      "db_id": 11070,
+      "db_name": "Shabadaba"
+    },
+    {
+      "db_id": 11071,
+      "db_name": "Shamo"
+    },
+    {
+      "db_id": 11072,
+      "db_name": "Shamon"
+    },
+    {
+      "db_id": 11073,
+      "db_name": "Shiba"
+    },
+    {
+      "db_id": 11074,
+      "db_name": "Shiba (Kusagakure)"
+    },
+    {
+      "db_id": 11077,
+      "db_name": "Shibire"
+    },
+    {
+      "db_id": 11078,
+      "db_name": "Shibito Azuma"
+    },
+    {
+      "db_id": 11079,
+      "db_name": "Shibuki"
+    },
+    {
+      "db_id": 11080,
+      "db_name": "Shigezane"
+    },
+    {
+      "db_id": 11081,
+      "db_name": "Shigure"
+    },
+    {
+      "db_id": 11082,
+      "db_name": "Shiho"
+    },
+    {
+      "db_id": 11083,
+      "db_name": "Shiin"
+    },
+    {
+      "db_id": 11084,
+      "db_name": "Shijima"
+    },
+    {
+      "db_id": 11088,
+      "db_name": "Shikazo"
+    },
+    {
+      "db_id": 11089,
+      "db_name": "Shikuro Aburame"
+    },
+    {
+      "db_id": 11091,
+      "db_name": "Shimeji"
+    },
+    {
+      "db_id": 11092,
+      "db_name": "Shimon Hijiri"
+    },
+    {
+      "db_id": 11093,
+      "db_name": "Shin"
+    },
+    {
+      "db_id": 11095,
+      "db_name": "Shin'emon"
+    },
+    {
+      "db_id": 11096,
+      "db_name": "Shinayakana"
+    },
+    {
+      "db_id": 11097,
+      "db_name": "Shinbu"
+    },
+    {
+      "db_id": 11098,
+      "db_name": "Shinga"
+    },
+    {
+      "db_id": 11099,
+      "db_name": "Shinigami"
+    },
+    {
+      "db_id": 11101,
+      "db_name": "Shinko Inari"
+    },
+    {
+      "db_id": 11102,
+      "db_name": "Shinku Yūhi"
+    },
+    {
+      "db_id": 11103,
+      "db_name": "Shinnō"
+    },
+    {
+      "db_id": 11105,
+      "db_name": "Shinobu Mibu"
+    },
+    {
+      "db_id": 11106,
+      "db_name": "Shinta"
+    },
+    {
+      "db_id": 11107,
+      "db_name": "Shio"
+    },
+    {
+      "db_id": 11108,
+      "db_name": "Shion"
+    },
+    {
+      "db_id": 11109,
+      "db_name": "Shiore"
+    },
+    {
+      "db_id": 11110,
+      "db_name": "Shira"
+    },
+    {
+      "db_id": 11111,
+      "db_name": "Shirabe"
+    },
+    {
+      "db_id": 11112,
+      "db_name": "Shiranami"
+    },
+    {
+      "db_id": 11113,
+      "db_name": "Shiro"
+    },
+    {
+      "db_id": 11114,
+      "db_name": "Shiro (Land of Ancestors)"
+    },
+    {
+      "db_id": 11115,
+      "db_name": "Shiromari"
+    },
+    {
+      "db_id": 11116,
+      "db_name": "Shiseru"
+    },
+    {
+      "db_id": 11117,
+      "db_name": "Shishio"
+    },
+    {
+      "db_id": 11119,
+      "db_name": "Shisō"
+    },
+    {
+      "db_id": 11120,
+      "db_name": "Shitō Akimichi"
+    },
+    {
+      "db_id": 11121,
+      "db_name": "Shizuka"
+    },
+    {
+      "db_id": 11122,
+      "db_name": "Shizuku"
+    },
+    {
+      "db_id": 11123,
+      "db_name": "Shizuku (Taki)"
+    },
+    {
+      "db_id": 11124,
+      "db_name": "Shizuma Hoshigaki"
+    },
+    {
+      "db_id": 11130,
+      "db_name": "Shōseki"
+    },
+    {
+      "db_id": 11131,
+      "db_name": "Shū"
+    },
+    {
+      "db_id": 11132,
+      "db_name": "Shū (lord)"
+    },
+    {
+      "db_id": 11128,
+      "db_name": "Shun"
+    },
+    {
+      "db_id": 11129,
+      "db_name": "Shura"
+    },
+    {
+      "db_id": 11133,
+      "db_name": "Sky Ninja Executive"
+    },
+    {
+      "db_id": 11134,
+      "db_name": "Soegi"
+    },
+    {
+      "db_id": 11175,
+      "db_name": "Sōma"
+    },
+    {
+      "db_id": 11136,
+      "db_name": "Sora"
+    },
+    {
+      "db_id": 11137,
+      "db_name": "Sora (orphan)"
+    },
+    {
+      "db_id": 11176,
+      "db_name": "Sōsetsu Kazahana"
+    },
+    {
+      "db_id": 11177,
+      "db_name": "Sōsha Amino"
+    },
+    {
+      "db_id": 11178,
+      "db_name": "Sōta"
+    },
+    {
+      "db_id": 11138,
+      "db_name": "Soul Tao"
+    },
+    {
+      "db_id": 11139,
+      "db_name": "Sound Daimyō"
+    },
+    {
+      "db_id": 11179,
+      "db_name": "Sōzu"
+    },
+    {
+      "db_id": 11140,
+      "db_name": "Spirit Beast"
+    },
+    {
+      "db_id": 11141,
+      "db_name": "Stone Carver"
+    },
+    {
+      "db_id": 11142,
+      "db_name": "Stone Carver's Assistant"
+    },
+    {
+      "db_id": 11143,
+      "db_name": "Suguro"
+    },
+    {
+      "db_id": 11144,
+      "db_name": "Suien"
+    },
+    {
+      "db_id": 11146,
+      "db_name": "Suika"
+    },
+    {
+      "db_id": 11147,
+      "db_name": "Suika Kannonji"
+    },
+    {
+      "db_id": 11148,
+      "db_name": "Suiko"
+    },
+    {
+      "db_id": 11149,
+      "db_name": "Suiren"
+    },
+    {
+      "db_id": 11150,
+      "db_name": "Suiren (Kiri)"
+    },
+    {
+      "db_id": 11151,
+      "db_name": "Suiu"
+    },
+    {
+      "db_id": 11152,
+      "db_name": "Sukeza"
+    },
+    {
+      "db_id": 11153,
+      "db_name": "Sukima"
+    },
+    {
+      "db_id": 11154,
+      "db_name": "Sukui"
+    },
+    {
+      "db_id": 11155,
+      "db_name": "Sukune"
+    },
+    {
+      "db_id": 11156,
+      "db_name": "Sumaru"
+    },
+    {
+      "db_id": 11157,
+      "db_name": "Sumashi"
+    },
+    {
+      "db_id": 11158,
+      "db_name": "Sumire (citizen)"
+    },
+    {
+      "db_id": 11160,
+      "db_name": "Sumure"
+    },
+    {
+      "db_id": 11161,
+      "db_name": "Suna Assassin Captain"
+    },
+    {
+      "db_id": 11162,
+      "db_name": "Suna Reincarnated Shinobi"
+    },
+    {
+      "db_id": 11163,
+      "db_name": "Suname"
+    },
+    {
+      "db_id": 11164,
+      "db_name": "Susuki"
+    },
+    {
+      "db_id": 11165,
+      "db_name": "Susuki (Land of Demons)"
+    },
+    {
+      "db_id": 11166,
+      "db_name": "Suzaku (minister)"
+    },
+    {
+      "db_id": 11167,
+      "db_name": "Suzaku Nara"
+    },
+    {
+      "db_id": 11168,
+      "db_name": "Suzu Sōgi"
+    },
+    {
+      "db_id": 11169,
+      "db_name": "Suzume"
+    },
+    {
+      "db_id": 11170,
+      "db_name": "Suzumebachi"
+    },
+    {
+      "db_id": 11171,
+      "db_name": "Suzuran"
+    },
+    {
+      "db_id": 11180,
+      "db_name": "Tadaichi"
+    },
+    {
+      "db_id": 11181,
+      "db_name": "Tagitsuhime"
+    },
+    {
+      "db_id": 11182,
+      "db_name": "Tagorihime"
+    },
+    {
+      "db_id": 11183,
+      "db_name": "Taiki"
+    },
+    {
+      "db_id": 11184,
+      "db_name": "Taiko Uchiha"
+    },
+    {
+      "db_id": 11185,
+      "db_name": "Taisa Amagiri"
+    },
+    {
+      "db_id": 11186,
+      "db_name": "Taiseki"
+    },
+    {
+      "db_id": 11187,
+      "db_name": "Taizō"
+    },
+    {
+      "db_id": 11188,
+      "db_name": "Taji"
+    },
+    {
+      "db_id": 11189,
+      "db_name": "Tajiki"
+    },
+    {
+      "db_id": 11191,
+      "db_name": "Takajō Torikai"
+    },
+    {
+      "db_id": 11192,
+      "db_name": "Takamaru"
+    },
+    {
+      "db_id": 11193,
+      "db_name": "Takanami Senka"
+    },
+    {
+      "db_id": 11194,
+      "db_name": "Takishi"
+    },
+    {
+      "db_id": 11195,
+      "db_name": "Taku"
+    },
+    {
+      "db_id": 11196,
+      "db_name": "Tamae"
+    },
+    {
+      "db_id": 11197,
+      "db_name": "Tamaki"
+    },
+    {
+      "db_id": 11198,
+      "db_name": "Tamao"
+    },
+    {
+      "db_id": 11199,
+      "db_name": "Tami"
+    },
+    {
+      "db_id": 11200,
+      "db_name": "Tango"
+    },
+    {
+      "db_id": 11201,
+      "db_name": "Tanishi"
+    },
+    {
+      "db_id": 11202,
+      "db_name": "Tanuki Shigaraki"
+    },
+    {
+      "db_id": 11203,
+      "db_name": "Tanzō"
+    },
+    {
+      "db_id": 11207,
+      "db_name": "Tarō"
+    },
+    {
+      "db_id": 11204,
+      "db_name": "Taruho"
+    },
+    {
+      "db_id": 11205,
+      "db_name": "Tarui"
+    },
+    {
+      "db_id": 11206,
+      "db_name": "Taruto"
+    },
+    {
+      "db_id": 11208,
+      "db_name": "Tasuki"
+    },
+    {
+      "db_id": 11209,
+      "db_name": "Tatewaki"
+    },
+    {
+      "db_id": 11210,
+      "db_name": "Tatsuji"
+    },
+    {
+      "db_id": 11211,
+      "db_name": "Tatsuma Aburame"
+    },
+    {
+      "db_id": 11212,
+      "db_name": "Tatsumi"
+    },
+    {
+      "db_id": 11213,
+      "db_name": "Tatsunami"
+    },
+    {
+      "db_id": 11214,
+      "db_name": "Tayori Kuroyagi"
+    },
+    {
+      "db_id": 11217,
+      "db_name": "Tea Daimyō"
+    },
+    {
+      "db_id": 11218,
+      "db_name": "Team Goji Leader"
+    },
+    {
+      "db_id": 11219,
+      "db_name": "Teguse"
+    },
+    {
+      "db_id": 11220,
+      "db_name": "Teguse (game)"
+    },
+    {
+      "db_id": 11221,
+      "db_name": "Tekka Uchiha"
+    },
+    {
+      "db_id": 11222,
+      "db_name": "Tekkan"
+    },
+    {
+      "db_id": 11223,
+      "db_name": "Tekuno Kanden"
+    },
+    {
+      "db_id": 11225,
+      "db_name": "Temui"
+    },
+    {
+      "db_id": 11226,
+      "db_name": "Temujin"
+    },
+    {
+      "db_id": 11227,
+      "db_name": "Ten-Tails"
+    },
+    {
+      "db_id": 11228,
+      "db_name": "Ten-Tails (Kara)"
+    },
+    {
+      "db_id": 11229,
+      "db_name": "Tenga"
+    },
+    {
+      "db_id": 11230,
+      "db_name": "Tenji"
+    },
+    {
+      "db_id": 11231,
+      "db_name": "Tenma Funato"
+    },
+    {
+      "db_id": 11232,
+      "db_name": "Tenma Izumo"
+    },
+    {
+      "db_id": 11233,
+      "db_name": "Tenma Kodon"
+    },
+    {
+      "db_id": 11236,
+      "db_name": "Tenzen Daikoku"
+    },
+    {
+      "db_id": 11237,
+      "db_name": "Tenzen's Bodyguard"
+    },
+    {
+      "db_id": 11238,
+      "db_name": "Tenzō (Iburi Clan)"
+    },
+    {
+      "db_id": 11239,
+      "db_name": "Teo"
+    },
+    {
+      "db_id": 11240,
+      "db_name": "Tera"
+    },
+    {
+      "db_id": 11241,
+      "db_name": "Terai"
+    },
+    {
+      "db_id": 11242,
+      "db_name": "Teru"
+    },
+    {
+      "db_id": 11243,
+      "db_name": "Terubō"
+    },
+    {
+      "db_id": 11244,
+      "db_name": "Tessa"
+    },
+    {
+      "db_id": 11245,
+      "db_name": "Tessen Togeito"
+    },
+    {
+      "db_id": 11246,
+      "db_name": "Tetsu"
+    },
+    {
+      "db_id": 11247,
+      "db_name": "Tetsuru"
+    },
+    {
+      "db_id": 11249,
+      "db_name": "Teyaki Uchiha"
+    },
+    {
+      "db_id": 11250,
+      "db_name": "Tezuna"
+    },
+    {
+      "db_id": 11251,
+      "db_name": "Tezutsu Mikawa"
+    },
+    {
+      "db_id": 11252,
+      "db_name": "Third Hoshikage"
+    },
+    {
+      "db_id": 11253,
+      "db_name": "Third Kazekage"
+    },
+    {
+      "db_id": 11254,
+      "db_name": "Third Mizukage"
+    },
+    {
+      "db_id": 11255,
+      "db_name": "This Daimyō"
+    },
+    {
+      "db_id": 11256,
+      "db_name": "Three Giant Snakes"
+    },
+    {
+      "db_id": 11257,
+      "db_name": "Three Haimaru Brothers"
+    },
+    {
+      "db_id": 11258,
+      "db_name": "Three-Headed Guardian Beast"
+    },
+    {
+      "db_id": 11259,
+      "db_name": "Tiger-Masked Anbu Member"
+    },
+    {
+      "db_id": 11317,
+      "db_name": "Tōbei Kagetsu"
+    },
+    {
+      "db_id": 11260,
+      "db_name": "Tobi (Zetsu)"
+    },
+    {
+      "db_id": 11261,
+      "db_name": "Tobimaru"
+    },
+    {
+      "db_id": 11262,
+      "db_name": "Tobio"
+    },
+    {
+      "db_id": 11264,
+      "db_name": "Todoroki"
+    },
+    {
+      "db_id": 11265,
+      "db_name": "Tofu"
+    },
+    {
+      "db_id": 11318,
+      "db_name": "Tōfū"
+    },
+    {
+      "db_id": 11319,
+      "db_name": "Tōjūrō"
+    },
+    {
+      "db_id": 11320,
+      "db_name": "Tōka Senju"
+    },
+    {
+      "db_id": 11266,
+      "db_name": "Tokara"
+    },
+    {
+      "db_id": 11267,
+      "db_name": "Toki"
+    },
+    {
+      "db_id": 11268,
+      "db_name": "Toki (Shinobazu)"
+    },
+    {
+      "db_id": 11269,
+      "db_name": "Tokiwa"
+    },
+    {
+      "db_id": 11270,
+      "db_name": "Tokuma Hyūga"
+    },
+    {
+      "db_id": 11271,
+      "db_name": "Tomari"
+    },
+    {
+      "db_id": 11272,
+      "db_name": "Tomaru"
+    },
+    {
+      "db_id": 11273,
+      "db_name": "Tomaru Minakura"
+    },
+    {
+      "db_id": 11274,
+      "db_name": "Tonbee"
+    },
+    {
+      "db_id": 11275,
+      "db_name": "Tonbo Tobitake"
+    },
+    {
+      "db_id": 11276,
+      "db_name": "Toneri Ōtsutsuki"
+    },
+    {
+      "db_id": 11277,
+      "db_name": "Tonika Village Head"
+    },
+    {
+      "db_id": 11278,
+      "db_name": "Tonsuke"
+    },
+    {
+      "db_id": 11279,
+      "db_name": "Tonton"
+    },
+    {
+      "db_id": 11280,
+      "db_name": "Tora"
+    },
+    {
+      "db_id": 11281,
+      "db_name": "Tora (Anbu)"
+    },
+    {
+      "db_id": 11282,
+      "db_name": "Torifu Akimichi"
+    },
+    {
+      "db_id": 11284,
+      "db_name": "Toroi (Genin)"
+    },
+    {
+      "db_id": 11286,
+      "db_name": "Tosaka"
+    },
+    {
+      "db_id": 11287,
+      "db_name": "Toshi"
+    },
+    {
+      "db_id": 11321,
+      "db_name": "Tōu"
+    },
+    {
+      "db_id": 11288,
+      "db_name": "Towa"
+    },
+    {
+      "db_id": 11289,
+      "db_name": "Tsubaki (anime)"
+    },
+    {
+      "db_id": 11290,
+      "db_name": "Tsubaki (game)"
+    },
+    {
+      "db_id": 11291,
+      "db_name": "Tsubaki (parent)"
+    },
+    {
+      "db_id": 11292,
+      "db_name": "Tsubaki Kurogane"
+    },
+    {
+      "db_id": 11293,
+      "db_name": "Tsubusa"
+    },
+    {
+      "db_id": 11294,
+      "db_name": "Tsubute Futaba"
+    },
+    {
+      "db_id": 11295,
+      "db_name": "Tsuchigumo Chief"
+    },
+    {
+      "db_id": 11296,
+      "db_name": "Tsuchino"
+    },
+    {
+      "db_id": 11297,
+      "db_name": "Tsuchinoe"
+    },
+    {
+      "db_id": 11298,
+      "db_name": "Tsuchinoto"
+    },
+    {
+      "db_id": 11299,
+      "db_name": "Tsukado"
+    },
+    {
+      "db_id": 11300,
+      "db_name": "Tsukiko Kagetsu"
+    },
+    {
+      "db_id": 11301,
+      "db_name": "Tsukino"
+    },
+    {
+      "db_id": 11302,
+      "db_name": "Tsukino's Father"
+    },
+    {
+      "db_id": 11303,
+      "db_name": "Tsukiyo"
+    },
+    {
+      "db_id": 11304,
+      "db_name": "Tsukune"
+    },
+    {
+      "db_id": 11305,
+      "db_name": "Tsukushi"
+    },
+    {
+      "db_id": 11309,
+      "db_name": "Tsuru Itoi"
+    },
+    {
+      "db_id": 11310,
+      "db_name": "Tsurugi"
+    },
+    {
+      "db_id": 11311,
+      "db_name": "Tsurushi Hachiya"
+    },
+    {
+      "db_id": 11312,
+      "db_name": "Tsuyu"
+    },
+    {
+      "db_id": 11313,
+      "db_name": "Tsuzumi"
+    },
+    {
+      "db_id": 11314,
+      "db_name": "Tsuzumi (cultist)"
+    },
+    {
+      "db_id": 11315,
+      "db_name": "Tsuzumi Sarugaku"
+    },
+    {
+      "db_id": 11316,
+      "db_name": "Tsuzura Shitakiri"
+    },
+    {
+      "db_id": 11322,
+      "db_name": "Ubau"
+    },
+    {
+      "db_id": 11324,
+      "db_name": "Ugai"
+    },
+    {
+      "db_id": 11325,
+      "db_name": "Ugatsu"
+    },
+    {
+      "db_id": 11430,
+      "db_name": "Ūhei"
+    },
+    {
+      "db_id": 11326,
+      "db_name": "Ultimate Summoning Beast"
+    },
+    {
+      "db_id": 11327,
+      "db_name": "Umibōzu"
+    },
+    {
+      "db_id": 11328,
+      "db_name": "Unagi"
+    },
+    {
+      "db_id": 11329,
+      "db_name": "Unkai Kurama"
+    },
+    {
+      "db_id": 11330,
+      "db_name": "Unmo Samidare"
+    },
+    {
+      "db_id": 11331,
+      "db_name": "Unnamed Team 6 Member"
+    },
+    {
+      "db_id": 11340,
+      "db_name": "Uō"
+    },
+    {
+      "db_id": 11332,
+      "db_name": "Urakaku"
+    },
+    {
+      "db_id": 11333,
+      "db_name": "Urashiki Ōtsutsuki"
+    },
+    {
+      "db_id": 11334,
+      "db_name": "Uroko Kurama"
+    },
+    {
+      "db_id": 11335,
+      "db_name": "Uruchi Uchiha"
+    },
+    {
+      "db_id": 11336,
+      "db_name": "Urushi"
+    },
+    {
+      "db_id": 11337,
+      "db_name": "Urushi (summon)"
+    },
+    {
+      "db_id": 11338,
+      "db_name": "Ushi"
+    },
+    {
+      "db_id": 11341,
+      "db_name": "Valleys Daimyō"
+    },
+    {
+      "db_id": 11343,
+      "db_name": "Victor's Secretary"
+    },
+    {
+      "db_id": 11344,
+      "db_name": "Village Headman"
+    },
+    {
+      "db_id": 11346,
+      "db_name": "Wasabi Izuno"
+    },
+    {
+      "db_id": 11347,
+      "db_name": "Watase"
+    },
+    {
+      "db_id": 11348,
+      "db_name": "Water Daimyō"
+    },
+    {
+      "db_id": 11349,
+      "db_name": "White Snake Sage"
+    },
+    {
+      "db_id": 11351,
+      "db_name": "Wind Daimyō (Part I)"
+    },
+    {
+      "db_id": 11352,
+      "db_name": "Wind Daimyō (Part II)"
+    },
+    {
+      "db_id": 11353,
+      "db_name": "Ya"
+    },
+    {
+      "db_id": 11354,
+      "db_name": "Yagura (anime)"
+    },
+    {
+      "db_id": 11357,
+      "db_name": "Yajirobee"
+    },
+    {
+      "db_id": 11358,
+      "db_name": "Yakku"
+    },
+    {
+      "db_id": 11359,
+      "db_name": "Yakumi Uchiha"
+    },
+    {
+      "db_id": 11360,
+      "db_name": "Yakumo Kurama"
+    },
+    {
+      "db_id": 11361,
+      "db_name": "Yamame"
+    },
+    {
+      "db_id": 11362,
+      "db_name": "Yamame (citizen)"
+    },
+    {
+      "db_id": 11363,
+      "db_name": "Yamaoka"
+    },
+    {
+      "db_id": 11365,
+      "db_name": "Yanaru Aze"
+    },
+    {
+      "db_id": 11366,
+      "db_name": "Yaoki"
+    },
+    {
+      "db_id": 11367,
+      "db_name": "Yashamaru"
+    },
+    {
+      "db_id": 11368,
+      "db_name": "Yashiro Uchiha"
+    },
+    {
+      "db_id": 11369,
+      "db_name": "Yatogo Ryūgen"
+    },
+    {
+      "db_id": 11398,
+      "db_name": "Yōji Aburame"
+    },
+    {
+      "db_id": 11371,
+      "db_name": "Yokaze"
+    },
+    {
+      "db_id": 11372,
+      "db_name": "Yokozuna"
+    },
+    {
+      "db_id": 11373,
+      "db_name": "Yome"
+    },
+    {
+      "db_id": 11374,
+      "db_name": "Yomi"
+    },
+    {
+      "db_id": 11375,
+      "db_name": "Yomito Hirasaka"
+    },
+    {
+      "db_id": 11376,
+      "db_name": "Yone"
+    },
+    {
+      "db_id": 11399,
+      "db_name": "Yōrō"
+    },
+    {
+      "db_id": 11378,
+      "db_name": "Yoruga"
+    },
+    {
+      "db_id": 11379,
+      "db_name": "Yoshino Nara"
+    },
+    {
+      "db_id": 11380,
+      "db_name": "Yoshiteru"
+    },
+    {
+      "db_id": 11381,
+      "db_name": "Yota"
+    },
+    {
+      "db_id": 11382,
+      "db_name": "Yotaka"
+    },
+    {
+      "db_id": 11383,
+      "db_name": "Yubeshi"
+    },
+    {
+      "db_id": 11384,
+      "db_name": "Yubina"
+    },
+    {
+      "db_id": 11400,
+      "db_name": "Yūdachi"
+    },
+    {
+      "db_id": 11401,
+      "db_name": "Yūga"
+    },
+    {
+      "db_id": 11386,
+      "db_name": "Yui"
+    },
+    {
+      "db_id": 11387,
+      "db_name": "Yuina Itomaki"
+    },
+    {
+      "db_id": 11388,
+      "db_name": "Yukai"
+    },
+    {
+      "db_id": 11389,
+      "db_name": "Yukata"
+    },
+    {
+      "db_id": 11390,
+      "db_name": "Yuki (Academy student)"
+    },
+    {
+      "db_id": 11391,
+      "db_name": "Yuki (hawk)"
+    },
+    {
+      "db_id": 11403,
+      "db_name": "Yūki Minazuki"
+    },
+    {
+      "db_id": 11404,
+      "db_name": "Yūkimaru"
+    },
+    {
+      "db_id": 11405,
+      "db_name": "Yūkimaru's Mother"
+    },
+    {
+      "db_id": 11392,
+      "db_name": "Yukimi"
+    },
+    {
+      "db_id": 11406,
+      "db_name": "Yūra"
+    },
+    {
+      "db_id": 11393,
+      "db_name": "Yurika"
+    },
+    {
+      "db_id": 11394,
+      "db_name": "Yurinojō"
+    },
+    {
+      "db_id": 11395,
+      "db_name": "Yurito"
+    },
+    {
+      "db_id": 11396,
+      "db_name": "Yurui"
+    },
+    {
+      "db_id": 11397,
+      "db_name": "Yurui (anime)"
+    },
+    {
+      "db_id": 11407,
+      "db_name": "Yūsuke"
+    },
+    {
+      "db_id": 11408,
+      "db_name": "Yūsuke's Father"
+    },
+    {
+      "db_id": 11409,
+      "db_name": "Yūto"
+    },
+    {
+      "db_id": 11411,
+      "db_name": "Zaji"
+    },
+    {
+      "db_id": 11412,
+      "db_name": "Zaji (gambler)"
+    },
+    {
+      "db_id": 11414,
+      "db_name": "Zangei"
+    },
+    {
+      "db_id": 11415,
+      "db_name": "Zansūru"
+    },
+    {
+      "db_id": 11416,
+      "db_name": "Zenigoke"
+    },
+    {
+      "db_id": 11417,
+      "db_name": "Zenza"
+    },
+    {
+      "db_id": 11418,
+      "db_name": "Zero-Tails"
+    },
+    {
+      "db_id": 11419,
+      "db_name": "Zō"
+    },
+    {
+      "db_id": 11421,
+      "db_name": "Zōsui"
+    }
+  ],
+  "daily_challenges_at_risk": [
+    {
+      "challenge_id": 447,
+      "mode": "classic",
+      "date": "2026-03-27",
+      "character_id": 11081,
+      "character_name": "Shigure"
+    },
+    {
+      "challenge_id": 450,
+      "mode": "eye",
+      "date": "2026-03-27",
+      "character_id": 9166,
+      "character_name": "Gekkō"
+    },
+    {
+      "challenge_id": 449,
+      "mode": "quote",
+      "date": "2026-03-27",
+      "character_id": 10645,
+      "character_name": "Menō"
+    }
+  ]
+}

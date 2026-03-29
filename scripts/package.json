@@ -1,0 +1,10 @@
+{
+  "name": "guessle-scripts",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.80.0",
+    "@supabase/supabase-js": "^2.0.0",
+    "node-html-parser": "^6.1.0"
+  }
+}
