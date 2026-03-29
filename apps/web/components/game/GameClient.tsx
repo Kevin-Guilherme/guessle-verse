@@ -64,6 +64,10 @@ export function GameClient({ challengeId, slug, mode, universeName, authenticate
   const store = useGameStore()
   const reset = useGameStore((s) => s.reset)
 
+  // Build quest mode manages its own completion UI (ScoreSummary per quest).
+  // Keep ModeLoader mounted after win so ScoreSummary is shown; suppress the generic banner.
+  const isBuildQuestMode = mode === 'build' && Array.isArray((challenge.extra as Record<string, unknown>)?.quests)
+
   const { loading: sessionLoading } = useGameSession(challengeId, authenticated)
   const { submitGuess, loading, error } = useGuess(challengeId)
 
@@ -154,8 +158,8 @@ export function GameClient({ challengeId, slug, mode, universeName, authenticate
         </div>
       )}
 
-      {/* Mode component */}
-      {!store.won && !store.lost && (
+      {/* Mode component — build quest stays mounted after win to show ScoreSummary */}
+      {(!store.won && !store.lost || isBuildQuestMode) && (
         <Suspense fallback={
           <div className="space-y-3">
             <Skeleton className="h-48 w-full rounded-xl bg-surface" />
@@ -166,8 +170,8 @@ export function GameClient({ challengeId, slug, mode, universeName, authenticate
         </Suspense>
       )}
 
-      {/* Win/Loss banner */}
-      {(store.won || store.lost) && (
+      {/* Win/Loss banner — suppressed for build quest (BuildMode shows ScoreSummary instead) */}
+      {(store.won || store.lost) && !isBuildQuestMode && (
         <div
           className={`banner-reveal relative rounded-xl border overflow-hidden ${
             store.won

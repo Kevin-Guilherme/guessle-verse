@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useGameStore } from '@/lib/store/game-store'
 import { useGuess } from '@/hooks/useGuess'
 import type { ModeComponentProps } from '@/lib/game/registry'
@@ -33,6 +33,25 @@ export default function QuadraMode({ challenge, config }: ModeComponentProps) {
   const [selected,     setSelected]     = useState<string[]>([])
   const [solvedGroups, setSolvedGroups] = useState<Group[]>([])
   const [shaking,      setShaking]      = useState(false)
+
+  // Restore solved groups from persisted guesses on mount (hydration)
+  const hasHydrated = useRef(false)
+  useEffect(() => {
+    if (hasHydrated.current || !guesses.length) return
+    hasHydrated.current = true
+    const restored: Group[] = []
+    for (const g of guesses) {
+      if (g.feedback?.[0]?.feedback !== 'correct') continue
+      const guessedNames = g.value.split(',').map((s: string) => s.trim())
+      const matchedGroup = groups.find(gr =>
+        guessedNames.length === 4 && guessedNames.every((n: string) => gr.champions.includes(n))
+      )
+      if (matchedGroup && !restored.find(r => r.category === matchedGroup.category)) {
+        restored.push(matchedGroup)
+      }
+    }
+    if (restored.length) setSolvedGroups(restored)
+  }, [guesses]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const wrongGuesses  = guesses.filter(g => !g.feedback.every(f => f.feedback === 'correct')).length
   const livesLeft     = totalLives - wrongGuesses
