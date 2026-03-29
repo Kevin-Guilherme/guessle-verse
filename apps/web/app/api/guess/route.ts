@@ -47,6 +47,9 @@ export async function POST(req: NextRequest) {
     is_legendary: 'Legendary',
     is_mythical:  'Mythical',
     evolves_from: 'Evolves from',
+    // Pokemon — new fields
+    habitat:          'Habitat',
+    evolution_stage:  'Stage',
     // Naruto
     genero:         'Gender',
     afiliacao:      'Affiliations',
