@@ -50,7 +50,7 @@ export default function PokemonCardMode({ challenge }: ModeComponentProps) {
           {/* Wrong guess counter badge */}
           {!won && !lost && (
             <div className="absolute bottom-2 right-2 bg-black/60 text-white text-xs font-display px-2 py-1 rounded-full">
-              {wrongGuesses}/10
+              {Math.min(wrongGuesses, 10)}/10
             </div>
           )}
         </div>
