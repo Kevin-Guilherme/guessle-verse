@@ -1,13 +1,44 @@
 import { createClient } from 'npm:@supabase/supabase-js@2'
 
-const SUPABASE_URL      = Deno.env.get('SUPABASE_URL')!
-const SERVICE_KEY       = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-const IGDB_CLIENT_ID    = Deno.env.get('IGDB_CLIENT_ID') ?? ''
+const SUPABASE_URL       = Deno.env.get('SUPABASE_URL')!
+const SERVICE_KEY        = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+const IGDB_CLIENT_ID     = Deno.env.get('IGDB_CLIENT_ID') ?? ''
 const IGDB_CLIENT_SECRET = Deno.env.get('IGDB_CLIENT_SECRET') ?? ''
+const GEMINI_KEY         = Deno.env.get('GEMINI_API_KEY') ?? ''
 const RIOT_VERSION_URL  = 'https://ddragon.leagueoflegends.com/api/versions.json'
 const LOOKBACK_DAYS     = 60
 
 const supabase = createClient(SUPABASE_URL, SERVICE_KEY)
+
+// ─── Gemini — rewrite Pokémon description ────────────────────────────────────
+
+async function generatePokemonDescription(name: string, flavorText: string): Promise<string> {
+  if (!GEMINI_KEY || !flavorText) return flavorText
+  try {
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`,
+      {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        signal:  AbortSignal.timeout(15_000),
+        body: JSON.stringify({
+          contents: [{
+            parts: [{
+              text: `Rewrite this Pokémon Pokédex description without mentioning the Pokémon's name "${name}" or any direct reference to it by name. Replace name occurrences with "this Pokémon". Keep it factual and 2–3 sentences. Return ONLY the rewritten description, nothing else.\n\nOriginal: ${flavorText}`,
+            }],
+          }],
+          generationConfig: { maxOutputTokens: 200, temperature: 0.3 },
+        }),
+      }
+    )
+    if (!res.ok) return flavorText
+    const json = await res.json() as { candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }> }
+    const text = json.candidates?.[0]?.content?.parts?.[0]?.text?.trim()
+    return text || flavorText
+  } catch {
+    return flavorText
+  }
+}
 
 const UGG_GQL = 'https://u.gg/api'
 const UGG_HDR = { 'Content-Type': 'application/json', 'Origin': 'https://u.gg', 'User-Agent': 'Mozilla/5.0' }
@@ -63,31 +94,76 @@ async function challengeExists(themeId: number, mode: string, today: string): Pr
 async function fetchPokemon(themeId: number, mode: string, today: string): Promise<string> {
   const recent = await getRecentNames(themeId, mode)
 
-  const { data: candidates } = await supabase
+  const { data: allCandidates } = await supabase
     .from('characters')
-    .select('id, name, attributes, extra')
+    .select('id, name, attributes, extra, image_url')
     .eq('theme_id', themeId)
     .eq('active', true)
 
-  const pool = (candidates ?? []).filter((c: { name: string }) => !recent.has(c.name))
-  if (!pool.length) return 'skipped: no candidates'
+  const candidates = allCandidates ?? []
 
-  const pick = pool[Math.floor(Math.random() * pool.length)] as {
-    id: number; name: string; attributes: Record<string, unknown>; extra: Record<string, unknown>
+  // Mode-specific pool filter
+  let pool = candidates.filter((c: { name: string }) => !recent.has(c.name)) as Array<{
+    id: number; name: string
+    attributes: Record<string, unknown>
+    extra:      Record<string, unknown>
+    image_url:  string | null
+  }>
+
+  if (mode === 'pokemon-card') {
+    pool = pool.filter(c => !!c.extra.card_url)
   }
 
-  // Fetch cry URL from PokeAPI at cron time
-  let cryUrl: string | null = null
-  try {
-    const dexNum = pick.attributes.pokedex_number as number
-    const pokeRes = await fetch(`https://pokeapi.co/api/v2/pokemon/${dexNum}`)
-    if (pokeRes.ok) {
-      const pokeData = await pokeRes.json()
-      cryUrl = pokeData.cries?.latest ?? null
-    }
-  } catch { /* non-fatal */ }
+  if (!pool.length) return 'skipped: no candidates'
 
-  const extra = { ...pick.extra, cry_url: cryUrl }
+  const pick = pool[Math.floor(Math.random() * pool.length)]
+
+  // Build mode-specific attributes snapshot and extra
+  let attrs: Record<string, unknown>
+  let extra: Record<string, unknown>
+
+  if (mode === 'pokemon-classic') {
+    // Only the 7 visible columns for the classic grid, in display order
+    attrs = {
+      type1:           pick.attributes.type1 ?? null,
+      type2:           pick.attributes.type2 ?? 'None',
+      habitat:         pick.attributes.habitat ?? 'unknown',
+      color:           pick.attributes.color ?? '',
+      evolution_stage: pick.attributes.evolution_stage ?? 1,
+      height_m:        pick.attributes.height_m ?? '0',
+      weight_kg:       pick.attributes.weight_kg ?? '0',
+    }
+    extra = {}
+
+  } else if (mode === 'pokemon-card') {
+    attrs = pick.attributes
+    extra = { card_url: pick.extra.card_url }
+
+  } else if (mode === 'pokemon-description') {
+    // Fetch English flavor text from PokéAPI
+    let flavorText = ''
+    try {
+      const dexNum  = pick.attributes.pokedex_number as number
+      const specRes = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${dexNum}`)
+      if (specRes.ok) {
+        const specData = await specRes.json() as {
+          flavor_text_entries: Array<{ flavor_text: string; language: { name: string } }>
+        }
+        const entry = specData.flavor_text_entries.find(e => e.language.name === 'en')
+        // Clean control characters (newlines, form feeds) from flavor text
+        flavorText = (entry?.flavor_text ?? '').replace(/[\f\n\r]/g, ' ').trim()
+      }
+    } catch { /* non-fatal */ }
+
+    const description = await generatePokemonDescription(pick.name, flavorText)
+    attrs = pick.attributes
+    extra = { description }
+
+  } else {
+    // pokemon-silhouette — no extra needed
+    attrs = pick.attributes
+    extra = {}
+  }
 
   await supabase.from('daily_challenges').insert({
     theme_id:     themeId,
@@ -95,8 +171,8 @@ async function fetchPokemon(themeId: number, mode: string, today: string): Promi
     date:         today,
     character_id: pick.id,
     name:         pick.name,
-    image_url:    (pick.extra.sprite_url as string) ?? null,
-    attributes:   pick.attributes,
+    image_url:    pick.image_url,
+    attributes:   attrs,
     extra,
   })
 
