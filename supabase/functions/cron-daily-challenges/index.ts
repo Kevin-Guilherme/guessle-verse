@@ -230,35 +230,45 @@ async function fetchOpggBuild(
 
     let boots: { ids: number[]; names: string[] } | null
     let core:  { ids: number[]; names: string[] } | null
-    let fourth: { ids: number[]; names: string[] } | null
-    let last:  { ids: number[]; names: string[] } | null
+    let extraSlots: Array<{ ids: number[]; names: string[] }>[]
     let runesPartIdx: number
     let skillsPartIdx: number
 
     if (parts.length <= 7) {
       // New compact format: boots, core, fourth[], last[], Runes, Skills
-      boots  = parts.length > 0 ? _parseOpggItem(parts[0]) : null
-      core   = parts.length > 1 ? _parseOpggItem(parts[1]) : null
-      fourth = parts.length > 2 ? (parseArr(parts[2])[0] ?? null) : null
-      last   = parts.length > 3 ? (parseArr(parts[3])[0] ?? null) : null
+      boots      = parts.length > 0 ? _parseOpggItem(parts[0]) : null
+      core       = parts.length > 1 ? _parseOpggItem(parts[1]) : null
+      extraSlots = [parseArr(parts[2] ?? ''), parseArr(parts[3] ?? '')]
       runesPartIdx  = 4
       skillsPartIdx = 5
     } else {
       // Old verbose format: starter, boots, core, fourth[], fifth[], sixth[], last[], Runes, Skills
-      boots  = parts.length > 1 ? _parseOpggItem(parts[1]) : null
-      core   = parts.length > 2 ? _parseOpggItem(parts[2]) : null
-      fourth = parts.length > 3 ? (parseArr(parts[3])[0] ?? null) : null
-      last   = parts.length > 6 ? (parseArr(parts[6])[0] ?? null) : null
+      boots      = parts.length > 1 ? _parseOpggItem(parts[1]) : null
+      core       = parts.length > 2 ? _parseOpggItem(parts[2]) : null
+      extraSlots = [parseArr(parts[3] ?? ''), parseArr(parts[4] ?? ''), parseArr(parts[5] ?? ''), parseArr(parts[6] ?? '')]
       runesPartIdx  = 7
       skillsPartIdx = 8
     }
 
-    // Canonical build: [boots(1), core(2-3), fourth(1), last(1)] capped at 6
+    // Build canonical 6-item list: boots → core → extra slots (with fallbacks).
+    // Dedup across all slots; if a slot's top pick is already present, try the next option.
+    const seen = new Set<number>()
     const ids: number[] = []
-    if (boots)              ids.push(boots.ids[0])
-    if (core)               ids.push(...core.ids)
-    if (fourth && ids.length < 5) ids.push(fourth.ids[0])
-    if (last   && ids.length < 6) ids.push(last.ids[0])
+    const addId = (id: number) => { if (id && !seen.has(id)) { seen.add(id); ids.push(id) } }
+
+    if (boots) addId(boots.ids[0])
+    if (core)  core.ids.forEach(addId)
+
+    // Iterate all options across extra slots in round-robin until we have 6
+    const maxOpts = Math.max(...extraSlots.map(s => s.length), 0)
+    for (let optIdx = 0; optIdx < maxOpts && ids.length < 6; optIdx++) {
+      for (const slot of extraSlots) {
+        if (ids.length >= 6) break
+        const opt = slot[optIdx]
+        if (opt) addId(opt.ids[0])
+      }
+    }
+
     const items = ids.slice(0, 6).map(id => `https://ddragon.leagueoflegends.com/cdn/${version}/img/item/${id}.png`)
 
     // Keystone rune — look up icon by name in DDragon runesReforged.json
@@ -573,12 +583,15 @@ async function fetchNaruto(themeId: number, mode: string, today: string): Promis
   if (mode === 'eye') {
     pool = pool.filter((c: CandRow) => c.image_url && !/\.svg/i.test(c.image_url))
   } else if (mode === 'jutsu') {
-    pool = pool.filter((c: CandRow) => c.extra?.jutsu_image_url || c.extra?.jutsu_video_url)
+    pool = pool.filter((c: CandRow) => !!c.extra?.jutsu_video_url)
   } else if (mode === 'quote') {
-    pool = pool.filter((c: CandRow) => {
+    // Prefer characters with pre-scraped quotes but don't hard-exclude others
+    // (cron will try wiki fetch at runtime for those without quotes)
+    const withQuotes = pool.filter((c: CandRow) => {
       const quotes = (c.extra?.quotes ?? []) as string[]
       return quotes.some((q: string) => !q.toLowerCase().includes(c.name.toLowerCase()))
     })
+    if (withQuotes.length > 0) pool = withQuotes
   }
 
   if (!pool.length) return 'skipped: no candidates'
@@ -599,12 +612,91 @@ async function fetchNaruto(themeId: number, mode: string, today: string): Promis
 
   let extra = { ...pick.extra }
 
-  // quote: select a random quote from the character's pool (filtered to exclude name references)
+  // quote: try fetching from Naruto wiki first, fall back to extra.quotes pool
   if (mode === 'quote') {
-    const quotes = ((pick.extra?.quotes ?? []) as string[])
-      .filter((q: string) => !q.toLowerCase().includes(pick.name.toLowerCase()))
-    const quote  = quotes.length ? quotes[Math.floor(Math.random() * quotes.length)] : ''
-    extra = { ...extra, quote }
+    type QuoteEntry = { text: string; saidToRaw: string | null }
+    let selectedEntry: QuoteEntry | null = null
+
+    try {
+      const wikiName = pick.name.replace(/ /g, '_')
+      for (const wikiPage of [`${wikiName}/Quotes`, wikiName]) {
+        const wikiRes = await fetch(
+          `https://naruto.fandom.com/api.php?action=parse&page=${encodeURIComponent(wikiPage)}&prop=wikitext&format=json`,
+          { headers: { 'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1)' } }
+        )
+        const wikiData = await wikiRes.json() as { parse?: { wikitext?: { '*': string } } }
+        const wikitext = wikiData?.parse?.wikitext?.['*'] ?? ''
+        if (!wikitext) continue
+
+        const firstName = pick.name.split(' ')[0].toLowerCase()
+
+        // Pass 1 — quotes that include "to [[CharName]]" context (same line or next line)
+        // Handles: "text" — Attrib, to [[Name]] and "text"\n**— Attrib, to [[Name]]
+        const withTo: QuoteEntry[] = []
+        const toRegex = /[""]([^""]{20,300})[""][^\n]*(?:\n[^\n]*)?to \[\[([^\]|#\n]+)/g
+        for (const m of wikitext.matchAll(toRegex)) {
+          const text      = m[1].trim()
+          const saidToRaw = m[2].trim()
+          if (text.toLowerCase().includes(firstName)) continue
+          if (text.length < 20 || text.length > 300)  continue
+          withTo.push({ text, saidToRaw })
+        }
+
+        // Pass 2 — all quoted strings (no said_to context required)
+        const plain: QuoteEntry[] = [
+          ...[...wikitext.matchAll(/[""]([^""]{20,300})[""]|"([^"]{20,300})"/g)]
+            .map(m => ({ text: (m[1] ?? m[2]).trim(), saidToRaw: null })),
+          ...[...wikitext.matchAll(/\|\s*([^|=\n]{30,300}?)\s*(?:\||})/g)]
+            .map(m => ({ text: m[1].trim(), saidToRaw: null }))
+            .filter(e => /[.!?]$/.test(e.text)),
+        ].filter(e =>
+          !e.text.toLowerCase().includes(firstName) &&
+          e.text.length >= 20 && e.text.length <= 300
+        )
+
+        // Prefer quotes with said_to context; fall back to plain
+        const pool = withTo.length > 0 ? withTo : plain
+        const unique = [...new Map(pool.map(e => [e.text, e])).values()]
+        if (unique.length > 0) {
+          selectedEntry = unique[Math.floor(Math.random() * unique.length)]
+          break
+        }
+      }
+    } catch { /* fall through to extra.quotes */ }
+
+    // Fallback to stored quotes pool (no said_to available)
+    if (!selectedEntry) {
+      const pool = ((pick.extra?.quotes ?? []) as string[])
+        .filter((q: string) => !q.toLowerCase().includes(pick.name.toLowerCase()))
+      if (pool.length) {
+        selectedEntry = { text: pool[Math.floor(Math.random() * pool.length)], saidToRaw: null }
+      }
+    }
+
+    // Resolve said_to character name against DB
+    let saidToName: string | null = null
+    if (selectedEntry?.saidToRaw) {
+      const rawName = selectedEntry.saidToRaw.trim()
+      // Wiki links can be "First Last" or "First_Last" — normalise underscores
+      const normName = rawName.replace(/_/g, ' ')
+      const { data: saidToChar } = await supabase
+        .from('characters')
+        .select('name')
+        .eq('theme_id', themeId)
+        .ilike('name', `%${normName.split(' ')[0]}%`)
+        .limit(5)
+      // Pick the closest match (shortest name that starts with the first word)
+      const match = (saidToChar ?? []).find(
+        c => c.name.toLowerCase().startsWith(normName.split(' ')[0].toLowerCase())
+      ) ?? saidToChar?.[0] ?? null
+      if (match) saidToName = match.name
+    }
+
+    extra = {
+      ...extra,
+      quote: selectedEntry?.text ?? '',
+      ...(saidToName ? { quote_said_to_name: saidToName } : {}),
+    }
   }
 
   await supabase.from('daily_challenges').insert({
@@ -841,18 +933,18 @@ const CURATED_GROUPS: Array<{
   { type: 'lore', category: 'Campeões de Targon',     color: 'green',  champions: ['Pantheon','Diana','Leona','Taric','Soraka','Zoe','Aphelios','Aurelion Sol'] },
   // TYPE
   { type: 'type', category: 'Yordles',                color: 'yellow', champions: ['Teemo','Lulu','Tristana','Kennen','Corki','Rumble','Ziggs','Heimerdinger','Veigar','Kled','Poppy','Gnar','Yuumi'] },
-  { type: 'type', category: 'Invocam Pets',           color: 'yellow', champions: ['Annie','Yorick','Malzahar','Zyra','Heimerdinger','Shaco','Elise','Mordekaiser','Azir'] },
+  { type: 'type', category: 'Invocam Pets',           color: 'yellow', champions: ['Annie','Yorick','Malzahar','Zyra','Heimerdinger','Shaco','Elise','Azir'] },
   { type: 'type', category: 'Se Transformam',         color: 'yellow', champions: ['Nidalee','Jayce','Elise','Gnar','Kayn','Shyvana'] },
   // MECHANIC
   { type: 'mechanic', category: 'Podem Reviver',      color: 'blue',   champions: ['Anivia','Sion','Zac','Zilean'] },
   { type: 'mechanic', category: 'Reset de Abate',     color: 'blue',   champions: ['Katarina','Akali','Master Yi','Pyke','Viego','Aurora',"Bel'Veth"] },
-  { type: 'mechanic', category: 'Ultimate Global',    color: 'blue',   champions: ['Shen','Twisted Fate','Soraka','Gangplank','Karthus','Senna','Ashe','Jinx','Ezreal','Briar','Draven','Ziggs'] },
+  { type: 'mechanic', category: 'Ultimate Global',    color: 'blue',   champions: ['Shen','Soraka','Gangplank','Karthus','Senna','Ashe','Jinx','Ezreal','Draven'] },
   { type: 'mechanic', category: 'Têm Stealth',        color: 'blue',   champions: ['Twitch','Evelynn','Shaco','Akali','Rengar',"Kha'Zix",'Talon','Wukong','Teemo','Neeko'] },
   { type: 'mechanic', category: 'Não Usam Mana',      color: 'blue',   champions: ['Garen','Katarina','Riven','Zed','Aatrox','Tryndamere','Renekton','Shyvana','Gwen','Samira'] },
   { type: 'mechanic', category: 'Usam Energia',       color: 'blue',   champions: ['Zed','Shen','Akali','Kennen','Lee Sin'] },
   // TRICK
-  { type: 'trick', category: 'Golens/Construtos',     color: 'purple', champions: ['Malphite','Blitzcrank','Orianna','Galio','Nautilus','Maokai','Zac'] },
-  { type: 'trick', category: 'Têm Gancho (Hook)',     color: 'purple', champions: ['Blitzcrank','Thresh','Nautilus','Pyke','Leona'] },
+  { type: 'trick', category: 'Golens',                color: 'purple', champions: ['Malphite','Blitzcrank','Orianna','Galio','Nautilus','Maokai','Zac'] },
+  { type: 'trick', category: 'Têm Gancho (Hook)',     color: 'purple', champions: ['Blitzcrank','Thresh','Nautilus','Pyke'] },
   { type: 'trick', category: 'Spell Shield',          color: 'purple', champions: ['Sivir','Morgana','Nocturne','Malzahar'] },
   { type: 'trick', category: 'Stacks Permanentes',    color: 'purple', champions: ["Cho'Gath",'Nasus','Senna','Thresh','Veigar'] },
 ]
