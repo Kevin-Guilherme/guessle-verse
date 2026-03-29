@@ -12,6 +12,11 @@ export default function PokemonSilhouetteMode({ challenge }: ModeComponentProps)
   const wrongGuesses = guesses.filter(g => g.feedback?.[0]?.feedback !== 'correct').length
   const alreadyGuessed = guesses.map((g) => g.value.toLowerCase())
 
+  // Deterministic crop — fixed per challenge, no refresh exploit
+  const cropX = (challenge.id * 37) % 60 + 20  // 20–80%
+  const cropY = (challenge.id * 53) % 60 + 20  // 20–80%
+  const scale = won ? 1 : Math.max(4 - wrongGuesses * 0.3, 1)
+
   const imageUrl = challenge.image_url as string | undefined
 
   return (
@@ -31,10 +36,13 @@ export default function PokemonSilhouetteMode({ challenge }: ModeComponentProps)
               src={imageUrl}
               alt={won ? challenge.name : 'Pokémon silhouette'}
               style={{
-                width:      '85%',
-                height:     '85%',
-                objectFit:  'contain',
-                filter:     won ? 'none' : 'brightness(0)',
+                width:           '100%',
+                height:          '100%',
+                objectFit:       'contain',
+                transform:       `scale(${scale})`,
+                transformOrigin: `${cropX}% ${cropY}%`,
+                transition:      'transform 400ms ease, filter 400ms ease',
+                filter:          won ? 'none' : 'brightness(0)',
               }}
               draggable={false}
             />
