@@ -4,13 +4,14 @@ import { useState, useRef, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
 interface SearchInputProps {
-  themeId:      number
-  onSubmit:     (value: string) => void
-  disabled?:    boolean
-  placeholder?: string
+  themeId:        number
+  onSubmit:       (value: string) => void
+  disabled?:      boolean
+  placeholder?:   string
+  excludeNames?:  string[]
 }
 
-export function SearchInput({ themeId, onSubmit, disabled, placeholder }: SearchInputProps) {
+export function SearchInput({ themeId, onSubmit, disabled, placeholder, excludeNames }: SearchInputProps) {
   const supabase = createClient()
   const [query,        setQuery]        = useState('')
   const [results,      setResults]      = useState<Array<{ name: string; image_url: string | null; tile_url: string | null }>>([])
@@ -32,7 +33,8 @@ export function SearchInput({ themeId, onSubmit, disabled, placeholder }: Search
         .ilike('name', `%${query}%`)
         .limit(8)
 
-      const items = (data ?? []).map((d) => {
+      const excluded = new Set(excludeNames ?? [])
+      const items = (data ?? []).filter(d => !excluded.has((d.name as string).toLowerCase())).map((d) => {
         const img  = d.image_url as string | null
         // Keep splash as fallback; tile shown in <img onError>
         const tile = img?.includes('/splash/') ? img.replace('/splash/', '/tiles/') : img
@@ -45,7 +47,8 @@ export function SearchInput({ themeId, onSubmit, disabled, placeholder }: Search
     }, 200)
 
     return () => { clearTimeout(timer); setSearching(false) }
-  }, [query, themeId, supabase])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query, themeId, supabase, excludeNames?.join(',')])
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {

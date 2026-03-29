@@ -75,12 +75,10 @@ export default function PokemonDescriptionMode({ challenge }: ModeComponentProps
       {!won && !lost && (
         <SearchInput
           themeId={challenge.theme_id}
-          onSubmit={(name) => {
-            if (alreadyGuessed.includes(name.toLowerCase())) return
-            submitGuess(name)
-          }}
+          onSubmit={(name) => submitGuess(name)}
           disabled={loading}
           placeholder="Enter Pokémon name..."
+          excludeNames={alreadyGuessed}
         />
       )}
     </div>

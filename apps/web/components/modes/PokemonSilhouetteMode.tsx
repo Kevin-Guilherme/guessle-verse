@@ -29,18 +29,24 @@ export default function PokemonSilhouetteMode({ challenge }: ModeComponentProps)
 
       {/* Silhouette display */}
       <div className="flex justify-center">
+        {/* Outer container is white so the silhouette shows as black on white */}
         <div
-          className="w-64 h-64 mx-auto rounded-xl border border-white/10 overflow-hidden bg-black"
-          style={{
-            backgroundImage:    imageUrl ? `url(${imageUrl})` : undefined,
-            backgroundSize:     `${zoom}%`,
-            backgroundPosition: bgPos,
-            backgroundRepeat:   'no-repeat',
-            filter:             won ? 'none' : 'brightness(0)',
-            transition:         'background-size 400ms ease, filter 400ms ease',
-          }}
+          className="w-64 h-64 mx-auto rounded-xl border border-white/20 overflow-hidden bg-white"
           aria-label={won ? challenge.name : 'Pokémon silhouette'}
-        />
+        >
+          <div
+            style={{
+              width:              '100%',
+              height:             '100%',
+              backgroundImage:    imageUrl ? `url(${imageUrl})` : undefined,
+              backgroundSize:     `${zoom}%`,
+              backgroundPosition: bgPos,
+              backgroundRepeat:   'no-repeat',
+              filter:             won ? 'none' : 'brightness(0)',
+              transition:         'background-size 400ms ease, filter 400ms ease',
+            }}
+          />
+        </div>
       </div>
 
       {/* Win reveal */}
@@ -55,12 +61,10 @@ export default function PokemonSilhouetteMode({ challenge }: ModeComponentProps)
       {!won && !lost && (
         <SearchInput
           themeId={challenge.theme_id}
-          onSubmit={(name) => {
-            if (alreadyGuessed.includes(name.toLowerCase())) return
-            submitGuess(name)
-          }}
+          onSubmit={(name) => submitGuess(name)}
           disabled={loading}
           placeholder="Enter Pokémon name..."
+          excludeNames={alreadyGuessed}
         />
       )}
     </div>

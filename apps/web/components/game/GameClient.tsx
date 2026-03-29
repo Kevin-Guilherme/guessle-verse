@@ -243,7 +243,8 @@ export function GameClient({ challengeId, slug, mode, universeName, authenticate
       {/* Guess history */}
       {store.guesses.length > 0 && (() => {
         const firstGuess = store.guesses[0]
-        const isSimple   = firstGuess.feedback.length === 1 && firstGuess.feedback[0].key === 'champion'
+        const forceSimple = mode.startsWith('pokemon-') && mode !== 'pokemon-classic'
+        const isSimple   = forceSimple || (firstGuess.feedback.length === 1 && firstGuess.feedback[0].key === 'champion')
         const cols       = firstGuess.feedback.length
         return (
           <div className="space-y-2">
