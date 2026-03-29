@@ -68,10 +68,9 @@ export default function SplashMode({ challenge }: ModeComponentProps) {
     if (e.key === 'Escape') setOpen(false)
   }
 
-  const cropPos = useMemo(() => ({
-    x: Math.floor(Math.random() * 60) + 20,  // 20%–80%
-    y: Math.floor(Math.random() * 60) + 20,
-  }), [])
+  // Deterministic crop — same position every refresh for the same challenge
+  const cropX = (challenge.id * 37) % 60 + 20  // range 20–80
+  const cropY = (challenge.id * 53) % 60 + 20  // range 20–80
 
   const alreadyGuessedChamps = champGuesses.map(g => g.value.toLowerCase())
 
@@ -83,7 +82,7 @@ export default function SplashMode({ challenge }: ModeComponentProps) {
           <div className="w-[220px] h-[220px] overflow-hidden rounded-xl">
             <div
               className="w-full h-full bg-no-repeat transition-all duration-500"
-              style={{ backgroundImage: `url(${challenge.image_url as string})`, backgroundSize: `${zoom}%`, backgroundPosition: won || lost ? 'center' : `${cropPos.x}% ${cropPos.y}%` }}
+              style={{ backgroundImage: `url(${challenge.image_url as string})`, backgroundSize: `${zoom}%`, backgroundPosition: won || lost ? 'center' : `${cropX}% ${cropY}%` }}
             />
           </div>
         </div>
