@@ -16,7 +16,7 @@ export default function PokemonSilhouetteMode({ challenge }: ModeComponentProps)
   const edgeOffset = (challenge.id * 37) % 20 + 5   // 5–25%
   const cropX = (challenge.id % 2 === 0) ? edgeOffset : 100 - edgeOffset  // left or right edge
   const cropY = (challenge.id * 53) % 40 + 27        // 27–67% (shifted up)
-  const scale = won ? 1 : Math.max(1.6 - wrongGuesses * 0.06, 1)
+  const scale = won ? 1 : Math.max(2.0 - wrongGuesses * 0.1, 1)
 
   const imageUrl = challenge.image_url as string | undefined
 
