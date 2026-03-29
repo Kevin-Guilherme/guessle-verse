@@ -29,8 +29,8 @@ export default function JutsuMode({ challenge }: ModeComponentProps) {
 
       <div className="w-full max-w-sm mx-auto aspect-video overflow-hidden rounded-xl border border-white/10 bg-black">
         {videoUrl ? (
-          /\.gif/i.test(videoUrl) ? (
-            // GIF (animated jutsu from Naruto wiki)
+          /\.(gif|png|jpe?g|webp)/i.test(videoUrl) ? (
+            // Static/animated image (GIF, PNG, JPG, WEBP)
             // eslint-disable-next-line @next/next/no-img-element
             <img src={videoUrl} alt="Jutsu" className="w-full h-full object-cover" style={filterStyle} />
           ) : (
@@ -62,7 +62,7 @@ export default function JutsuMode({ challenge }: ModeComponentProps) {
           <p className="text-correct font-display text-sm tracking-wide">{challenge.name}</p>
           {videoUrl && (
             <div className="w-full max-w-sm mx-auto aspect-video overflow-hidden rounded-xl border border-correct/20 bg-black">
-              {/\.gif/i.test(videoUrl) ? (
+              {/\.(gif|png|jpe?g|webp)/i.test(videoUrl) ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={videoUrl} alt={jutsuName} className="w-full h-full object-cover" />
               ) : (
