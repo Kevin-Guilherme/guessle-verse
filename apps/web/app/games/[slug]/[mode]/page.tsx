@@ -47,6 +47,26 @@ export default async function GamePage({ params }: Props) {
     .eq('date', today)
     .single()
 
+  // For jutsu/eye modes, merge live character extra so dynamic fields are always fresh
+  // (daily_challenges.extra is a snapshot from generation time)
+  if (challenge && (params.mode === 'jutsu' || params.mode === 'eye') && challenge.character_id) {
+    const service = createServiceClient()
+    const { data: char } = await service
+      .from('characters')
+      .select('extra')
+      .eq('id', challenge.character_id)
+      .single()
+    if (char?.extra) {
+      const liveExtra = char.extra as Record<string, unknown>
+      if (params.mode === 'jutsu' && liveExtra.jutsu_video_url) {
+        challenge.extra = { ...(challenge.extra ?? {}), jutsu_video_url: liveExtra.jutsu_video_url, jutsu_name: liveExtra.jutsu_name }
+      }
+      if (params.mode === 'eye' && liveExtra.eye_coords) {
+        challenge.extra = { ...(challenge.extra ?? {}), eye_coords: liveExtra.eye_coords }
+      }
+    }
+  }
+
   const { data: { user } } = await supabase.auth.getUser()
 
   // Fetch completion status for all modes today (for tab indicators)

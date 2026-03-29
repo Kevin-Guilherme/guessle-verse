@@ -11,13 +11,19 @@ export default function EyeMode({ challenge }: ModeComponentProps) {
   const { submitGuess, loading } = useGuess(challenge.id)
   const alreadyGuessed = guesses.map((g) => g.value.toLowerCase())
 
-  const eyeCrop   = (challenge.extra as Record<string, unknown> | null)?.eye_crop as { left: { x: number; y: number }; right: { x: number; y: number } } | undefined
-  const hasEyeCrop = !!eyeCrop
+  const eyeCoords = (challenge.extra as Record<string, unknown> | null)?.eye_coords as { left: { x: number; y: number }; right: { x: number; y: number } } | undefined
+  const hasEyeCoords = !!eyeCoords
   const eyeSide   = challenge.id % 2 === 0 ? 'left' : 'right'
-  const eyeCoords = eyeCrop?.[eyeSide]
+  const eye       = eyeCoords?.[eyeSide]
 
-  const zoom   = won ? 100 : (hasEyeCrop ? 600 : Math.max(800 - guesses.length * 100, 100))
-  const eyePos = won ? 'center' : (hasEyeCrop && eyeCoords ? `${eyeCoords.x}% ${eyeCoords.y}%` : `${challenge.id % 2 === 0 ? '38%' : '62%'} 45%`)
+  const zoom   = won ? 100 : (hasEyeCoords ? 600 : Math.max(800 - guesses.length * 100, 100))
+  const eyePos = won ? 'center' : (hasEyeCoords && eye ? `${eye.x}% ${eye.y}%` : `${challenge.id % 2 === 0 ? '38%' : '62%'} 45%`)
+
+  // Load full-resolution image (strip Fandom scale restriction)
+  const hiResUrl = (url: string) =>
+    url.replace(/\/revision\/latest\/scale-to-width-down\/\d+/, '/revision/latest')
+
+  const bgUrl = challenge.image_url ? hiResUrl(challenge.image_url as string) : ''
 
   return (
     <div className="space-y-4">
@@ -29,7 +35,7 @@ export default function EyeMode({ challenge }: ModeComponentProps) {
         <div
           className="w-64 h-40 mx-auto rounded-xl border border-white/10 overflow-hidden"
           style={{
-            backgroundImage:    `url(${challenge.image_url})`,
+            backgroundImage:    `url(${bgUrl})`,
             backgroundSize:     won ? 'contain' : `${zoom}%`,
             backgroundPosition: won ? 'center' : eyePos,
             backgroundRepeat:   'no-repeat',
