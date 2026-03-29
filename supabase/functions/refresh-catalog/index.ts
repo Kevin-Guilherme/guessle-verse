@@ -1,8 +1,10 @@
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import { parse } from 'npm:node-html-parser@6'
 
-const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
-const SERVICE_KEY  = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+const SUPABASE_URL     = Deno.env.get('SUPABASE_URL')!
+const SERVICE_KEY      = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+const GEMINI_KEY       = Deno.env.get('GEMINI_API_KEY') ?? ''
+const EYE_DETECT_MODEL = 'gemini-2.5-flash'
 
 const supabase = createClient(SUPABASE_URL, SERVICE_KEY)
 
@@ -13,6 +15,68 @@ async function getThemeId(slug: string): Promise<number | null> {
   return data?.id ?? null
 }
 
+// ─── Eye coordinate detection via Claude Vision ───────────────────────────────
+
+type EyeCoords = { left: { x: number; y: number }; right: { x: number; y: number } }
+
+async function detectEyeCoords(imageUrl: string): Promise<EyeCoords | null> {
+  if (!GEMINI_KEY) return null
+  try {
+    const imgRes = await fetch(imageUrl, {
+      headers: { 'User-Agent': 'GuessleBot/1.0' },
+      signal:  AbortSignal.timeout(10_000),
+    })
+    if (!imgRes.ok) throw new Error(`Image fetch HTTP ${imgRes.status}`)
+
+    const contentType = imgRes.headers.get('content-type') ?? 'image/jpeg'
+    const mimeType    = contentType.split(';')[0].trim()
+    const allowed     = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+    if (!allowed.includes(mimeType)) return null
+
+    const buffer = await imgRes.arrayBuffer()
+    const bytes  = new Uint8Array(buffer)
+    let binary   = ''
+    for (const b of bytes) binary += String.fromCharCode(b)
+    const base64 = btoa(binary)
+
+    const geminiRes = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${EYE_DETECT_MODEL}:generateContent?key=${GEMINI_KEY}`,
+      {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        signal:  AbortSignal.timeout(20_000),
+        body: JSON.stringify({
+          contents: [{
+            parts: [
+              { inline_data: { mime_type: mimeType, data: base64 } },
+              { text: 'This is an anime/manga character portrait. Estimate the percentage coordinates (X%, Y% from top-left, 0-100) of the center of the LEFT eye and RIGHT eye. Respond ONLY with valid JSON: {"left": {"x": number, "y": number}, "right": {"x": number, "y": number}}' },
+            ],
+          }],
+          generationConfig: { maxOutputTokens: 128, temperature: 0 },
+        }),
+      }
+    )
+    if (!geminiRes.ok) throw new Error(`Gemini HTTP ${geminiRes.status}`)
+
+    const json      = await geminiRes.json() as { candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }> }
+    const raw       = json.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? ''
+    const jsonMatch = raw.match(/\{[\s\S]*\}/)
+    if (!jsonMatch) return null
+
+    const coords = JSON.parse(jsonMatch[0]) as EyeCoords
+    if (typeof coords.left?.x !== 'number' || typeof coords.right?.x !== 'number') return null
+
+    const clamp = (n: number) => Math.max(0, Math.min(100, n))
+    return {
+      left:  { x: clamp(coords.left.x),  y: clamp(coords.left.y)  },
+      right: { x: clamp(coords.right.x), y: clamp(coords.right.y) },
+    }
+  } catch (err) {
+    console.warn(`Eye detection failed (${imageUrl.slice(0, 60)}...):`, err instanceof Error ? err.message : err)
+    return null
+  }
+}
+
 async function upsertCharacter(
   themeId: number,
   name: string,
@@ -21,10 +85,45 @@ async function upsertCharacter(
   extra: Record<string, unknown>,
   active = true
 ): Promise<void> {
+  // Preserve existing eye_coords from DB so repeated refreshes don't wipe detections
+  let preservedEyeCoords: EyeCoords | undefined
+  try {
+    const { data: existing } = await supabase
+      .from('characters')
+      .select('extra')
+      .eq('theme_id', themeId)
+      .eq('name', name)
+      .maybeSingle()
+    if (existing?.extra?.eye_coords) preservedEyeCoords = existing.extra.eye_coords as EyeCoords
+  } catch { /* non-fatal — proceed without preserved coords */ }
+
+  const mergedExtra = preservedEyeCoords
+    ? { ...extra, eye_coords: preservedEyeCoords }
+    : extra
+
   await supabase.from('characters').upsert(
-    { theme_id: themeId, name, image_url: imageUrl, attributes, extra, active },
+    { theme_id: themeId, name, image_url: imageUrl, attributes, extra: mergedExtra, active },
     { onConflict: 'theme_id,name' }
   )
+
+  // If image available and no eye_coords yet, detect in background (fire-and-forget)
+  if (imageUrl && !mergedExtra.eye_coords) {
+    detectEyeCoords(imageUrl).then(async (coords) => {
+      if (!coords) return
+      const { data: char } = await supabase
+        .from('characters')
+        .select('id, extra')
+        .eq('theme_id', themeId)
+        .eq('name', name)
+        .maybeSingle()
+      if (!char) return
+      await supabase
+        .from('characters')
+        .update({ extra: { ...(char.extra ?? {}), eye_coords: coords } })
+        .eq('id', char.id)
+      console.log(`👁  Eye coords detected for ${name}: L(${coords.left.x.toFixed(1)}%, ${coords.left.y.toFixed(1)}%) R(${coords.right.x.toFixed(1)}%, ${coords.right.y.toFixed(1)}%)`)
+    }).catch(e => console.warn(`Eye detection bg error (${name}):`, e instanceof Error ? e.message : e))
+  }
 }
 
 function extractInfobox(html: string): Record<string, string> {
@@ -493,6 +592,76 @@ async function getWikiPageHtml(host: string, title: string): Promise<string> {
   return data?.parse?.text?.['*'] ?? ''
 }
 
+// ─── Naruto: Dattebayo API + arc lookup ──────────────────────────────────────
+
+async function fetchDattebayo(name: string): Promise<Record<string, unknown> | null> {
+  try {
+    const url = `https://dattebayo-api.onrender.com/characters?name=${encodeURIComponent(name)}`
+    const res = await fetch(url, {
+      headers: { 'User-Agent': 'GuessleBot/1.0' },
+      signal:  AbortSignal.timeout(8000),
+    })
+    if (!res.ok) return null
+    const data  = await res.json() as { characters?: Array<Record<string, unknown>> }
+    const chars = data.characters ?? []
+    if (!chars.length) return null
+    return chars.find(c => String(c.name ?? '').toLowerCase() === name.toLowerCase()) ?? null
+  } catch { return null }
+}
+
+type ArcRange = [number, number, string]  // [from, to, name]
+
+const NARUTO_CH_ARCS: ArcRange[] = [
+  [4,   33,  'Land of Waves'],
+  [34,  115, 'Chunin Exams'],
+  [116, 138, 'Konoha Crush'],
+  [139, 171, 'Search for Tsunade'],
+  [172, 238, 'Sasuke Recovery'],
+]
+const SHIPPUDEN_CH_ARCS: ArcRange[] = [
+  [1,   32,  'Kazekage Rescue'],
+  [33,  53,  'Tenchi Bridge'],
+  [72,  88,  'Akatsuki Suppression'],
+  [113, 151, 'Itachi Pursuit'],
+  [152, 175, "Pain's Assault"],
+  [197, 214, 'Five Kage Summit'],
+  [215, 700, 'Fourth Shinobi World War'],
+]
+const NARUTO_EP_ARCS: ArcRange[] = [
+  [6,   19,  'Land of Waves'],
+  [20,  67,  'Chunin Exams'],
+  [68,  80,  'Konoha Crush'],
+  [81,  100, 'Search for Tsunade'],
+  [107, 135, 'Sasuke Recovery'],
+]
+const SHIPPUDEN_EP_ARCS: ArcRange[] = [
+  [1,   32,  'Kazekage Rescue'],
+  [33,  53,  'Tenchi Bridge'],
+  [72,  88,  'Akatsuki Suppression'],
+  [113, 151, 'Itachi Pursuit'],
+  [152, 175, "Pain's Assault"],
+  [197, 214, 'Five Kage Summit'],
+  [215, 500, 'Fourth Shinobi World War'],
+]
+
+function arcFromDebut(manga: string | null, anime: string | null): string {
+  for (const [raw, isChapter] of [[manga, true], [anime, false]] as const) {
+    if (!raw) continue
+    const isShippuden = /shipp/i.test(raw)
+    const m = raw.match(/#(\d+)/)
+    if (!m) continue
+    const n     = parseInt(m[1], 10)
+    const table = isChapter
+      ? (isShippuden ? SHIPPUDEN_CH_ARCS : NARUTO_CH_ARCS)
+      : (isShippuden ? SHIPPUDEN_EP_ARCS : NARUTO_EP_ARCS)
+    for (const [from, to, name] of table) if (n >= from && n <= to) return name
+    return isShippuden ? 'Part II' : 'Part I'
+  }
+  return ''
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 async function refreshWikiUniverse(slug: string, themeId: number, cmcontinue = '', chunkSize = 50): Promise<{ count: number; nextOffset: string | null }> {
   const config = WIKI_CONFIGS[slug]
   if (!config) throw new Error(`No wiki config for ${slug}`)
@@ -500,7 +669,7 @@ async function refreshWikiUniverse(slug: string, themeId: number, cmcontinue = '
   const { titles, nextOffset } = await getWikiCategoryMembers(config.host, config.category, chunkSize, cmcontinue)
   let count = 0
 
-  for (const title of titles) {
+  async function processTitle(title: string): Promise<void> {
     try {
       // Skip variant/alternate-form pages — "(Part II)", "(Boruto)", "(Game)", etc.
       if (slug === 'naruto' && title.includes(' (')) {
@@ -508,13 +677,18 @@ async function refreshWikiUniverse(slug: string, themeId: number, cmcontinue = '
           { theme_id: themeId, name: title, active: false },
           { onConflict: 'theme_id,name' }
         )
-        continue
+        return
       }
 
-      const html    = await getWikiPageHtml(config.host, title)
+      // Fetch wiki + Dattebayo in parallel for Naruto
+      const [html, dattebayo] = await Promise.all([
+        getWikiPageHtml(config.host, title),
+        slug === 'naruto' ? fetchDattebayo(title) : Promise.resolve(null),
+      ])
+
       const infobox = extractInfobox(html)
 
-      if (!Object.keys(infobox).length) continue
+      if (!Object.keys(infobox).length) return
 
       const attributes: Record<string, unknown> = {}
       for (const [infoboxKey, attrKey] of Object.entries(config.attributeMap)) {
@@ -536,6 +710,55 @@ async function refreshWikiUniverse(slug: string, themeId: number, cmcontinue = '
       // ── Naruto-specific post-processing ──────────────────────────────────
       let active = true
       if (slug === 'naruto') {
+        // ── Dattebayo merge (fills/overrides wiki values) ─────────────────
+        let debutManga: string | null = null
+        let debutAnime: string | null = null
+        if (dattebayo) {
+          const p = (dattebayo.personal ?? {}) as Record<string, unknown>
+
+          if (p.sex)
+            attributes['genero'] = p.sex
+
+          const aff = Array.isArray(p.affiliation)
+            ? (p.affiliation as unknown[]).flat()[0]
+            : p.affiliation
+          if (aff) attributes['afiliacao'] = String(aff)
+
+          const clan = Array.isArray(p.clan) ? (p.clan as string[])[0] : p.clan
+          if (clan) attributes['cla'] = String(clan)
+
+          const kkg = p.kekkeiGenkai
+          if (kkg) attributes['kekkei_genkai'] = Array.isArray(kkg)
+            ? (kkg as string[]).join(', ')
+            : String(kkg)
+
+          const cl = p.classification
+          if (cl) {
+            const items = (Array.isArray(cl) ? cl as string[] : [String(cl)])
+              .map(s => s.replace(/\s*\(.*?\)/g, '').trim())
+              .filter(Boolean)
+            if (items.length) attributes['_class_raw'] = items.join(', ')
+          }
+
+          const nt = dattebayo.natureType as string[] | undefined
+          if (nt?.length) {
+            const natures = nt
+              .map(t => t.replace(/\s*\(.*?\)/g, '').trim())
+              .filter(Boolean)
+            if (natures.length) attributes['nature_types'] = natures.join(', ')
+          }
+
+          const debut = (dattebayo.debut ?? {}) as Record<string, string>
+          debutManga = debut.manga ?? null
+          debutAnime = debut.anime ?? null
+        }
+
+        // debut_arc: wiki infobox wins; Dattebayo-derived fallback
+        if (!attributes['debut_arc']) {
+          const arc = arcFromDebut(debutManga, debutAnime)
+          if (arc) attributes['debut_arc'] = arc
+        }
+
         // Filter: only keep characters that appear in Manga or Anime
         const appearsIn = String(attributes['_appears_in'] ?? '').toLowerCase()
         if (appearsIn && !appearsIn.includes('manga') && !appearsIn.includes('anime')) {
@@ -545,14 +768,12 @@ async function refreshWikiUniverse(slug: string, themeId: number, cmcontinue = '
 
         // Affiliations: keep only the first village/org (split by comma or space+capital)
         if (attributes['afiliacao']) {
-          const raw    = String(attributes['afiliacao'])
+          const raw     = String(attributes['afiliacao'])
           const byComma = raw.split(/,\s*/).filter(Boolean)
           if (byComma.length > 1) {
             attributes['afiliacao'] = byComma[0].trim()
           } else {
-            // space-separated list — split on capital letter after space boundary
-            const firstWord = raw.split(/\s+(?=[A-Z])/)[0].trim()
-            attributes['afiliacao'] = firstWord
+            attributes['afiliacao'] = raw.split(/\s+(?=[A-Z])/)[0].trim()
           }
         }
 
@@ -568,7 +789,7 @@ async function refreshWikiUniverse(slug: string, themeId: number, cmcontinue = '
         }
 
         // Extract Nature Types and Jutsu from collapsible cellbox sections
-        const cellboxes  = pageRoot.querySelectorAll('table.cellbox')
+        const cellboxes = pageRoot.querySelectorAll('table.cellbox')
         let natureCb: typeof cellboxes[0] | null = null
         let jutsuCb:  typeof cellboxes[0] | null = null
         for (const tb of cellboxes) {
@@ -577,7 +798,7 @@ async function refreshWikiUniverse(slug: string, themeId: number, cmcontinue = '
           if (label === 'Jutsu')       jutsuCb  = tb
         }
 
-        if (natureCb) {
+        if (natureCb && !attributes['nature_types']) {
           const natures: string[] = []
           for (const a of natureCb.querySelectorAll('a')) {
             const t = a.getAttribute('title') ?? ''
@@ -586,26 +807,38 @@ async function refreshWikiUniverse(slug: string, themeId: number, cmcontinue = '
           if (natures.length) attributes['nature_types'] = natures.join(', ')
         }
 
-        let firstJutsu: string | null = null
+        // Collect ALL jutsus; keep first for backwards-compat jutsu_name
+        const allJutsus: string[] = []
         if (jutsuCb) {
           for (const a of jutsuCb.querySelectorAll('a')) {
-            firstJutsu = a.getAttribute('title') ?? null
-            if (firstJutsu) break
+            const t = a.getAttribute('title') ?? ''
+            if (t && t.length > 3 && !allJutsus.includes(t)) allJutsus.push(t)
           }
         }
+        const firstJutsu = allJutsus[0] ?? null
+        if (allJutsus.length) extra['jutsus'] = allJutsus
 
         if (firstJutsu) {
           try {
-            const jHtml    = await getWikiPageHtml(config.host, firstJutsu)
-            const jRoot    = parse(jHtml)
-            const videoSrc = jRoot.querySelector('video source, source[type*="video"]')
-              ?.getAttribute('src') ?? null
+            const jHtml = await getWikiPageHtml(config.host, firstJutsu)
+            const jRoot = parse(jHtml)
+            let jGifUrl: string | null = null
             let jImgUrl: string | null = null
-            for (const el of jRoot.querySelectorAll('.infobox img, .pi-image-thumbnail, .pi-image img, figure img')) {
-              const src = el.getAttribute('src') ?? ''
-              if (/\.(png|jpg|jpeg|webp)/i.test(src)) { jImgUrl = src; break }
+            // Prioritize GIF (animated jutsu) over static image
+            for (const el of jRoot.querySelectorAll('.infobox img, .pi-image-thumbnail, .pi-image img, figure img, img')) {
+              const src = (el.getAttribute('src') ?? el.getAttribute('data-src') ?? '')
+              if (/\.gif/i.test(src) && !jGifUrl) { jGifUrl = src }
+              else if (/\.(png|jpg|jpeg|webp)/i.test(src) && !jImgUrl) { jImgUrl = src }
+              if (jGifUrl && jImgUrl) break
             }
-            if (videoSrc) extra['jutsu_video_url'] = videoSrc
+            // Also check <a href> links to File:.gif (wiki file links)
+            if (!jGifUrl) {
+              for (const el of jRoot.querySelectorAll('a[href*=".gif"], a[href*="File:"]')) {
+                const href = el.getAttribute('href') ?? ''
+                if (/\.gif/i.test(href)) { jGifUrl = href; break }
+              }
+            }
+            if (jGifUrl)  extra['jutsu_video_url'] = jGifUrl  // store GIF as video_url for JutsuMode
             if (jImgUrl)  extra['jutsu_image_url'] = jImgUrl
             extra['jutsu_name'] = firstJutsu
           } catch { /* non-fatal */ }
@@ -625,11 +858,8 @@ async function refreshWikiUniverse(slug: string, themeId: number, cmcontinue = '
           const qHtml = await getWikiPageHtml(config.host, `${title}/Quotes`)
           extractQuotes(parse(qHtml))
         } catch { /* /Quotes page may not exist — fall through */ }
-        // Fallback: extract blockquotes from the main character page
         if (quotes.length === 0) {
-          try {
-            extractQuotes(pageRoot)
-          } catch { /* non-fatal */ }
+          try { extractQuotes(pageRoot) } catch { /* non-fatal */ }
         }
         quotes = [...new Set(quotes)].slice(0, 20)
         extra['quotes'] = quotes
@@ -637,11 +867,16 @@ async function refreshWikiUniverse(slug: string, themeId: number, cmcontinue = '
 
       await upsertCharacter(themeId, title, imageUrl, attributes, extra, active)
       count++
-
-      await new Promise(r => setTimeout(r, 250))
     } catch (err) {
       console.error(`Wiki error (${slug}/${title}):`, err)
     }
+  }
+
+  // Process 5 characters in parallel; 200ms pause between batches
+  const BATCH = 5
+  for (let i = 0; i < titles.length; i += BATCH) {
+    await Promise.allSettled(titles.slice(i, i + BATCH).map(processTitle))
+    if (i + BATCH < titles.length) await new Promise(r => setTimeout(r, 200))
   }
 
   return { count, nextOffset }
