@@ -200,21 +200,32 @@ export async function POST(req: NextRequest) {
       }
     }
   } else {
-    const { data: candidate } = await service
-      .from('characters')
-      .select('name, attributes, image_url')
-      .eq('theme_id', challenge.theme_id)
-      .ilike('name', `%${value}%`)
-      .limit(1)
-      .single()
+    const [{ data: candidate }, { data: targetCharacter }] = await Promise.all([
+      service
+        .from('characters')
+        .select('name, attributes, image_url')
+        .eq('theme_id', challenge.theme_id)
+        .ilike('name', `%${value}%`)
+        .limit(1)
+        .single(),
+      service
+        .from('characters')
+        .select('attributes')
+        .eq('id', challenge.character_id)
+        .single(),
+    ])
 
     if (!candidate) {
       return NextResponse.json({ error: 'Character not found' }, { status: 404 })
     }
 
-    const targetAttrs    = challenge.attributes as Record<string, unknown>
+    // Column keys come from challenge.attributes snapshot (cron defines the schema per universe)
+    // Target values come from live characters.attributes (avoids stale after bulk updates)
+    const snapshotAttrs  = (challenge.attributes as Record<string, unknown>) ?? {}
+    const liveAttrs      = (targetCharacter?.attributes ?? {}) as Record<string, unknown>
+    const targetAttrs    = { ...snapshotAttrs, ...liveAttrs } as Record<string, unknown>
     const candidateAttrs = (candidate.attributes as Record<string, unknown>) ?? {}
-    const attrKeys       = Object.keys(targetAttrs)
+    const attrKeys       = Object.keys(snapshotAttrs)
 
     feedback = attrKeys.map((key) => {
       const targetVal    = String(targetAttrs[key] ?? '')
