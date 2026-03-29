@@ -15,7 +15,7 @@ export default function PokemonSilhouetteMode({ challenge }: ModeComponentProps)
   // Deterministic crop — fixed per challenge, no refresh exploit
   const cropX = (challenge.id * 37) % 60 + 20  // 20–80%
   const cropY = (challenge.id * 53) % 60 + 20  // 20–80%
-  const scale = won ? 1 : Math.max(2 - wrongGuesses * 0.1, 1)
+  const scale = won ? 1 : Math.max(1.5 - wrongGuesses * 0.05, 1)
 
   const imageUrl = challenge.image_url as string | undefined
 
