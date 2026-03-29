@@ -12,8 +12,13 @@ const supabase = createClient(SUPABASE_URL, SERVICE_KEY)
 
 // ─── Gemini — rewrite Pokémon description ────────────────────────────────────
 
+function sanitizeFallback(name: string, text: string): string {
+  return text.replace(new RegExp(name, 'gi'), 'this Pokémon')
+}
+
 async function generatePokemonDescription(name: string, flavorText: string): Promise<string> {
-  if (!GEMINI_KEY || !flavorText) return flavorText
+  if (!flavorText) return flavorText
+  if (!GEMINI_KEY) return sanitizeFallback(name, flavorText)
   try {
     const res = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`,
@@ -31,12 +36,12 @@ async function generatePokemonDescription(name: string, flavorText: string): Pro
         }),
       }
     )
-    if (!res.ok) return flavorText
+    if (!res.ok) return sanitizeFallback(name, flavorText)
     const json = await res.json() as { candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }> }
     const text = json.candidates?.[0]?.content?.parts?.[0]?.text?.trim()
-    return text || flavorText
+    return text || sanitizeFallback(name, flavorText)
   } catch {
-    return flavorText
+    return sanitizeFallback(name, flavorText)
   }
 }
 
@@ -111,7 +116,7 @@ async function fetchPokemon(themeId: number, mode: string, today: string): Promi
   }>
 
   if (mode === 'pokemon-card') {
-    pool = pool.filter(c => !!c.extra.card_url)
+    pool = pool.filter(c => !!c.extra?.card_url)
   }
 
   if (!pool.length) return 'skipped: no candidates'
