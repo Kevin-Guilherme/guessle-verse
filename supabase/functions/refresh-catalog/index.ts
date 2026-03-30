@@ -614,6 +614,260 @@ const WIKI_CONFIGS: Record<string, WikiConfig> = {
   },
 }
 
+// ─── Monster Hunter catalog ───────────────────────────────────────────────────
+
+// Map CrimsonNynja full game names → generation number
+const MH_GAME_TO_GENERATION: Record<string, number> = {
+  'Monster Hunter':                     1,
+  'Monster Hunter G':                   1,
+  'Monster Hunter Freedom':             1,
+  'Monster Hunter 2':                   2,
+  'Monster Hunter Freedom 2':           2,
+  'Monster Hunter Freedom Unite':       2,
+  'Monster Hunter Tri':                 3,
+  'Monster Hunter 3 Ultimate':          3,
+  'Monster Hunter Portable 3rd':        3,
+  'Monster Hunter 4':                   4,
+  'Monster Hunter 4 Ultimate':          4,
+  'Monster Hunter Generations':         5,
+  'Monster Hunter Generations Ultimate':5,
+  'Monster Hunter World':               5,
+  'Monster Hunter World: Iceborne':     5,
+}
+
+// Games that are gen 6+ (Rise, Wilds) or spinoffs — excluded from first_appearance
+const MH_GEN6_OR_SPINOFF = new Set([
+  'Monster Hunter Rise',
+  'Monster Hunter Rise: Sunbreak',
+  'Monster Hunter Wilds',
+  'Monster Hunter Stories',
+  'Monster Hunter Stories 2',
+])
+
+const SIZE_TIERS: Record<string, { size_min: string; size_max: string }> = {
+  'Fatalis':              { size_min: 'XL', size_max: 'XL' },
+  'Crimson Fatalis':      { size_min: 'XL', size_max: 'XL' },
+  'White Fatalis':        { size_min: 'XL', size_max: 'XL' },
+  'Alatreon':             { size_min: 'XL', size_max: 'XL' },
+  'Amatsu':               { size_min: 'XL', size_max: 'XL' },
+  'Teostra':              { size_min: 'L',  size_max: 'XL' },
+  'Lunastra':             { size_min: 'L',  size_max: 'XL' },
+  'Kushala Daora':        { size_min: 'L',  size_max: 'XL' },
+  'Chameleos':            { size_min: 'L',  size_max: 'XL' },
+  'Vaal Hazak':           { size_min: 'L',  size_max: 'XL' },
+  'Nergigante':           { size_min: 'L',  size_max: 'XL' },
+  "Xeno'jiiva":           { size_min: 'L',  size_max: 'XL' },
+  'Namielle':             { size_min: 'L',  size_max: 'XL' },
+  'Velkhana':             { size_min: 'L',  size_max: 'XL' },
+  'Rajang':               { size_min: 'L',  size_max: 'XL' },
+  'Furious Rajang':       { size_min: 'L',  size_max: 'XL' },
+  'Deviljho':             { size_min: 'L',  size_max: 'XL' },
+  'Savage Deviljho':      { size_min: 'L',  size_max: 'XL' },
+  'Lao-Shan Lung':        { size_min: 'XL', size_max: 'XL' },
+  'Shen Gaoren':          { size_min: 'XL', size_max: 'XL' },
+  'Jhen Mohran':          { size_min: 'XL', size_max: 'XL' },
+  'Dalamadur':            { size_min: 'XL', size_max: 'XL' },
+  'Gogmazios':            { size_min: 'XL', size_max: 'XL' },
+  'Dire Miralis':         { size_min: 'XL', size_max: 'XL' },
+  'Nakarkos':             { size_min: 'XL', size_max: 'XL' },
+  'Zorah Magdaros':       { size_min: 'XL', size_max: 'XL' },
+  'Rathalos':             { size_min: 'L',  size_max: 'XL' },
+  'Azure Rathalos':       { size_min: 'L',  size_max: 'XL' },
+  'Silver Rathalos':      { size_min: 'L',  size_max: 'XL' },
+  'Rathian':              { size_min: 'L',  size_max: 'XL' },
+  'Pink Rathian':         { size_min: 'L',  size_max: 'XL' },
+  'Gold Rathian':         { size_min: 'L',  size_max: 'XL' },
+  'Diablos':              { size_min: 'L',  size_max: 'XL' },
+  'Black Diablos':        { size_min: 'L',  size_max: 'XL' },
+  'Tigrex':               { size_min: 'L',  size_max: 'XL' },
+  'Brute Tigrex':         { size_min: 'L',  size_max: 'XL' },
+  'Brachydios':           { size_min: 'L',  size_max: 'XL' },
+  'Raging Brachydios':    { size_min: 'L',  size_max: 'XL' },
+  'Zinogre':              { size_min: 'L',  size_max: 'XL' },
+  'Stygian Zinogre':      { size_min: 'L',  size_max: 'XL' },
+  'Nargacuga':            { size_min: 'L',  size_max: 'XL' },
+  'Barioth':              { size_min: 'L',  size_max: 'XL' },
+  'Sand Barioth':         { size_min: 'L',  size_max: 'XL' },
+  'Lagiacrus':            { size_min: 'L',  size_max: 'XL' },
+  'Ivory Lagiacrus':      { size_min: 'L',  size_max: 'XL' },
+  'Agnaktor':             { size_min: 'L',  size_max: 'XL' },
+  'Glacial Agnaktor':     { size_min: 'L',  size_max: 'XL' },
+  'Duramboros':           { size_min: 'L',  size_max: 'XL' },
+  'Rust Duramboros':      { size_min: 'L',  size_max: 'XL' },
+  'Uragaan':              { size_min: 'L',  size_max: 'XL' },
+  'Steel Uragaan':        { size_min: 'L',  size_max: 'XL' },
+  'Royal Ludroth':        { size_min: 'L',  size_max: 'XL' },
+  'Purple Ludroth':       { size_min: 'L',  size_max: 'XL' },
+  'Plesioth':             { size_min: 'L',  size_max: 'XL' },
+  'Green Plesioth':       { size_min: 'L',  size_max: 'XL' },
+  'Gravios':              { size_min: 'L',  size_max: 'XL' },
+  'Black Gravios':        { size_min: 'L',  size_max: 'XL' },
+  'Glavenus':             { size_min: 'L',  size_max: 'XL' },
+  'Acidic Glavenus':      { size_min: 'L',  size_max: 'XL' },
+  'Mizutsune':            { size_min: 'M',  size_max: 'L'  },
+  'Soulseer Mizutsune':   { size_min: 'M',  size_max: 'L'  },
+  'Lagombi':              { size_min: 'M',  size_max: 'L'  },
+  'Kecha Wacha':          { size_min: 'M',  size_max: 'L'  },
+  'Paolumu':              { size_min: 'M',  size_max: 'L'  },
+  'Night Shade Paolumu':  { size_min: 'M',  size_max: 'L'  },
+  'Tzitzi-Ya-Ku':         { size_min: 'M',  size_max: 'L'  },
+  'Pukei-Pukei':          { size_min: 'M',  size_max: 'L'  },
+  'Coral Pukei-Pukei':    { size_min: 'M',  size_max: 'L'  },
+  'Jyuratodus':           { size_min: 'M',  size_max: 'L'  },
+  'Tobi-Kadachi':         { size_min: 'M',  size_max: 'L'  },
+  'Radobaan':             { size_min: 'M',  size_max: 'L'  },
+  'Odogaron':             { size_min: 'M',  size_max: 'L'  },
+  'Gigginox':             { size_min: 'M',  size_max: 'L'  },
+  'Baleful Gigginox':     { size_min: 'M',  size_max: 'L'  },
+  'Nibelsnarf':           { size_min: 'M',  size_max: 'L'  },
+  'Velocidrome':          { size_min: 'S',  size_max: 'M'  },
+  'Giadrome':             { size_min: 'S',  size_max: 'M'  },
+  'Bulldrome':            { size_min: 'S',  size_max: 'M'  },
+  'Baggi':                { size_min: 'S',  size_max: 'M'  },
+  'Great Jaggi':          { size_min: 'S',  size_max: 'M'  },
+  'Great Baggi':          { size_min: 'S',  size_max: 'M'  },
+  'Great Wroggi':         { size_min: 'S',  size_max: 'M'  },
+}
+
+function getMhSizeTier(name: string): { size_min: string; size_max: string } {
+  return SIZE_TIERS[name] ?? { size_min: 'L', size_max: 'XL' }
+}
+
+// Fetch image URLs for a batch of Fandom wiki icon filenames
+async function fetchFandomImageUrls(fileNames: string[]): Promise<Map<string, string>> {
+  const result = new Map<string, string>()
+  if (!fileNames.length) return result
+
+  const titles = fileNames.map(f => `File:${f}`).join('|')
+  const qs = new URLSearchParams({
+    action: 'query',
+    titles,
+    prop:   'imageinfo',
+    iiprop: 'url',
+    format: 'json',
+  })
+  try {
+    const res = await fetch(`https://monsterhunter.fandom.com/api.php?${qs}`, {
+      headers: { 'User-Agent': 'GuessleBot/1.0' },
+      signal:  AbortSignal.timeout(20_000),
+    })
+    if (!res.ok) return result
+    const data = await res.json() as { query?: { pages?: Record<string, { title?: string; imageinfo?: Array<{ url: string }> }> } }
+    const pages = data?.query?.pages ?? {}
+    for (const page of Object.values(pages)) {
+      const url = page.imageinfo?.[0]?.url
+      if (url && page.title) {
+        // page.title is like "File:MH3U-Rathalos Icon.png" (space normalized)
+        const fileName = page.title.replace(/^File:/i, '').replace(/ /g, '_')
+        result.set(fileName, url)
+      }
+    }
+  } catch { /* non-fatal */ }
+  return result
+}
+
+async function refreshMonsterHunter(themeId: number): Promise<number> {
+  const crimsonRes = await fetch(
+    'https://raw.githubusercontent.com/CrimsonNynja/monster-hunter-DB/master/monsters.json',
+    {
+      headers: { 'User-Agent': 'GuessleBot/1.0' },
+      signal:  AbortSignal.timeout(30_000),
+    },
+  )
+  if (!crimsonRes.ok) throw new Error(`CrimsonNynja HTTP ${crimsonRes.status}`)
+
+  type CrimsonGame = { game: string; image?: string; info?: string; danger?: string }
+  type CrimsonMonster = {
+    name: string
+    isLarge: boolean
+    type: string
+    elements: string[]
+    ailments: string[]
+    weakness: string[]
+    games: CrimsonGame[]
+  }
+  type CrimsonPayload = { monsters: CrimsonMonster[] }
+
+  const payload    = await crimsonRes.json() as CrimsonPayload
+  const allMonsters = payload.monsters
+
+  // Filter: large + first non-spinoff game must be gen 1-5
+  const gen1to5Large = allMonsters.filter(m => {
+    if (!m.isLarge) return false
+    const firstMainGame = m.games.find(g => !MH_GEN6_OR_SPINOFF.has(g.game))
+    if (!firstMainGame) return false
+    return firstMainGame.game in MH_GAME_TO_GENERATION
+  })
+
+  // Collect all icon filenames to batch-fetch image URLs
+  const allIconFiles: string[] = []
+  for (const m of gen1to5Large) {
+    const iconGame = m.games.find(g => g.image)
+    if (iconGame?.image) allIconFiles.push(iconGame.image)
+  }
+
+  // De-duplicate
+  const uniqueIcons = [...new Set(allIconFiles)]
+
+  // Batch fetch image URLs (Fandom MediaWiki API, up to 50 titles per request)
+  const imageUrlMap = new Map<string, string>()
+  const BATCH = 50
+  for (let i = 0; i < uniqueIcons.length; i += BATCH) {
+    const batch  = uniqueIcons.slice(i, i + BATCH)
+    const batchMap = await fetchFandomImageUrls(batch)
+    for (const [k, v] of batchMap) imageUrlMap.set(k, v)
+  }
+
+  let count = 0
+
+  for (const m of gen1to5Large) {
+    const firstMainGame = m.games.find(g => !MH_GEN6_OR_SPINOFF.has(g.game) && g.game in MH_GAME_TO_GENERATION)!
+    const generation      = MH_GAME_TO_GENERATION[firstMainGame.game]
+    const firstAppearance = firstMainGame.game
+
+    // Pick the icon from the first game that has one
+    const iconGame = m.games.find(g => g.image)
+    const imageUrl = iconGame?.image ? (imageUrlMap.get(iconGame.image) ?? null) : null
+
+    // Threat level: max danger across all games
+    const threatLevel = m.games.reduce((max, g) => {
+      const d = parseInt(g.danger ?? '0', 10)
+      return isNaN(d) ? max : Math.max(max, d)
+    }, 0)
+
+    const element  = m.elements?.[0]  || 'None'
+    const ailment  = m.ailments?.[0]  || 'None'
+    const weakness = m.weakness?.[0]  || 'None'
+    const mhClass  = m.type           || 'Unknown'
+
+    const { size_min, size_max } = getMhSizeTier(m.name)
+
+    const attributes: Record<string, unknown> = {
+      element,
+      ailment,
+      weakness,
+      class:            mhClass,
+      size_max,
+      size_min,
+      threat_level:     threatLevel,
+      first_appearance: firstAppearance,
+      generation,
+    }
+
+    // Store description from first game info, fallback empty
+    const description = m.games.find(g => g.info)?.info ?? ''
+
+    const extra: Record<string, unknown> = {
+      description,
+    }
+
+    await upsertCharacter(themeId, m.name, imageUrl, attributes, extra)
+    count++
+  }
+
+  return count
+}
+
 async function fetchMediaWikiApi(host: string, params: Record<string, string>): Promise<unknown> {
   const qs  = new URLSearchParams({ ...params, format: 'json' })
   const res = await fetch(`https://${host}/api.php?${qs}`, {
@@ -937,7 +1191,7 @@ async function refreshWikiUniverse(slug: string, themeId: number, cmcontinue = '
 
 // ─── Main handler ─────────────────────────────────────────────────────────────
 
-const WIKI_SLUGS = ['naruto', 'onepiece', 'jujutsu', 'smash', 'zelda', 'mario', 'gow', 'monsterhunter']
+const WIKI_SLUGS = ['naruto', 'onepiece', 'jujutsu', 'smash', 'zelda', 'mario', 'gow']
 
 type RefreshBody = {
   universe?:   string
@@ -957,6 +1211,10 @@ async function refreshOne(slug: string, body: RefreshBody): Promise<Record<strin
   if (slug === 'lol') {
     const { count, nextOffset } = await refreshLoL(themeId, body.offset ?? 0, body.chunkSize ?? 5)
     return { result: `ok: ${count} upserted`, nextOffset }
+  }
+  if (slug === 'monsterhunter') {
+    const count = await refreshMonsterHunter(themeId)
+    return { result: `ok: ${count} upserted`, nextOffset: null }
   }
   if (WIKI_SLUGS.includes(slug)) {
     const { count, nextOffset } = await refreshWikiUniverse(slug, themeId, body.cmcontinue ?? '', body.chunkSize ?? 50)
@@ -987,7 +1245,7 @@ Deno.serve(async (req) => {
   }
 
   // Full refresh (all universes) — use only when not time-constrained
-  for (const slug of ['lol', 'pokemon', ...WIKI_SLUGS]) {
+  for (const slug of ['lol', 'pokemon', 'monsterhunter', ...WIKI_SLUGS]) {
     try {
       log.push({ universe: slug, ...(await refreshOne(slug, body)) })
     } catch (err) {
