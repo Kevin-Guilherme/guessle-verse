@@ -759,15 +759,21 @@ async function fetchNaruto(themeId: number, mode: string, today: string): Promis
         }
 
         // Pass 2 — all quoted strings (no said_to context required)
+        // Only curly/straight quotes — drop the pipe-template regex entirely (produces wiki markup junk)
+        const isCleanQuote = (text: string) =>
+          !text.includes('{{') && !text.includes('}}') &&
+          !text.includes('[[') && !text.includes(']]') &&
+          !text.includes('|')  && !text.includes('=')  &&
+          !/literally means/i.test(text) &&
+          /^[\x20-\x7E\s]+$/.test(text)   // ASCII printable only (rejects Japanese/template garbage)
+
         const plain: QuoteEntry[] = [
           ...[...wikitext.matchAll(/[""]([^""]{20,300})[""]|"([^"]{20,300})"/g)]
             .map(m => ({ text: (m[1] ?? m[2]).trim(), saidToRaw: null })),
-          ...[...wikitext.matchAll(/\|\s*([^|=\n]{30,300}?)\s*(?:\||})/g)]
-            .map(m => ({ text: m[1].trim(), saidToRaw: null }))
-            .filter(e => /[.!?]$/.test(e.text)),
         ].filter(e =>
           !e.text.toLowerCase().includes(firstName) &&
-          e.text.length >= 20 && e.text.length <= 300
+          e.text.length >= 20 && e.text.length <= 300 &&
+          isCleanQuote(e.text)
         )
 
         // Prefer quotes with said_to context; fall back to plain

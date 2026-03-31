@@ -241,7 +241,7 @@ export function GameClient({ challengeId, slug, mode, universeName, authenticate
       <HintReveal hint={hint} extra={challenge.extra ?? {}} />
 
       {/* Guess history */}
-      {store.guesses.length > 0 && (() => {
+      {store.guesses.length > 0 && mode !== 'pokemon-card' && (() => {
         const firstGuess = store.guesses[0]
         const forceSimple = mode.startsWith('pokemon-') && mode !== 'pokemon-classic'
         const isSimple   = forceSimple || (firstGuess.feedback.length === 1 && firstGuess.feedback[0].key === 'champion')

@@ -11,7 +11,7 @@ export default function PokemonCardMode({ challenge }: ModeComponentProps) {
 
   const cardUrl      = (challenge.extra as Record<string, unknown>)?.card_url as string | undefined
   const wrongGuesses = guesses.filter(g => g.feedback?.[0]?.feedback !== 'correct').length
-  const blurPx       = won ? 0 : Math.max(40 - wrongGuesses * 4, 0)
+  const blurPx       = won ? 0 : Math.max(12 - wrongGuesses * 1.2, 0)
   const alreadyGuessed = guesses.map((g) => g.value.toLowerCase())
 
   return (
