@@ -776,7 +776,7 @@ async function refreshMonsterHunter(themeId: number): Promise<number> {
   )
   if (!crimsonRes.ok) throw new Error(`CrimsonNynja HTTP ${crimsonRes.status}`)
 
-  type CrimsonGame = { game: string; image?: string; info?: string; danger?: string }
+  type CrimsonGame = { game: string; image?: string; info?: string }
   type CrimsonMonster = {
     name: string
     isLarge: boolean
@@ -819,6 +819,7 @@ async function refreshMonsterHunter(themeId: number): Promise<number> {
   }
 
   let count = 0
+  const validNames = new Set<string>()
 
   for (const m of gen1to5Large) {
     const firstMainGame = m.games.find(g => !MH_GEN6_OR_SPINOFF.has(g.game) && g.game in MH_GAME_TO_GENERATION)!
@@ -829,11 +830,9 @@ async function refreshMonsterHunter(themeId: number): Promise<number> {
     const iconGame = m.games.find(g => g.image)
     const imageUrl = iconGame?.image ? (imageUrlMap.get(iconGame.image) ?? null) : null
 
-    // Threat level: max danger across all games
-    const threatLevel = m.games.reduce((max, g) => {
-      const d = parseInt(g.danger ?? '0', 10)
-      return isNaN(d) ? max : Math.max(max, d)
-    }, 0)
+    // CrimsonNynja data does not include a danger/threat_level field;
+    // default to 0 for all monsters.
+    const threatLevel = 0
 
     const element  = m.elements?.[0]  || 'None'
     const ailment  = m.ailments?.[0]  || 'None'
@@ -862,7 +861,29 @@ async function refreshMonsterHunter(themeId: number): Promise<number> {
     }
 
     await upsertCharacter(themeId, m.name, imageUrl, attributes, extra)
+    validNames.add(m.name)
     count++
+  }
+
+  // Deactivate any characters not in the gen 1-5 large monster set
+  // (stale records from previous wiki scrapes: gen 6, spinoffs, small monsters)
+  if (validNames.size > 0) {
+    const { data: allChars } = await supabase
+      .from('characters')
+      .select('id, name')
+      .eq('theme_id', themeId)
+
+    const staleIds = (allChars ?? [])
+      .filter((c: { id: number; name: string }) => !validNames.has(c.name))
+      .map((c: { id: number }) => c.id)
+
+    if (staleIds.length > 0) {
+      await supabase
+        .from('characters')
+        .update({ active: false })
+        .in('id', staleIds)
+      console.log(`Deactivated ${staleIds.length} stale MH characters`)
+    }
   }
 
   return count
