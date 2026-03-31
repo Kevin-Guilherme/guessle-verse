@@ -339,12 +339,12 @@ export default function BuildMode({ challenge }: ModeComponentProps) {
   const [advancing, setAdvancing]     = useState(false)
   const [allDone, setAllDone]         = useState(false)
   const advanceTimer  = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const hasHydrated   = useRef(false)
-
-  // Restore state from guess history (hydration after reload)
+  // Restore state from guess history (hydration after reload).
+  // Runs once on mount — GameClient blocks BuildMode from rendering until sessionLoading=false,
+  // so guesses are already populated when we mount. Using [guesses] deps caused this to fire
+  // on every live guess, advancing questIndex a second time and skipping the next quest.
   useEffect(() => {
-    if (hasHydrated.current || !isQuestMode || !guesses.length) return
-    hasHydrated.current = true
+    if (!isQuestMode || !guesses.length) return
 
     const questGuesses = guesses.filter(g => g.feedback?.[0]?.key === 'champion')
     if (questGuesses.length === 0) return
@@ -368,7 +368,7 @@ export default function BuildMode({ challenge }: ModeComponentProps) {
     } else {
       setQuestIndex(qi)
     }
-  }, [guesses]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Cleanup timer on unmount
   useEffect(() => () => { if (advanceTimer.current) clearTimeout(advanceTimer.current) }, [])
