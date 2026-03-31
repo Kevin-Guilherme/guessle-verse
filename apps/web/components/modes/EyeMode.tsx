@@ -36,7 +36,7 @@ export default function EyeMode({ challenge }: ModeComponentProps) {
           className="w-64 h-40 mx-auto rounded-xl border border-white/10 overflow-hidden"
           style={{
             backgroundImage:    `url(${bgUrl})`,
-            backgroundSize:     won ? 'contain' : `${zoom}%`,
+            backgroundSize:     won ? '100%' : `${zoom}%`,
             backgroundPosition: won ? 'center' : eyePos,
             backgroundRepeat:   'no-repeat',
             backgroundColor:    '#0f0f1a',

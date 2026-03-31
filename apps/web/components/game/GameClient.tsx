@@ -67,6 +67,7 @@ export function GameClient({ challengeId, slug, mode, universeName, authenticate
   // Build quest mode manages its own completion UI (ScoreSummary per quest).
   // Keep ModeLoader mounted after win so ScoreSummary is shown; suppress the generic banner.
   const isBuildQuestMode = mode === 'build' && Array.isArray((challenge.extra as Record<string, unknown>)?.quests)
+  const isEyeMode        = mode === 'eye'
 
   const { loading: sessionLoading } = useGameSession(challengeId, authenticated)
   const { submitGuess, loading, error } = useGuess(challengeId)
@@ -158,8 +159,8 @@ export function GameClient({ challengeId, slug, mode, universeName, authenticate
         </div>
       )}
 
-      {/* Mode component — build quest stays mounted after win to show ScoreSummary */}
-      {(!store.won && !store.lost || isBuildQuestMode) && (
+      {/* Mode component — build quest stays mounted after win to show ScoreSummary; eye mode stays mounted for zoom-out + reveal */}
+      {(!store.won && !store.lost || isBuildQuestMode || isEyeMode) && (
         <Suspense fallback={
           <div className="space-y-3">
             <Skeleton className="h-48 w-full rounded-xl bg-surface" />
