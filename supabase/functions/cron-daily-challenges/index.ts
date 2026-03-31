@@ -45,6 +45,41 @@ async function generatePokemonDescription(name: string, flavorText: string): Pro
   }
 }
 
+// ─── Gemini — rewrite Monster Hunter description ─────────────────────────────
+
+function sanitizeMhFallback(name: string, text: string): string {
+  return text.replace(new RegExp(name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), 'this monster')
+}
+
+async function generateMhDescription(name: string, rawDescription: string): Promise<string> {
+  if (!rawDescription) return rawDescription
+  if (!GEMINI_KEY) return sanitizeMhFallback(name, rawDescription)
+  try {
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`,
+      {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        signal:  AbortSignal.timeout(15_000),
+        body: JSON.stringify({
+          contents: [{
+            parts: [{
+              text: `Rewrite this Monster Hunter Hunter's Notes description without mentioning the monster's name "${name}". Replace name occurrences with "this monster". Keep it factual, 2-3 sentences. Return ONLY the rewritten description, nothing else.\n\nOriginal: ${rawDescription}`,
+            }],
+          }],
+          generationConfig: { maxOutputTokens: 200, temperature: 0.3 },
+        }),
+      }
+    )
+    if (!res.ok) return sanitizeMhFallback(name, rawDescription)
+    const json = await res.json() as { candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }> }
+    const text = json.candidates?.[0]?.content?.parts?.[0]?.text?.trim()
+    return text || sanitizeMhFallback(name, rawDescription)
+  } catch {
+    return sanitizeMhFallback(name, rawDescription)
+  }
+}
+
 const UGG_GQL = 'https://u.gg/api'
 const UGG_HDR = { 'Content-Type': 'application/json', 'Origin': 'https://u.gg', 'User-Agent': 'Mozilla/5.0' }
 
@@ -794,6 +829,69 @@ async function fetchNaruto(themeId: number, mode: string, today: string): Promis
   return `ok: ${pick.name}`
 }
 
+// ─── Monster Hunter fetcher ──────────────────────────────────────────────────
+
+async function fetchMonsterHunter(themeId: number, mode: string, today: string): Promise<string> {
+  const recent = await getRecentNames(themeId, mode)
+
+  const { data: allCandidates } = await supabase
+    .from('characters')
+    .select('id, name, attributes, extra, image_url')
+    .eq('theme_id', themeId)
+    .eq('active', true)
+
+  const pool = (allCandidates ?? []).filter((c: { name: string }) => !recent.has(c.name)) as Array<{
+    id: number; name: string
+    attributes: Record<string, unknown>
+    extra:      Record<string, unknown>
+    image_url:  string | null
+  }>
+
+  if (!pool.length) return 'skipped: no candidates'
+
+  const pick = pool[Math.floor(Math.random() * pool.length)]
+
+  let attrs: Record<string, unknown>
+  let extra: Record<string, unknown>
+
+  if (mode === 'monsterhunter-classic') {
+    attrs = {
+      element:          pick.attributes.element          ?? 'None',
+      ailment:          pick.attributes.ailment          ?? 'None',
+      weakness:         pick.attributes.weakness         ?? 'None',
+      class:            pick.attributes.class            ?? 'Unknown',
+      size_max:         pick.attributes.size_max         ?? 'L',
+      size_min:         pick.attributes.size_min         ?? 'L',
+      threat_level:     pick.attributes.threat_level     ?? 0,
+      first_appearance: pick.attributes.first_appearance ?? 'Monster Hunter (PS2)',
+      generation:       pick.attributes.generation       ?? 1,
+    }
+    extra = {}
+  } else if (mode === 'monsterhunter-description') {
+    const rawDescription = (pick.extra?.description ?? '') as string
+    const description    = await generateMhDescription(pick.name, rawDescription)
+    attrs = { answer: pick.name }
+    extra = { description }
+  } else {
+    // monsterhunter-silhouette
+    attrs = { answer: pick.name }
+    extra = {}
+  }
+
+  await supabase.from('daily_challenges').insert({
+    theme_id:     themeId,
+    mode,
+    date:         today,
+    character_id: pick.id,
+    name:         pick.name,
+    image_url:    pick.image_url,
+    attributes:   attrs,
+    extra,
+  })
+
+  return `ok: ${pick.name}`
+}
+
 // ─── Generic character fetcher (wiki-sourced universes) ────────────────────
 
 async function fetchCharacter(themeId: number, mode: string, today: string): Promise<string> {
@@ -1244,6 +1342,8 @@ Deno.serve(async (req) => {
           result = await fetchLoL(theme.id, mode, today)
         } else if (theme.slug === 'naruto') {
           result = await fetchNaruto(theme.id, mode, today)
+        } else if (theme.slug === 'monsterhunter') {
+          result = await fetchMonsterHunter(theme.id, mode, today)
         } else {
           // All other character universes: use characters table
           result = await fetchCharacter(theme.id, mode, today)
