@@ -9,6 +9,8 @@ export default function MonsterHunterSilhouetteMode({ challenge }: ModeComponent
   const { won, lost, guesses } = useGameStore()
   const { submitGuess, loading } = useGuess(challenge.id)
 
+  const wrongGuesses    = guesses.filter(g => g.feedback?.[0]?.feedback !== 'correct').length
+  const blurPx          = Math.max(5 - wrongGuesses * 0.5, 0)
   const alreadyGuessed  = guesses.map((g) => g.value.toLowerCase())
   const imageUrl        = challenge.image_url as string | undefined
 
@@ -33,7 +35,7 @@ export default function MonsterHunterSilhouetteMode({ challenge }: ModeComponent
                 height:     '100%',
                 objectFit:  'contain',
                 transition: 'filter 400ms ease',
-                filter:     won ? 'none' : 'brightness(0)',
+                filter:     won ? 'none' : `brightness(0) blur(${blurPx}px)`,
               }}
               draggable={false}
             />
