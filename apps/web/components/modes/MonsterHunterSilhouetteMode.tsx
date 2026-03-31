@@ -10,7 +10,7 @@ export default function MonsterHunterSilhouetteMode({ challenge }: ModeComponent
   const { submitGuess, loading } = useGuess(challenge.id)
 
   const wrongGuesses    = guesses.filter(g => g.feedback?.[0]?.feedback !== 'correct').length
-  const blurPx          = Math.max(8 - wrongGuesses * 0.8, 0)
+  const blurPx          = Math.max(10 - wrongGuesses, 0)
   const alreadyGuessed  = guesses.map((g) => g.value.toLowerCase())
   const imageUrl        = challenge.image_url as string | undefined
 
