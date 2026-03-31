@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
     pokedex_number: '#',
     type1:        'Type 1',
     type2:        'Type 2',
-    generation:   'Gen',
+    generation:   'Generation',
     height_m:     'Height (m)',
     weight_kg:    'Weight (kg)',
     color:        'Color',
@@ -59,6 +59,15 @@ export async function POST(req: NextRequest) {
     classification: 'Attributes',
     debut_arc:      'Debut Arc',
     cla:            'Clan',
+    // Monster Hunter
+    element:          'Element',
+    ailment:          'Ailment',
+    weakness:         'Weakness',
+    class:            'Class',
+    size_max:         'Max Size',
+    size_min:         'Min Size',
+    threat_level:     'Threat Level',
+    first_appearance: 'First Appearance',
   }
 
   let feedback: Array<{ key: string; label: string; value: string; feedback: string }> = []
