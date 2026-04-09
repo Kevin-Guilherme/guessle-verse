@@ -95,6 +95,14 @@ export const MODE_CONFIGS: Record<string, { label: string; maxAttempts: number |
   output:             { label: 'Output',      maxAttempts: 3 },
 }
 
-export function getModeLoader(slug: string) {
+const gamedleRegistry: Record<string, () => Promise<{ default: ComponentType<ModeComponentProps> }>> = {
+  classic:    () => import('@/components/modes/GameClassicMode'),
+  screenshot: () => import('@/components/modes/GameImageMode'),
+  cover:      () => import('@/components/modes/GameImageMode'),
+  soundtrack: () => import('@/components/modes/GameAudioMode'),
+}
+
+export function getModeLoader(slug: string, universeSlug?: string) {
+  if (universeSlug === 'gamedle' && gamedleRegistry[slug]) return gamedleRegistry[slug]
   return registry[slug] ?? registry.classic
 }

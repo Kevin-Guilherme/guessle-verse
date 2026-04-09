@@ -9,9 +9,10 @@ interface SearchInputProps {
   disabled?:      boolean
   placeholder?:   string
   excludeNames?:  string[]
+  source?:        'characters' | 'gamedle_pool'
 }
 
-export function SearchInput({ themeId, onSubmit, disabled, placeholder, excludeNames }: SearchInputProps) {
+export function SearchInput({ themeId, onSubmit, disabled, placeholder, excludeNames, source = 'characters' }: SearchInputProps) {
   const supabase = createClient()
   const [query,        setQuery]        = useState('')
   const [results,      setResults]      = useState<Array<{ name: string; image_url: string | null; tile_url: string | null }>>([])
@@ -21,25 +22,40 @@ export function SearchInput({ themeId, onSubmit, disabled, placeholder, excludeN
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (query.length < 2) { setResults([]); setOpen(false); setSearching(false); return }
+    if (query.length < 1) { setResults([]); setOpen(false); setSearching(false); return }
 
     setSearching(true)
     const timer = setTimeout(async () => {
-      const { data } = await supabase
-        .from('characters')
-        .select('name, image_url')
-        .eq('theme_id', themeId)
-        .eq('active', true)
-        .ilike('name', `%${query}%`)
-        .limit(8)
-
       const excluded = new Set(excludeNames ?? [])
-      const items = (data ?? []).filter(d => !excluded.has((d.name as string).toLowerCase())).map((d) => {
-        const img  = d.image_url as string | null
-        // Keep splash as fallback; tile shown in <img onError>
-        const tile = img?.includes('/splash/') ? img.replace('/splash/', '/tiles/') : img
-        return { name: d.name as string, image_url: img, tile_url: tile ?? null }
-      })
+      let items: Array<{ name: string; image_url: string | null; tile_url: string | null }> = []
+
+      if (source === 'gamedle_pool') {
+        const { data } = await supabase
+          .from('gamedle_pool')
+          .select('name')
+          .eq('active', true)
+          .ilike('name', `${query}%`)
+          .limit(8)
+
+        items = (data ?? [])
+          .filter(d => !excluded.has((d.name as string).toLowerCase()))
+          .map(d => ({ name: d.name as string, image_url: null, tile_url: null }))
+      } else {
+        const { data } = await supabase
+          .from('characters')
+          .select('name, image_url')
+          .eq('theme_id', themeId)
+          .eq('active', true)
+          .ilike('name', `${query}%`)
+          .limit(8)
+
+        items = (data ?? []).filter(d => !excluded.has((d.name as string).toLowerCase())).map((d) => {
+          const img  = d.image_url as string | null
+          const tile = img?.includes('/splash/') ? img.replace('/splash/', '/tiles/') : img
+          return { name: d.name as string, image_url: img, tile_url: tile ?? null }
+        })
+      }
+
       setResults(items)
       setOpen(items.length > 0)
       setHighlighted(0)
@@ -48,7 +64,7 @@ export function SearchInput({ themeId, onSubmit, disabled, placeholder, excludeN
 
     return () => { clearTimeout(timer); setSearching(false) }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, themeId, supabase, excludeNames?.join(',')])
+  }, [query, themeId, source, supabase, excludeNames?.join(',')])
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {

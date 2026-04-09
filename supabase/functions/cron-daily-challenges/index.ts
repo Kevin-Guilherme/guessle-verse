@@ -952,7 +952,7 @@ async function fetchGamedle(themeId: number, mode: string, today: string): Promi
 
   const { data: candidates } = await supabase
     .from('gamedle_pool')
-    .select('igdb_id, name, genre, platform, developer, franchise, release_year, multiplayer')
+    .select('igdb_id, name, genre, platform, developer, franchise, release_year, multiplayer, audio_url')
     .eq('active', true)
 
   const pool = (candidates ?? []).filter((c: { name: string }) => !recent.has(c.name))
@@ -961,11 +961,12 @@ async function fetchGamedle(themeId: number, mode: string, today: string): Promi
   const pick = pool[Math.floor(Math.random() * pool.length)] as {
     igdb_id: number; name: string; genre: string[]; platform: string[]
     developer: string; franchise: string; release_year: number; multiplayer: boolean
+    audio_url: string | null
   }
 
   let coverUrl:      string | null = null
   let screenshotUrl: string | null = null
-  let soundtrackUrl: string | null = null
+  const audioUrl:    string | null = pick.audio_url ?? null
 
   const igdbToken = await getIgdbToken()
   if (igdbToken) {
@@ -1000,19 +1001,22 @@ async function fetchGamedle(themeId: number, mode: string, today: string): Promi
     } catch { /* non-fatal */ }
   }
 
-  const attributes = {
-    genre:        pick.genre?.join(', ') ?? '',
-    platform:     pick.platform?.join(', ') ?? '',
-    developer:    pick.developer ?? '',
-    franchise:    pick.franchise ?? '',
-    release_year: pick.release_year ?? 0,
-    multiplayer:  pick.multiplayer ? 'Sim' : 'Nao',
-  }
+  // classic: attribute grid with genre/platform/etc; other modes: simple name guess
+  const attributes = mode === 'classic'
+    ? {
+        genre:        pick.genre?.join(', ') ?? '',
+        platform:     pick.platform?.join(', ') ?? '',
+        developer:    pick.developer ?? '',
+        franchise:    pick.franchise ?? '',
+        release_year: pick.release_year ?? 0,
+        multiplayer:  pick.multiplayer ? 'Sim' : 'Nao',
+      }
+    : { answer: pick.name }
 
   const extra = {
     cover_url:      coverUrl,
     screenshot_url: screenshotUrl,
-    soundtrack_url: soundtrackUrl,
+    audio_url:      audioUrl,
   }
 
   await supabase.from('daily_challenges').insert({

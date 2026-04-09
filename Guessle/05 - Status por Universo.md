@@ -87,10 +87,24 @@ Necessitam auditoria pos-scrape.
 
 ---
 
-## Gamedle — Status: Depende do IGDB
+## Gamedle — Status: Implementado (2026-04-08)
 
 Pool fixa de 150 jogos em `gamedle_pool`. Imagens buscadas do IGDB no cron.
-Risco: mudancas na API IGDB ou tokens expirados.
+
+**Modos implementados:**
+- `classic` → GameClassicMode: grade de atributos (genre, platform, developer, franchise, release_year, multiplayer). SearchInput busca em `gamedle_pool`.
+- `screenshot` / `cover` → GameImageMode: imagem com zoom-out progressivo, sem fase de skin. SearchInput busca em `gamedle_pool`.
+- `soundtrack` → GameAudioMode: audio clip com duração crescente. SearchInput busca em `gamedle_pool`.
+
+**Arquitetura:**
+- `getModeLoader(mode, universeSlug)`: Gamedle usa `gamedleRegistry` no registry.ts
+- `guess/route.ts`: `isGameClassic` detecta via join com `themes.slug`, query no `gamedle_pool`
+- Cron: `attributes` condicional — classic usa atributos, outros modos usam `{ answer: pick.name }`
+- Extra: `audio_url` (renomeado de `soundtrack_url`), `cover_url`, `screenshot_url`
+
+**Pool:** 135 jogos seedados (2026-04-08). Cobertura de áudio: 91% (123/135 via Deezer).
+**12 games sem áudio:** Baldur's Gate II, CS:GO, Doom (1993), God of War (2018), Half-Life 2, Metroid Dread, Path of Exile, Prey (2017), RE2 (2019), Sekiro, Splatoon 3, What Remains of Edith Finch. Revisar via KHInsider manualmente.
+**IGDB:** Credenciais não configuradas nas Supabase secrets — capa/screenshot vem null até serem adicionadas (IGDB_CLIENT_ID + IGDB_CLIENT_SECRET via Twitch dev app).
 
 ---
 

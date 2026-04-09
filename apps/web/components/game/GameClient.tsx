@@ -58,7 +58,7 @@ function AttemptDots({ count, max }: { count: number; max: number | null }) {
 
 export function GameClient({ challengeId, slug, mode, universeName, authenticated, challenge, modesStatus = {} }: GameClientProps) {
   const config     = { slug: mode, ...MODE_CONFIGS[mode] ?? { label: mode, maxAttempts: null } }
-  const ModeLoader = useMemo(() => lazy(getModeLoader(mode)), [mode])
+  const ModeLoader = useMemo(() => lazy(getModeLoader(mode, slug)), [mode, slug])
   const universe   = getUniverse(slug)
 
   const store = useGameStore()
@@ -66,8 +66,11 @@ export function GameClient({ challengeId, slug, mode, universeName, authenticate
 
   // Build quest mode manages its own completion UI (ScoreSummary per quest).
   // Keep ModeLoader mounted after win so ScoreSummary is shown; suppress the generic banner.
-  const isBuildQuestMode = mode === 'build' && Array.isArray((challenge.extra as Record<string, unknown>)?.quests)
-  const isEyeMode        = mode === 'eye'
+  const isBuildQuestMode  = mode === 'build' && Array.isArray((challenge.extra as Record<string, unknown>)?.quests)
+  const isEyeMode         = mode === 'eye'
+  const isGamedleImageMode = slug === 'gamedle' && (mode === 'screenshot' || mode === 'cover')
+  const isGamedleClassic   = slug === 'gamedle' && mode === 'classic'
+  const keepMountedOnWin   = isBuildQuestMode || isEyeMode || mode === 'pokemon-card' || mode === 'pokemon-silhouette' || mode === 'pokemon-classic' || mode === 'pokemon-description' || mode === 'quadra' || mode === 'ability' || mode === 'splash' || isGamedleImageMode || isGamedleClassic
 
   const { loading: sessionLoading } = useGameSession(challengeId, authenticated)
   const { submitGuess, loading, error } = useGuess(challengeId)
@@ -160,7 +163,7 @@ export function GameClient({ challengeId, slug, mode, universeName, authenticate
       )}
 
       {/* Mode component — build quest stays mounted after win to show ScoreSummary; eye mode stays mounted for zoom-out + reveal */}
-      {(!store.won && !store.lost || isBuildQuestMode || isEyeMode) && (
+      {(!store.won && !store.lost || keepMountedOnWin) && (
         <Suspense fallback={
           <div className="space-y-3">
             <Skeleton className="h-48 w-full rounded-xl bg-surface" />
@@ -215,34 +218,12 @@ export function GameClient({ challengeId, slug, mode, universeName, authenticate
         </div>
       )}
 
-      {/* Quadra Kill — reveal all groups on loss */}
-      {store.lost && mode === 'quadra' && (() => {
-        type QGroup = { category: string; color: string; champions: string[] }
-        const groups = ((challenge.attributes as Record<string, unknown>)?.groups ?? []) as QGroup[]
-        const colorMap: Record<string, string> = {
-          green:  'bg-green-600/80 border-green-400/50',
-          yellow: 'bg-yellow-600/80 border-yellow-400/50',
-          orange: 'bg-orange-600/80 border-orange-400/50',
-          purple: 'bg-purple-600/80 border-purple-400/50',
-        }
-        return (
-          <div className="space-y-2">
-            <p className="text-[10px] font-display tracking-widest text-slate-600 uppercase text-center">Respostas</p>
-            {groups.map(g => (
-              <div key={g.category} className={`rounded-xl border px-4 py-3 ${colorMap[g.color] ?? 'bg-surface border-white/10'}`}>
-                <p className="text-xs font-display font-bold uppercase tracking-widest mb-1 text-white/90">{g.category}</p>
-                <p className="text-[11px] text-white/70">{g.champions.join(' · ')}</p>
-              </div>
-            ))}
-          </div>
-        )
-      })()}
 
       {/* Hint */}
-      <HintReveal hint={hint} extra={challenge.extra ?? {}} />
+      {mode !== 'quadra' && <HintReveal hint={hint} extra={challenge.extra ?? {}} />}
 
       {/* Guess history */}
-      {store.guesses.length > 0 && mode !== 'pokemon-card' && (() => {
+      {store.guesses.length > 0 && mode !== 'pokemon-card' && mode !== 'pokemon-silhouette' && mode !== 'pokemon-description' && mode !== 'splash' && !isGamedleImageMode && !(slug === 'gamedle' && mode === 'soundtrack') && (() => {
         const firstGuess = store.guesses[0]
         const forceSimple = mode.startsWith('pokemon-') && mode !== 'pokemon-classic'
         const isSimple   = forceSimple || (firstGuess.feedback.length === 1 && firstGuess.feedback[0].key === 'champion')

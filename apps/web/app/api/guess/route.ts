@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
 
   const { data: challenge, error: challengeError } = await service
     .from('daily_challenges')
-    .select('*')
+    .select('*, themes!inner(slug)')
     .eq('id', challengeId)
     .single()
 
@@ -21,11 +21,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Challenge not found' }, { status: 404 })
   }
 
+  const themeSlug = (challenge.themes as unknown as { slug: string })?.slug ?? ''
+
   const isCodeMode      = ['complete', 'fix', 'output'].includes(challenge.mode)
   const isQuadraMode    = challenge.mode === 'quadra'
   const isSplashMode    = challenge.mode === 'splash'
   const isBuildQuest    = challenge.mode === 'build' && Array.isArray((challenge.extra as Record<string, unknown>)?.quests)
-  const isNameGuessMode = !isCodeMode && !isQuadraMode && !isSplashMode && !isBuildQuest && typeof (challenge.attributes as Record<string, unknown>)?.answer === 'string'
+  const isGameClassic   = challenge.mode === 'classic' && themeSlug === 'gamedle'
+  const isNameGuessMode = !isCodeMode && !isQuadraMode && !isSplashMode && !isBuildQuest && !isGameClassic && typeof (challenge.attributes as Record<string, unknown>)?.answer === 'string'
 
   const ATTR_LABELS: Record<string, string> = {
     // LoL
@@ -59,6 +62,12 @@ export async function POST(req: NextRequest) {
     classification: 'Attributes',
     debut_arc:      'Debut Arc',
     cla:            'Clan',
+    // Gamedle
+    genre:       'Genre',
+    platform:    'Platform',
+    developer:   'Developer',
+    franchise:   'Franchise',
+    multiplayer: 'Multiplayer',
     // Monster Hunter
     element:          'Element',
     ailment:          'Ailment',
@@ -211,6 +220,66 @@ export async function POST(req: NextRequest) {
         feedback = [{ key: 'champion', label: 'Champion', value: guessedName, feedback: champCorrect ? 'correct' : 'wrong' }]
       }
     }
+  } else if (isGameClassic) {
+    // Gamedle classic: compare game attributes from gamedle_pool
+    const { data: candidate } = await service
+      .from('gamedle_pool')
+      .select('name, genre, platform, developer, franchise, release_year, multiplayer')
+      .ilike('name', `%${value}%`)
+      .eq('active', true)
+      .limit(1)
+      .single()
+
+    if (!candidate) {
+      return NextResponse.json({ error: 'Game not found' }, { status: 404 })
+    }
+
+    type GameCandidate = { name: string; genre: string[] | null; platform: string[] | null; developer: string | null; franchise: string | null; release_year: number | null; multiplayer: boolean | null }
+    const game = candidate as unknown as GameCandidate
+
+    const snapshotAttrs = (challenge.attributes as Record<string, unknown>) ?? {}
+    const attrKeys      = Object.keys(snapshotAttrs)
+
+    const targetAttrs: Record<string, string> = {
+      genre:        String(snapshotAttrs.genre ?? ''),
+      platform:     String(snapshotAttrs.platform ?? ''),
+      developer:    String(snapshotAttrs.developer ?? ''),
+      franchise:    String(snapshotAttrs.franchise ?? ''),
+      release_year: String(snapshotAttrs.release_year ?? 0),
+      multiplayer:  String(snapshotAttrs.multiplayer ?? ''),
+    }
+    const candidateAttrs: Record<string, string> = {
+      genre:        Array.isArray(game.genre) ? game.genre.join(', ') : String(game.genre ?? ''),
+      platform:     Array.isArray(game.platform) ? game.platform.join(', ') : String(game.platform ?? ''),
+      developer:    game.developer ?? '',
+      franchise:    game.franchise ?? '',
+      release_year: String(game.release_year ?? 0),
+      multiplayer:  game.multiplayer ? 'Sim' : 'Nao',
+    }
+
+    feedback = attrKeys.map((key) => {
+      const targetVal    = targetAttrs[key] ?? ''
+      const candidateVal = candidateAttrs[key] ?? ''
+      const isNumeric    = targetVal !== '' && candidateVal !== '' && !isNaN(Number(targetVal)) && !isNaN(Number(candidateVal))
+      const isArray      = targetVal.includes(',') || candidateVal.includes(',')
+      const compareMode  = isNumeric ? 'arrow' : isArray ? 'partial' : 'exact'
+
+      const label = ATTR_LABELS[key]
+        ?? key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+
+      const feedbackResult = compareMode === 'partial'
+        ? computeFeedback(
+            candidateVal.split(',').map(s => s.trim()).filter(Boolean),
+            targetVal.split(',').map(s => s.trim()).filter(Boolean),
+            'partial'
+          )
+        : computeFeedback(candidateVal, targetVal, compareMode)
+
+      return { key, label, value: candidateVal, feedback: feedbackResult }
+    })
+
+    won      = feedback.every((f) => f.feedback === 'correct')
+    imageUrl = null  // no tile image for games
   } else {
     const [{ data: candidate }, { data: targetCharacter }] = await Promise.all([
       service

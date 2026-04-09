@@ -76,15 +76,25 @@ export default function SplashMode({ challenge }: ModeComponentProps) {
 
   return (
     <div className="space-y-4">
-      {/* Splash art — zooms out with each wrong champion guess */}
+      {/* Splash art — zooms out with wrong guesses, full reveal on win */}
       {challenge.image_url && (
         <div className="flex justify-center">
-          <div className="w-[220px] h-[220px] overflow-hidden rounded-xl">
-            <div
-              className="w-full h-full bg-no-repeat transition-all duration-500"
-              style={{ backgroundImage: `url(${challenge.image_url as string})`, backgroundSize: `${zoom}%`, backgroundPosition: won || lost ? 'center' : `${cropX}% ${cropY}%` }}
+          {won ? (
+            // Full reveal — unclipped
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={challenge.image_url as string}
+              alt={challenge.name}
+              className="w-full max-w-sm rounded-xl border border-correct/30 object-cover transition-all duration-700"
             />
-          </div>
+          ) : (
+            <div className="w-[220px] h-[220px] overflow-hidden rounded-xl">
+              <div
+                className="w-full h-full bg-no-repeat transition-all duration-500"
+                style={{ backgroundImage: `url(${challenge.image_url as string})`, backgroundSize: `${zoom}%`, backgroundPosition: lost ? 'center' : `${cropX}% ${cropY}%` }}
+              />
+            </div>
+          )}
         </div>
       )}
 
@@ -182,6 +192,47 @@ export default function SplashMode({ challenge }: ModeComponentProps) {
             ? `✓ ${skinGuess.value} — +50 pts bônus!`
             : `✕ Skin era: ${(challenge.extra as Record<string, unknown>)?.skin_name as string ?? '?'}`
           }
+        </div>
+      )}
+
+      {/* Guess history (champion + skin) */}
+      {guesses.length > 0 && (
+        <div className="space-y-2 pt-1">
+          <div className="flex items-center gap-3">
+            <span className="text-[10px] font-display tracking-[0.2em] text-slate-700 uppercase">Tentativas</span>
+            <div className="flex-1 h-px bg-white/[0.05]" />
+            <span className="text-[10px] text-slate-700 font-display tabular-nums">{guesses.length}</span>
+          </div>
+          <div className="max-h-48 overflow-y-auto space-y-1.5 pr-1 [scrollbar-width:thin] [scrollbar-color:rgba(255,255,255,0.1)_transparent]">
+            {[...guesses].reverse().map((g, i) => {
+              const correct  = g.feedback?.[0]?.feedback === 'correct'
+              const tileUrl  = g.image_url?.includes('/splash/')
+                ? g.image_url.replace('/splash/', '/tiles/')
+                : g.image_url
+              const isSkinn  = g.feedback?.[0]?.key === 'skin'
+              // Skin guess: use stored image_url or fallback to challenge splash
+              const skinImg  = isSkinn ? (g.image_url ?? (challenge.image_url as string | null)) : null
+              return (
+                <div key={i} className={`flex items-center gap-3 rounded-xl p-3 border ${correct ? 'bg-correct/5 border-correct/20' : 'bg-white/[0.03] border-wrong/20'}`}>
+                  {isSkinn && skinImg ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={skinImg} alt={g.value} className="w-10 h-10 rounded-lg object-cover border border-white/10 shrink-0" />
+                  ) : tileUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={tileUrl} alt={g.value} className="w-10 h-10 rounded-lg object-cover object-top border border-white/10 shrink-0" />
+                  ) : (
+                    <div className="w-10 h-10 rounded-lg bg-surface border border-white/10 flex items-center justify-center text-slate-500 text-xs shrink-0">
+                      {g.value[0]?.toUpperCase()}
+                    </div>
+                  )}
+                  <p className={`text-sm font-display flex-1 truncate ${correct ? 'text-correct' : 'text-slate-300'}`}>{g.value}</p>
+                  <span className={`text-[11px] font-sans px-2 py-0.5 rounded-full border shrink-0 ${correct ? 'bg-correct/20 text-correct border-correct/30' : 'bg-wrong/20 text-wrong border-wrong/30'}`}>
+                    {correct ? '✓ Acertou' : '✗ Errou'}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
         </div>
       )}
     </div>

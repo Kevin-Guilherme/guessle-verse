@@ -15,9 +15,10 @@ export default function JutsuMode({ challenge }: ModeComponentProps) {
   const imageUrl  = (challenge.extra?.jutsu_image_url ?? challenge.image_url) as string | null
   const jutsuName = (challenge.extra?.jutsu_name ?? '') as string
 
-  const blur = won ? 0 : Math.max(6 - guesses.length * 2, 0)
+  const blur      = won ? 0 : Math.max(20 - guesses.length * 7, 0)
+  const grayscale = won ? 0 : Math.max(100 - guesses.length * 34, 0)
   const filterStyle: React.CSSProperties = {
-    filter: won ? undefined : `blur(${blur}px) grayscale(100%)`,
+    filter: won ? undefined : `blur(${blur}px) grayscale(${grayscale}%)`,
     transition: 'filter 0.8s ease',
   }
 

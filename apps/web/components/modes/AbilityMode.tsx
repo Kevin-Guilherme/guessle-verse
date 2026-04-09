@@ -158,6 +158,21 @@ export default function AbilityMode({ challenge }: ModeComponentProps) {
           </p>
         </div>
       )}
+
+      {/* Win reveal — show ability icon + name + slot */}
+      {won && ability && (
+        <div className="flex flex-col items-center gap-3 pt-2">
+          <div className="relative w-24 h-24 rounded-xl overflow-hidden border-2 border-correct/40 shadow-[0_0_20px_rgba(34,197,94,0.2)]">
+            <Image src={ability.icon_url} alt={ability.name} fill className="object-cover" unoptimized />
+          </div>
+          <div className="text-center space-y-1">
+            <p className="text-correct font-display font-bold text-base tracking-wide">{ability.name}</p>
+            <span className="inline-block text-[11px] font-display tracking-widest uppercase px-3 py-1 rounded-full bg-correct/10 border border-correct/30 text-correct/80">
+              {SLOT_LABEL[ability.slot]} — {ability.slot}
+            </span>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

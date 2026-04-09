@@ -150,22 +150,45 @@ export default function QuadraMode({ challenge, config }: ModeComponentProps) {
         </div>
       )}
 
-      {/* End-game: reveal all categories */}
+      {/* End-game: reveal all categories with champion icons */}
       {(won || lost) && (
         <div className="space-y-2 pt-1">
           <p className="text-center text-xs font-display font-bold uppercase tracking-widest text-white/40 pb-1">
             {won ? 'Categorias' : 'Resultado'}
           </p>
-          {groups.map(g => (
-            <div key={g.category} className={`rounded-xl border px-4 py-3 ${COLOR_MAP[g.color] ?? 'bg-surface border-white/10'}`}>
-              <p className={`text-xs font-display font-bold uppercase tracking-widest mb-1 ${COLOR_TEXT[g.color] ?? 'text-white'}`}>
-                {g.category}
-              </p>
-              <p className="text-[11px] text-white/80 font-sans">{g.champions.join(' · ')}</p>
-            </div>
-          ))}
+          {groups.map(g => {
+            const tileMap = Object.fromEntries(tiles.map(t => [t.name, t.image_url]))
+            return (
+              <div key={g.category} className={`rounded-xl border px-4 py-3 ${COLOR_MAP[g.color] ?? 'bg-surface border-white/10'}`}>
+                <p className={`text-xs font-display font-bold uppercase tracking-widest mb-2 ${COLOR_TEXT[g.color] ?? 'text-white'}`}>
+                  {g.category}
+                </p>
+                <div className="flex gap-2 flex-wrap">
+                  {g.champions.map(name => {
+                    const img = tileMap[name]
+                    return (
+                      <div key={name} className="flex flex-col items-center gap-1">
+                        <div className="w-10 h-10 rounded-lg overflow-hidden border border-white/20 shrink-0">
+                          {img ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={img} alt={name} className="w-full h-full object-cover object-top" loading="lazy" />
+                          ) : (
+                            <div className="w-full h-full bg-black/30 flex items-center justify-center text-[9px] font-display text-white/50">
+                              {name.slice(0, 3)}
+                            </div>
+                          )}
+                        </div>
+                        <span className="text-[9px] font-display text-white/70 text-center leading-tight max-w-[40px] truncate">{name}</span>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )
+          })}
         </div>
       )}
+
     </div>
   )
 }
