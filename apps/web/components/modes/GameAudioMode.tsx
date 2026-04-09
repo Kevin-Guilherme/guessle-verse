@@ -141,13 +141,46 @@ export default function GameAudioMode({ challenge }: ModeComponentProps) {
       <div className="flex flex-col items-center gap-3">
 
         {/* Reveal na vitória/derrota */}
-        {coverUrl && (won || lost) && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={coverUrl}
-            alt={challenge.name}
-            className="w-24 rounded-xl object-cover border border-correct/30"
-          />
+        {(won || lost) && (
+          <div className={`flex flex-col items-center gap-3 rounded-2xl border p-5 w-full ${
+            won ? 'bg-correct/5 border-correct/20' : 'bg-red-500/5 border-red-500/20'
+          }`}>
+            <div className="flex items-center gap-4">
+              {coverUrl && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={coverUrl}
+                  alt={challenge.name}
+                  className="w-20 h-28 rounded-xl object-cover shadow-lg shrink-0"
+                />
+              )}
+              <div className="flex flex-col gap-1 text-left">
+                <p className="text-[10px] font-display tracking-[0.2em] text-slate-500 uppercase">
+                  {won ? 'Acertou!' : 'Era...'}
+                </p>
+                <p className={`font-display font-bold text-lg leading-tight ${won ? 'text-correct' : 'text-red-400'}`}>
+                  {challenge.name}
+                </p>
+                {(challenge.attributes as Record<string, unknown>)?.developer && (
+                  <p className="text-[11px] text-slate-500">
+                    {String((challenge.attributes as Record<string, unknown>).developer)}
+                    {(challenge.attributes as Record<string, unknown>)?.release_year
+                      ? ` · ${(challenge.attributes as Record<string, unknown>).release_year}`
+                      : ''}
+                  </p>
+                )}
+              </div>
+            </div>
+            {/* Permite ouvir o trecho completo após revelar */}
+            <Button
+              onClick={handlePlay}
+              disabled={playing || !canPlay}
+              variant="outline"
+              className="gap-2 w-full text-xs"
+            >
+              {playing ? '♫ Reproduzindo...' : `▶ Ouvir trecho (${maxDuration}s)`}
+            </Button>
+          </div>
         )}
 
         {/* Barra de progresso das tentativas (steps) */}
@@ -169,26 +202,19 @@ export default function GameAudioMode({ challenge }: ModeComponentProps) {
           </div>
         )}
 
-        <Button
-          onClick={handlePlay}
-          disabled={playing || !canPlay}
-          className="gap-2 min-w-[140px]"
-        >
-          {playing
-            ? '♫ Reproduzindo...'
-            : `▶ Ouvir (${maxDuration}s)`}
-        </Button>
-
         {!won && !lost && (
-          <p className="text-[10px] font-display tracking-[0.2em] text-slate-600 uppercase">
-            De qual jogo é essa trilha sonora?
-          </p>
-        )}
-
-        {(won || lost) && (
-          <p className={`font-display font-bold text-base tracking-wide ${won ? 'text-correct' : 'text-red-400'}`}>
-            {challenge.name}
-          </p>
+          <>
+            <Button
+              onClick={handlePlay}
+              disabled={playing || !canPlay}
+              className="gap-2 min-w-[140px]"
+            >
+              {playing ? '♫ Reproduzindo...' : `▶ Ouvir (${maxDuration}s)`}
+            </Button>
+            <p className="text-[10px] font-display tracking-[0.2em] text-slate-600 uppercase">
+              De qual jogo é essa trilha sonora?
+            </p>
+          </>
         )}
       </div>
 

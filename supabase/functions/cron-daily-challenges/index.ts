@@ -952,7 +952,7 @@ async function fetchGamedle(themeId: number, mode: string, today: string): Promi
 
   const { data: candidates } = await supabase
     .from('gamedle_pool')
-    .select('igdb_id, name, genre, platform, developer, franchise, release_year, multiplayer, audio_url, youtube_id, youtube_start')
+    .select('igdb_id, name, genre, platform, developer, franchise, release_year, multiplayer, audio_url, youtube_id, youtube_start, cover_url')
     .eq('active', true)
 
   const pool = (candidates ?? []).filter((c: { name: string }) => !recent.has(c.name))
@@ -975,9 +975,11 @@ async function fetchGamedle(themeId: number, mode: string, today: string): Promi
     igdb_id: number; name: string; genre: string[]; platform: string[]
     developer: string; franchise: string; release_year: number; multiplayer: boolean
     audio_url: string | null; youtube_id: string | null; youtube_start: number
+    cover_url: string | null
   }
 
-  let coverUrl:      string | null = null
+  // Usa capa cacheada no pool se disponível — evita re-fetch IGDB
+  let coverUrl: string | null = pick.cover_url ?? null
   let screenshotUrl: string | null = null
   const audioUrl:    string | null = pick.audio_url   ?? null
   const youtubeId:   string | null = pick.youtube_id  ?? null
@@ -986,18 +988,21 @@ async function fetchGamedle(themeId: number, mode: string, today: string): Promi
   const igdbToken = await getIgdbToken()
   if (igdbToken) {
     try {
-      const coverRes = await fetch('https://api.igdb.com/v4/covers', {
-        method: 'POST',
-        headers: {
-          'Client-ID':     IGDB_CLIENT_ID,
-          'Authorization': `Bearer ${igdbToken}`,
-          'Content-Type':  'text/plain',
-        },
-        body: `fields url; where game = ${pick.igdb_id}; limit 1;`,
-      })
-      const covers = await coverRes.json()
-      if (covers[0]?.url) {
-        coverUrl = covers[0].url.replace('t_thumb', 't_cover_big').replace('//', 'https://')
+      // Só busca capa do IGDB se não tiver cacheada no pool
+      if (!coverUrl) {
+        const coverRes = await fetch('https://api.igdb.com/v4/covers', {
+          method: 'POST',
+          headers: {
+            'Client-ID':     IGDB_CLIENT_ID,
+            'Authorization': `Bearer ${igdbToken}`,
+            'Content-Type':  'text/plain',
+          },
+          body: `fields url; where game = ${pick.igdb_id}; limit 1;`,
+        })
+        const covers = await coverRes.json()
+        if (covers[0]?.url) {
+          coverUrl = covers[0].url.replace('t_thumb', 't_cover_big').replace('//', 'https://')
+        }
       }
 
       const ssRes = await fetch('https://api.igdb.com/v4/screenshots', {
@@ -1045,6 +1050,11 @@ async function fetchGamedle(themeId: number, mode: string, today: string): Promi
     attributes,
     extra,
   })
+
+  // Cache cover_url no pool para não re-buscar IGDB todo dia
+  if (coverUrl && !pick.cover_url) {
+    await supabase.from('gamedle_pool').update({ cover_url: coverUrl }).eq('name', pick.name)
+  }
 
   return `ok: ${pick.name}`
 }
