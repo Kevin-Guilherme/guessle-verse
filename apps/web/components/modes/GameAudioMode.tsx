@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useGameStore } from '@/lib/store/game-store'
 import { useGuess } from '@/hooks/useGuess'
 import { SearchInput } from '@/components/game/SearchInput'
@@ -57,26 +57,46 @@ export default function GameAudioMode({ challenge }: ModeComponentProps) {
   }, [youtubeId, youtubeStart, maxDuration])
 
   // ── Fallback: <audio> para games com audio_url manual ──────────────────────
-  const audioRef = useRef<HTMLAudioElement>(null)
+  const audioRef        = useRef<HTMLAudioElement>(null)
+  const maxDurationRef  = useRef(maxDuration)
+  useEffect(() => { maxDurationRef.current = maxDuration }, [maxDuration])
+
+  // Enforça o timer via eventos do elemento — funciona mesmo quando o play
+  // vem dos controles de mídia do sistema (barra do macOS, fone, etc.)
+  useEffect(() => {
+    const a = audioRef.current
+    if (!a) return
+
+    const onPlay = () => {
+      if (playTimerRef.current) clearTimeout(playTimerRef.current)
+      setPlaying(true)
+      playTimerRef.current = setTimeout(() => {
+        a.pause()
+        a.currentTime = 0
+        setPlaying(false)
+      }, maxDurationRef.current * 1000)
+    }
+
+    const onPause = () => {
+      if (playTimerRef.current) clearTimeout(playTimerRef.current)
+      setPlaying(false)
+    }
+
+    a.addEventListener('play',  onPlay)
+    a.addEventListener('pause', onPause)
+    return () => {
+      a.removeEventListener('play',  onPlay)
+      a.removeEventListener('pause', onPause)
+    }
+  }, [])  // sem deps — usa maxDurationRef para pegar valor atual sem re-registrar
+
   const playAudio = useCallback(async () => {
     const a = audioRef.current
     if (!a || !audioUrl) return
-    if (playTimerRef.current) clearTimeout(playTimerRef.current)
 
     a.currentTime = 0
-    setPlaying(true)
-    try {
-      await a.play()
-    } catch {
-      setPlaying(false)
-      return
-    }
-
-    playTimerRef.current = setTimeout(() => {
-      a.pause()
-      setPlaying(false)
-    }, maxDuration * 1000)
-  }, [audioUrl, maxDuration])
+    try { await a.play() } catch { setPlaying(false) }
+  }, [audioUrl])
 
   const handlePlay = youtubeId ? playYoutube : playAudio
   const canPlay    = youtubeId ? true : !!audioUrl
