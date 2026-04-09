@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { useGameStore } from '@/lib/store/game-store'
 import { useGuess } from '@/hooks/useGuess'
 import { SearchInput } from '@/components/game/SearchInput'
@@ -9,55 +9,6 @@ import type { ModeComponentProps } from '@/lib/game/registry'
 
 // Duração revelada por número de tentativas (Heardle-style)
 const REVEAL_STEPS = [1, 2, 4, 7, 11, 16]
-
-// ─── YouTube iFrame API singleton ────────────────────────────────────────────
-
-declare global {
-  interface Window {
-    YT: {
-      Player: new (el: HTMLElement, opts: YTPlayerOptions) => YTPlayer
-      PlayerState: { PLAYING: number; PAUSED: number; ENDED: number }
-    }
-    onYouTubeIframeAPIReady: () => void
-  }
-}
-
-interface YTPlayer {
-  seekTo(sec: number, allowSeekAhead: boolean): void
-  playVideo(): void
-  pauseVideo(): void
-  destroy(): void
-  getPlayerState(): number
-}
-
-interface YTPlayerOptions {
-  videoId: string
-  playerVars?: Record<string, unknown>
-  events?: {
-    onReady?: () => void
-    onError?: (e: { data: number }) => void
-  }
-}
-
-let ytApiState: 'idle' | 'loading' | 'ready' = 'idle'
-const ytCallbacks: Array<() => void> = []
-
-function loadYouTubeApi(onReady: () => void) {
-  if (ytApiState === 'ready') { onReady(); return }
-  ytCallbacks.push(onReady)
-  if (ytApiState === 'loading') return
-
-  ytApiState = 'loading'
-  window.onYouTubeIframeAPIReady = () => {
-    ytApiState = 'ready'
-    ytCallbacks.splice(0).forEach(cb => cb())
-  }
-  const s = document.createElement('script')
-  s.src = 'https://www.youtube.com/iframe_api'
-  document.head.appendChild(s)
-}
-
-// ─── Component ────────────────────────────────────────────────────────────────
 
 export default function GameAudioMode({ challenge }: ModeComponentProps) {
   const { won, lost, guesses } = useGameStore()
@@ -73,64 +24,34 @@ export default function GameAudioMode({ challenge }: ModeComponentProps) {
   const maxDuration = REVEAL_STEPS[step]
   const alreadyGuessed = guesses.map(g => g.value.toLowerCase())
 
-  // ── YouTube player ──────────────────────────────────────────────────────────
-  const playerContainerRef = useRef<HTMLDivElement>(null)
-  const playerRef          = useRef<YTPlayer | null>(null)
-  const [apiReady, setApiReady]       = useState(false)
-  const [playerReady, setPlayerReady] = useState(false)
-  const [playing, setPlaying]         = useState(false)
-  const playTimerRef                  = useRef<ReturnType<typeof setTimeout> | null>(null)
+  // ── State ───────────────────────────────────────────────────────────────────
+  const [playing, setPlaying]   = useState(false)
+  const [ytSrc, setYtSrc]       = useState('')
+  const playTimerRef            = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  useEffect(() => {
-    if (!youtubeId) return
-    loadYouTubeApi(() => setApiReady(true))
-  }, [youtubeId])
-
-  useEffect(() => {
-    if (!apiReady || !playerContainerRef.current || !youtubeId) return
-
-    setPlayerReady(false)
-    playerRef.current = new window.YT.Player(playerContainerRef.current, {
-      videoId: youtubeId,
-      playerVars: {
-        autoplay:       0,
-        controls:       0,
-        disablekb:      1,
-        fs:             0,
-        iv_load_policy: 3,
-        modestbranding: 1,
-        rel:            0,
-        start:          youtubeStart,
-        enablejsapi:    1,
-        origin:         window.location.origin,
-      },
-      events: {
-        onReady: () => setPlayerReady(true),
-      },
-    })
-
-    return () => {
-      if (playTimerRef.current) clearTimeout(playTimerRef.current)
-      try { playerRef.current?.destroy() } catch {}
-      playerRef.current = null
-      setPlayerReady(false)
-    }
-  }, [apiReady, youtubeId, youtubeStart])
-
+  // ── YouTube: iframe src-swap approach ───────────────────────────────────────
   const playYoutube = useCallback(() => {
-    const p = playerRef.current
-    if (!p) return
     if (playTimerRef.current) clearTimeout(playTimerRef.current)
 
-    p.seekTo(youtubeStart, true)
-    p.playVideo()
+    const params = new URLSearchParams({
+      autoplay:       '1',
+      start:          String(Math.floor(youtubeStart)),
+      controls:       '0',
+      disablekb:      '1',
+      fs:             '0',
+      iv_load_policy: '3',
+      modestbranding: '1',
+      rel:            '0',
+    })
+
+    setYtSrc(`https://www.youtube.com/embed/${youtubeId}?${params}`)
     setPlaying(true)
 
     playTimerRef.current = setTimeout(() => {
-      p.pauseVideo()
+      setYtSrc('')
       setPlaying(false)
     }, maxDuration * 1000)
-  }, [youtubeStart, maxDuration])
+  }, [youtubeId, youtubeStart, maxDuration])
 
   // ── Fallback: <audio> para games com audio_url manual ──────────────────────
   const audioRef = useRef<HTMLAudioElement>(null)
@@ -155,27 +76,38 @@ export default function GameAudioMode({ challenge }: ModeComponentProps) {
   }, [audioUrl, maxDuration])
 
   const handlePlay = youtubeId ? playYoutube : playAudio
-  const canPlay    = youtubeId ? playerReady : !!audioUrl
+  const canPlay    = youtubeId ? true : !!audioUrl
 
   // ── Render ──────────────────────────────────────────────────────────────────
   return (
     <div className="space-y-4">
 
-      {/* Player YouTube — invisível, apenas áudio */}
+      {/* YouTube iframe — troca o src no clique, allow="autoplay" explícito */}
       {youtubeId && (
         <div
           aria-hidden
           style={{
             position:      'fixed',
-            left:          '-9999px',
+            left:          0,
             bottom:        0,
             width:         '200px',
             height:        '200px',
             opacity:       0.001,
             pointerEvents: 'none',
+            zIndex:        -1,
           }}
         >
-          <div ref={playerContainerRef} style={{ width: '200px', height: '200px' }} />
+          {ytSrc && (
+            <iframe
+              key={ytSrc}
+              src={ytSrc}
+              allow="autoplay"
+              width="200"
+              height="200"
+              frameBorder="0"
+              title="audio-player"
+            />
+          )}
         </div>
       )}
 
@@ -223,9 +155,7 @@ export default function GameAudioMode({ challenge }: ModeComponentProps) {
         >
           {playing
             ? '♫ Reproduzindo...'
-            : canPlay
-            ? `▶ Ouvir (${maxDuration}s)`
-            : '⏳ Carregando...'}
+            : `▶ Ouvir (${maxDuration}s)`}
         </Button>
 
         {!won && !lost && (
