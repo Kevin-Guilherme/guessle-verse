@@ -125,7 +125,12 @@ export default function GameAudioMode({ challenge }: ModeComponentProps) {
 
     a.currentTime = 0
     setPlaying(true)
-    await a.play()
+    try {
+      await a.play()
+    } catch {
+      setPlaying(false)
+      return
+    }
 
     playTimerRef.current = setTimeout(() => {
       a.pause()
@@ -161,7 +166,7 @@ export default function GameAudioMode({ challenge }: ModeComponentProps) {
 
       {/* Fallback audio element */}
       {!youtubeId && audioUrl && (
-        <audio ref={audioRef} src={audioUrl} preload="auto" />
+        <audio ref={audioRef} src={audioUrl} preload="none" />
       )}
 
       {/* Controles */}
