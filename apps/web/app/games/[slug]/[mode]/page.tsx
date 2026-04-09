@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { createClient, createServiceClient } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 import { getUniverse } from '@/lib/constants/universes'
 import { GameClient } from '@/components/game/GameClient'
 import { MODE_CONFIGS } from '@/lib/game/registry'
@@ -12,17 +12,6 @@ interface Props {
   params: { slug: string; mode: string }
 }
 
-export async function generateStaticParams() {
-  const supabase = createServiceClient()
-  const { data } = await supabase
-    .from('themes')
-    .select('slug, modes')
-    .eq('active', true)
-
-  return (data ?? []).flatMap((t) =>
-    (t.modes as string[]).map((mode) => ({ slug: t.slug, mode }))
-  )
-}
 
 export default async function GamePage({ params }: Props) {
   const universe = getUniverse(params.slug)
