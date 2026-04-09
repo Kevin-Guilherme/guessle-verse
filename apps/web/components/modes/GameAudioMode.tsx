@@ -15,7 +15,7 @@ const REVEAL_STEPS = [1, 2, 4, 7, 11, 16]
 declare global {
   interface Window {
     YT: {
-      Player: new (el: HTMLElement, opts: object) => YTPlayer
+      Player: new (el: HTMLElement, opts: YTPlayerOptions) => YTPlayer
       PlayerState: { PLAYING: number; PAUSED: number; ENDED: number }
     }
     onYouTubeIframeAPIReady: () => void
@@ -28,6 +28,15 @@ interface YTPlayer {
   pauseVideo(): void
   destroy(): void
   getPlayerState(): number
+}
+
+interface YTPlayerOptions {
+  videoId: string
+  playerVars?: Record<string, unknown>
+  events?: {
+    onReady?: () => void
+    onError?: (e: { data: number }) => void
+  }
 }
 
 let ytApiState: 'idle' | 'loading' | 'ready' = 'idle'
@@ -67,30 +76,36 @@ export default function GameAudioMode({ challenge }: ModeComponentProps) {
   // ── YouTube player ──────────────────────────────────────────────────────────
   const playerContainerRef = useRef<HTMLDivElement>(null)
   const playerRef          = useRef<YTPlayer | null>(null)
-  const [ytReady, setYtReady]   = useState(false)
-  const [playing, setPlaying]   = useState(false)
-  const playTimerRef            = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [apiReady, setApiReady]       = useState(false)
+  const [playerReady, setPlayerReady] = useState(false)
+  const [playing, setPlaying]         = useState(false)
+  const playTimerRef                  = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     if (!youtubeId) return
-    loadYouTubeApi(() => setYtReady(true))
+    loadYouTubeApi(() => setApiReady(true))
   }, [youtubeId])
 
   useEffect(() => {
-    if (!ytReady || !playerContainerRef.current || !youtubeId) return
+    if (!apiReady || !playerContainerRef.current || !youtubeId) return
 
+    setPlayerReady(false)
     playerRef.current = new window.YT.Player(playerContainerRef.current, {
       videoId: youtubeId,
       playerVars: {
         autoplay:       0,
-        controls:       0,   // sem controles visíveis
-        disablekb:      1,   // sem atalhos de teclado
-        fs:             0,   // sem fullscreen
-        iv_load_policy: 3,   // sem anotações
-        modestbranding: 1,   // menos branding YouTube
-        rel:            0,   // sem vídeos relacionados
+        controls:       0,
+        disablekb:      1,
+        fs:             0,
+        iv_load_policy: 3,
+        modestbranding: 1,
+        rel:            0,
         start:          youtubeStart,
         enablejsapi:    1,
+        origin:         window.location.origin,
+      },
+      events: {
+        onReady: () => setPlayerReady(true),
       },
     })
 
@@ -98,8 +113,9 @@ export default function GameAudioMode({ challenge }: ModeComponentProps) {
       if (playTimerRef.current) clearTimeout(playTimerRef.current)
       try { playerRef.current?.destroy() } catch {}
       playerRef.current = null
+      setPlayerReady(false)
     }
-  }, [ytReady, youtubeId, youtubeStart])
+  }, [apiReady, youtubeId, youtubeStart])
 
   const playYoutube = useCallback(() => {
     const p = playerRef.current
@@ -139,7 +155,7 @@ export default function GameAudioMode({ challenge }: ModeComponentProps) {
   }, [audioUrl, maxDuration])
 
   const handlePlay = youtubeId ? playYoutube : playAudio
-  const canPlay    = youtubeId ? ytReady : !!audioUrl
+  const canPlay    = youtubeId ? playerReady : !!audioUrl
 
   // ── Render ──────────────────────────────────────────────────────────────────
   return (
@@ -150,17 +166,16 @@ export default function GameAudioMode({ challenge }: ModeComponentProps) {
         <div
           aria-hidden
           style={{
-            position:   'fixed',
-            left:       0,
-            bottom:     0,
-            width:      '1px',
-            height:     '1px',
-            opacity:    0.001,   // tecnicamente visível (YouTube não bloqueia), imperceptível ao usuário
-            overflow:   'hidden',
+            position:      'fixed',
+            left:          '-9999px',
+            bottom:        0,
+            width:         '200px',
+            height:        '200px',
+            opacity:       0.001,
             pointerEvents: 'none',
           }}
         >
-          <div ref={playerContainerRef} style={{ width: '1px', height: '1px' }} />
+          <div ref={playerContainerRef} style={{ width: '200px', height: '200px' }} />
         </div>
       )}
 
