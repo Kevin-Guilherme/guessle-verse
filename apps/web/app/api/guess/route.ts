@@ -27,8 +27,9 @@ export async function POST(req: NextRequest) {
   const isQuadraMode    = challenge.mode === 'quadra'
   const isSplashMode    = challenge.mode === 'splash'
   const isBuildQuest    = challenge.mode === 'build' && Array.isArray((challenge.extra as Record<string, unknown>)?.quests)
-  const isGameClassic   = challenge.mode === 'classic' && themeSlug === 'gamedle'
-  const isNameGuessMode = !isCodeMode && !isQuadraMode && !isSplashMode && !isBuildQuest && !isGameClassic && typeof (challenge.attributes as Record<string, unknown>)?.answer === 'string'
+  const isGameClassic      = challenge.mode === 'classic' && themeSlug === 'gamedle'
+  const isGamedleSimpleMode = themeSlug === 'gamedle' && !isGameClassic
+  const isNameGuessMode    = !isCodeMode && !isQuadraMode && !isSplashMode && !isBuildQuest && !isGameClassic && !isGamedleSimpleMode && typeof (challenge.attributes as Record<string, unknown>)?.answer === 'string'
 
   const ATTR_LABELS: Record<string, string> = {
     // LoL
@@ -280,6 +281,20 @@ export async function POST(req: NextRequest) {
 
     won      = feedback.every((f) => f.feedback === 'correct')
     imageUrl = null  // no tile image for games
+  } else if (isGamedleSimpleMode) {
+    // Soundtrack, location, music, game, cover, screenshot, etc.
+    // Resposta correta = challenge.name; busca nome canônico no pool
+    const { data: candidate } = await service
+      .from('gamedle_pool')
+      .select('name')
+      .ilike('name', value)
+      .eq('active', true)
+      .limit(1)
+      .single()
+
+    const guessedName = candidate?.name ?? value.trim()
+    won = guessedName.toLowerCase().trim() === challenge.name.toLowerCase().trim()
+    feedback = [{ key: 'game', label: 'Game', value: guessedName, feedback: won ? 'correct' : 'wrong' }]
   } else {
     const [{ data: candidate }, { data: targetCharacter }] = await Promise.all([
       service
