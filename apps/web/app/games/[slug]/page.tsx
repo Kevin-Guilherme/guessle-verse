@@ -5,7 +5,7 @@ import { getUniverse } from '@/lib/constants/universes'
 import { getGameDay } from '@/lib/utils/gameDay'
 import { ModeGrid } from '@/components/game/ModeGrid'
 
-export const revalidate = 3600
+export const dynamic = 'force-dynamic'
 
 interface Props {
   params: { slug: string }
