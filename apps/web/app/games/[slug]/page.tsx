@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { createClient, createServiceClient } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 import { getUniverse } from '@/lib/constants/universes'
 import { getGameDay } from '@/lib/utils/gameDay'
 import { ModeGrid } from '@/components/game/ModeGrid'
@@ -48,11 +48,6 @@ const MODE_META: Record<string, { label: string; description: string }> = {
   output:             { label: 'Output',            description: 'Qual e a saida?'                 },
 }
 
-export async function generateStaticParams() {
-  const supabase = createServiceClient()
-  const { data } = await supabase.from('themes').select('slug').eq('active', true)
-  return data?.map(t => ({ slug: t.slug })) ?? []
-}
 
 export default async function UniverseHubPage({ params }: Props) {
   const universe = getUniverse(params.slug)
