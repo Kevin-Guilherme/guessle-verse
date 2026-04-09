@@ -958,11 +958,17 @@ async function fetchGamedle(themeId: number, mode: string, today: string): Promi
   const pool = (candidates ?? []).filter((c: { name: string }) => !recent.has(c.name))
   if (!pool.length) return 'skipped: no candidates'
 
-  // Para soundtrack: prefere games com youtube_id; se nenhum tiver, usa qualquer um
+  // Para soundtrack: prefere games com audio_url no Storage (permanente);
+  // fallback para youtube_id; se nenhum, usa qualquer game do pool
   let filtered = pool
   if (mode === 'soundtrack') {
-    const withYt = pool.filter((c: { youtube_id: string | null }) => c.youtube_id)
-    if (withYt.length > 0) filtered = withYt
+    const withStorage = pool.filter((c: { audio_url: string | null }) => c.audio_url)
+    if (withStorage.length > 0) {
+      filtered = withStorage
+    } else {
+      const withYt = pool.filter((c: { youtube_id: string | null }) => c.youtube_id)
+      if (withYt.length > 0) filtered = withYt
+    }
   }
 
   const pick = filtered[Math.floor(Math.random() * filtered.length)] as {
