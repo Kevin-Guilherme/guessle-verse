@@ -25,12 +25,14 @@ export default function GameAudioMode({ challenge }: ModeComponentProps) {
   const alreadyGuessed = guesses.map(g => g.value.toLowerCase())
 
   // ── State ───────────────────────────────────────────────────────────────────
-  const [playing, setPlaying]   = useState(false)
-  const [ytSrc, setYtSrc]       = useState('')
-  const playTimerRef            = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [playing, setPlaying] = useState(false)
+  const playTimerRef          = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const iframeRef             = useRef<HTMLIFrameElement>(null)
 
-  // ── YouTube: iframe src-swap approach ───────────────────────────────────────
+  // ── YouTube: ref-based src swap (síncrono no click = dentro do user gesture) ─
   const playYoutube = useCallback(() => {
+    const iframe = iframeRef.current
+    if (!iframe) return
     if (playTimerRef.current) clearTimeout(playTimerRef.current)
 
     const params = new URLSearchParams({
@@ -44,11 +46,12 @@ export default function GameAudioMode({ challenge }: ModeComponentProps) {
       rel:            '0',
     })
 
-    setYtSrc(`https://www.youtube.com/embed/${youtubeId}?${params}`)
+    // Manipulação direta do DOM — síncrona, dentro do user gesture
+    iframe.src = `https://www.youtube.com/embed/${youtubeId}?${params}`
     setPlaying(true)
 
     playTimerRef.current = setTimeout(() => {
-      setYtSrc('')
+      iframe.src = 'about:blank'
       setPlaying(false)
     }, maxDuration * 1000)
   }, [youtubeId, youtubeStart, maxDuration])
@@ -82,7 +85,7 @@ export default function GameAudioMode({ challenge }: ModeComponentProps) {
   return (
     <div className="space-y-4">
 
-      {/* YouTube iframe — troca o src no clique, allow="autoplay" explícito */}
+      {/* YouTube iframe — sempre montado, src trocado via ref no click */}
       {youtubeId && (
         <div
           aria-hidden
@@ -97,17 +100,15 @@ export default function GameAudioMode({ challenge }: ModeComponentProps) {
             zIndex:        -1,
           }}
         >
-          {ytSrc && (
-            <iframe
-              key={ytSrc}
-              src={ytSrc}
-              allow="autoplay"
-              width="200"
-              height="200"
-              frameBorder="0"
-              title="audio-player"
-            />
-          )}
+          <iframe
+            ref={iframeRef}
+            src="about:blank"
+            allow="autoplay"
+            width="200"
+            height="200"
+            frameBorder="0"
+            title="audio-player"
+          />
         </div>
       )}
 

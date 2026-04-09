@@ -95,7 +95,27 @@ function officialScore(channelTitle) {
 }
 
 /**
+ * Verifica se um videoId permite embedding.
+ * Usa videos.list (custo: 1 unit) em vez de search (100 units).
+ * Retorna true se status.embeddable === true.
+ */
+async function isEmbeddable(videoId) {
+  const url = new URL('https://www.googleapis.com/youtube/v3/videos')
+  url.searchParams.set('part', 'status')
+  url.searchParams.set('id',   videoId)
+  url.searchParams.set('key',  YT_KEY)
+
+  const res = await fetch(url.toString())
+  await sleep(DELAY_MS)
+
+  if (!res.ok) return false
+  const json = await res.json()
+  return json.items?.[0]?.status?.embeddable === true
+}
+
+/**
  * Busca no YouTube e retorna o melhor video_id para o jogo.
+ * Filtra vídeos com embedding desabilitado (Error 150/153).
  * Retorna { videoId, title, channelTitle } ou null.
  */
 async function findYouTubeVideo(gameName) {
@@ -139,6 +159,8 @@ async function findYouTubeVideo(gameName) {
     const json  = await res.json()
     const items = json.items ?? []
 
+    // Coleta candidatos válidos desta query
+    const candidates = []
     for (const item of items) {
       const title   = item.snippet?.title ?? ''
       const channel = item.snippet?.channelTitle ?? ''
@@ -171,18 +193,22 @@ async function findYouTubeVideo(gameName) {
 
       if (!hasSoundtrackSignal) continue
 
-      // Score: sinais oficiais no canal/título
       const score = officialScore(channel) + officialScore(title)
+      candidates.push({ videoId: item.id?.videoId, title, channelTitle: channel, score })
+    }
 
-      if (score > bestScore) {
-        bestScore = score
-        best = {
-          videoId:      item.id?.videoId,
-          title,
-          channelTitle: channel,
-          score,
-        }
+    // Ordena por score desc e verifica embedding (custo: 1 unit por check)
+    candidates.sort((a, b) => b.score - a.score)
+    for (const candidate of candidates) {
+      if (candidate.score <= bestScore) continue  // já temos algo melhor
+      const embeddable = await isEmbeddable(candidate.videoId)
+      if (!embeddable) {
+        console.log(`         ⛔ ${candidate.videoId} bloqueado para embed — pulando`)
+        continue
       }
+      bestScore = candidate.score
+      best = candidate
+      break
     }
 
     // Resultado com score razoável — para de buscar mais queries
