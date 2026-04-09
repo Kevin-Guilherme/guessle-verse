@@ -952,21 +952,30 @@ async function fetchGamedle(themeId: number, mode: string, today: string): Promi
 
   const { data: candidates } = await supabase
     .from('gamedle_pool')
-    .select('igdb_id, name, genre, platform, developer, franchise, release_year, multiplayer, audio_url')
+    .select('igdb_id, name, genre, platform, developer, franchise, release_year, multiplayer, audio_url, youtube_id, youtube_start')
     .eq('active', true)
 
   const pool = (candidates ?? []).filter((c: { name: string }) => !recent.has(c.name))
   if (!pool.length) return 'skipped: no candidates'
 
-  const pick = pool[Math.floor(Math.random() * pool.length)] as {
+  // Para soundtrack: prefere games com youtube_id; se nenhum tiver, usa qualquer um
+  let filtered = pool
+  if (mode === 'soundtrack') {
+    const withYt = pool.filter((c: { youtube_id: string | null }) => c.youtube_id)
+    if (withYt.length > 0) filtered = withYt
+  }
+
+  const pick = filtered[Math.floor(Math.random() * filtered.length)] as {
     igdb_id: number; name: string; genre: string[]; platform: string[]
     developer: string; franchise: string; release_year: number; multiplayer: boolean
-    audio_url: string | null
+    audio_url: string | null; youtube_id: string | null; youtube_start: number
   }
 
   let coverUrl:      string | null = null
   let screenshotUrl: string | null = null
-  const audioUrl:    string | null = pick.audio_url ?? null
+  const audioUrl:    string | null = pick.audio_url   ?? null
+  const youtubeId:   string | null = pick.youtube_id  ?? null
+  const youtubeStart: number       = pick.youtube_start ?? 0
 
   const igdbToken = await getIgdbToken()
   if (igdbToken) {
@@ -1017,6 +1026,8 @@ async function fetchGamedle(themeId: number, mode: string, today: string): Promi
     cover_url:      coverUrl,
     screenshot_url: screenshotUrl,
     audio_url:      audioUrl,
+    youtube_id:     youtubeId,
+    youtube_start:  youtubeStart,
   }
 
   await supabase.from('daily_challenges').insert({

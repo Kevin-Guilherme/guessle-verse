@@ -1,38 +1,173 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { useGameStore } from '@/lib/store/game-store'
 import { useGuess } from '@/hooks/useGuess'
 import { SearchInput } from '@/components/game/SearchInput'
 import { Button } from '@/components/ui/button'
 import type { ModeComponentProps } from '@/lib/game/registry'
 
+// Duração revelada por número de tentativas (Heardle-style)
+const REVEAL_STEPS = [1, 2, 4, 7, 11, 16]
+
+// ─── YouTube iFrame API singleton ────────────────────────────────────────────
+
+declare global {
+  interface Window {
+    YT: {
+      Player: new (el: HTMLElement, opts: object) => YTPlayer
+      PlayerState: { PLAYING: number; PAUSED: number; ENDED: number }
+    }
+    onYouTubeIframeAPIReady: () => void
+  }
+}
+
+interface YTPlayer {
+  seekTo(sec: number, allowSeekAhead: boolean): void
+  playVideo(): void
+  pauseVideo(): void
+  destroy(): void
+  getPlayerState(): number
+}
+
+let ytApiState: 'idle' | 'loading' | 'ready' = 'idle'
+const ytCallbacks: Array<() => void> = []
+
+function loadYouTubeApi(onReady: () => void) {
+  if (ytApiState === 'ready') { onReady(); return }
+  ytCallbacks.push(onReady)
+  if (ytApiState === 'loading') return
+
+  ytApiState = 'loading'
+  window.onYouTubeIframeAPIReady = () => {
+    ytApiState = 'ready'
+    ytCallbacks.splice(0).forEach(cb => cb())
+  }
+  const s = document.createElement('script')
+  s.src = 'https://www.youtube.com/iframe_api'
+  document.head.appendChild(s)
+}
+
+// ─── Component ────────────────────────────────────────────────────────────────
+
 export default function GameAudioMode({ challenge }: ModeComponentProps) {
   const { won, lost, guesses } = useGameStore()
   const { submitGuess, loading } = useGuess(challenge.id)
-  const audioRef = useRef<HTMLAudioElement>(null)
-  const [playing, setPlaying] = useState(false)
 
-  const extra       = challenge.extra as Record<string, unknown>
-  const audioUrl    = (extra?.audio_url ?? extra?.soundtrack_url ?? '') as string
-  const coverUrl    = extra?.cover_url as string | null
-  const maxDuration = Math.min(1 + guesses.length * 1.5, 10)
-  const alreadyGuessed = guesses.map((g) => g.value.toLowerCase())
+  const extra        = challenge.extra as Record<string, unknown>
+  const youtubeId    = (extra?.youtube_id  ?? null) as string | null
+  const youtubeStart = (extra?.youtube_start ?? 0)  as number
+  const audioUrl     = (extra?.audio_url ?? extra?.soundtrack_url ?? '') as string
+  const coverUrl     = (extra?.cover_url ?? null) as string | null
 
-  const playClip = async () => {
-    const audio = audioRef.current
-    if (!audio || !audioUrl) return
-    audio.currentTime = 0
+  const step        = Math.min(guesses.length, REVEAL_STEPS.length - 1)
+  const maxDuration = REVEAL_STEPS[step]
+  const alreadyGuessed = guesses.map(g => g.value.toLowerCase())
+
+  // ── YouTube player ──────────────────────────────────────────────────────────
+  const playerContainerRef = useRef<HTMLDivElement>(null)
+  const playerRef          = useRef<YTPlayer | null>(null)
+  const [ytReady, setYtReady]   = useState(false)
+  const [playing, setPlaying]   = useState(false)
+  const playTimerRef            = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    if (!youtubeId) return
+    loadYouTubeApi(() => setYtReady(true))
+  }, [youtubeId])
+
+  useEffect(() => {
+    if (!ytReady || !playerContainerRef.current || !youtubeId) return
+
+    playerRef.current = new window.YT.Player(playerContainerRef.current, {
+      videoId: youtubeId,
+      playerVars: {
+        autoplay:       0,
+        controls:       0,   // sem controles visíveis
+        disablekb:      1,   // sem atalhos de teclado
+        fs:             0,   // sem fullscreen
+        iv_load_policy: 3,   // sem anotações
+        modestbranding: 1,   // menos branding YouTube
+        rel:            0,   // sem vídeos relacionados
+        start:          youtubeStart,
+        enablejsapi:    1,
+      },
+    })
+
+    return () => {
+      if (playTimerRef.current) clearTimeout(playTimerRef.current)
+      try { playerRef.current?.destroy() } catch {}
+      playerRef.current = null
+    }
+  }, [ytReady, youtubeId, youtubeStart])
+
+  const playYoutube = useCallback(() => {
+    const p = playerRef.current
+    if (!p) return
+    if (playTimerRef.current) clearTimeout(playTimerRef.current)
+
+    p.seekTo(youtubeStart, true)
+    p.playVideo()
     setPlaying(true)
-    await audio.play()
-    setTimeout(() => { audio.pause(); setPlaying(false) }, maxDuration * 1000)
-  }
 
+    playTimerRef.current = setTimeout(() => {
+      p.pauseVideo()
+      setPlaying(false)
+    }, maxDuration * 1000)
+  }, [youtubeStart, maxDuration])
+
+  // ── Fallback: <audio> para games com audio_url manual ──────────────────────
+  const audioRef = useRef<HTMLAudioElement>(null)
+  const playAudio = useCallback(async () => {
+    const a = audioRef.current
+    if (!a || !audioUrl) return
+    if (playTimerRef.current) clearTimeout(playTimerRef.current)
+
+    a.currentTime = 0
+    setPlaying(true)
+    await a.play()
+
+    playTimerRef.current = setTimeout(() => {
+      a.pause()
+      setPlaying(false)
+    }, maxDuration * 1000)
+  }, [audioUrl, maxDuration])
+
+  const handlePlay = youtubeId ? playYoutube : playAudio
+  const canPlay    = youtubeId ? ytReady : !!audioUrl
+
+  // ── Render ──────────────────────────────────────────────────────────────────
   return (
     <div className="space-y-4">
-      <audio ref={audioRef} src={audioUrl} preload="auto" />
 
+      {/* Player YouTube — invisível, apenas áudio */}
+      {youtubeId && (
+        <div
+          aria-hidden
+          style={{
+            position:   'fixed',
+            left:       0,
+            bottom:     0,
+            width:      '1px',
+            height:     '1px',
+            opacity:    0.001,   // tecnicamente visível (YouTube não bloqueia), imperceptível ao usuário
+            overflow:   'hidden',
+            pointerEvents: 'none',
+          }}
+        >
+          <div ref={playerContainerRef} style={{ width: '1px', height: '1px' }} />
+        </div>
+      )}
+
+      {/* Fallback audio element */}
+      {!youtubeId && audioUrl && (
+        <audio ref={audioRef} src={audioUrl} preload="auto" />
+      )}
+
+      {/* Controles */}
       <div className="flex flex-col items-center gap-3">
+
+        {/* Reveal na vitória/derrota */}
         {coverUrl && (won || lost) && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -41,14 +176,44 @@ export default function GameAudioMode({ challenge }: ModeComponentProps) {
             className="w-24 rounded-xl object-cover border border-correct/30"
           />
         )}
-        <Button onClick={playClip} disabled={playing || !audioUrl} className="gap-2">
-          {playing ? '♫ Reproduzindo...' : `▶ Ouvir (${maxDuration.toFixed(1)}s)`}
+
+        {/* Barra de progresso das tentativas (steps) */}
+        {!won && !lost && (
+          <div className="flex items-end gap-1.5" title={`${maxDuration}s revelados`}>
+            {REVEAL_STEPS.map((s, i) => (
+              <div
+                key={i}
+                className={`rounded-full transition-all duration-300 ${
+                  i < step
+                    ? 'bg-wrong/50 w-5 h-1'
+                    : i === step
+                    ? 'bg-white/50 w-7 h-1.5'
+                    : 'bg-white/10 w-4 h-1'
+                }`}
+              />
+            ))}
+            <span className="text-[10px] text-slate-600 ml-1 font-mono tabular-nums">{maxDuration}s</span>
+          </div>
+        )}
+
+        <Button
+          onClick={handlePlay}
+          disabled={playing || !canPlay}
+          className="gap-2 min-w-[140px]"
+        >
+          {playing
+            ? '♫ Reproduzindo...'
+            : canPlay
+            ? `▶ Ouvir (${maxDuration}s)`
+            : '⏳ Carregando...'}
         </Button>
+
         {!won && !lost && (
           <p className="text-[10px] font-display tracking-[0.2em] text-slate-600 uppercase">
             De qual jogo é essa trilha sonora?
           </p>
         )}
+
         {(won || lost) && (
           <p className={`font-display font-bold text-base tracking-wide ${won ? 'text-correct' : 'text-red-400'}`}>
             {challenge.name}
@@ -56,6 +221,7 @@ export default function GameAudioMode({ challenge }: ModeComponentProps) {
         )}
       </div>
 
+      {/* Input de palpite */}
       {!won && !lost && (
         <SearchInput
           themeId={challenge.theme_id}
@@ -70,6 +236,7 @@ export default function GameAudioMode({ challenge }: ModeComponentProps) {
         />
       )}
 
+      {/* Histórico de tentativas */}
       {guesses.length > 0 && (
         <div className="space-y-2 pt-1">
           <div className="flex items-center gap-3">
@@ -83,7 +250,11 @@ export default function GameAudioMode({ challenge }: ModeComponentProps) {
               return (
                 <div
                   key={i}
-                  className={`flex items-center gap-3 rounded-xl p-3 border ${correct ? 'bg-correct/5 border-correct/20' : 'bg-white/[0.03] border-wrong/20'}`}
+                  className={`flex items-center gap-3 rounded-xl p-3 border ${
+                    correct
+                      ? 'bg-correct/5 border-correct/20'
+                      : 'bg-white/[0.03] border-wrong/20'
+                  }`}
                 >
                   <div className="w-8 h-8 rounded-lg bg-surface border border-white/10 flex items-center justify-center text-base shrink-0">
                     🎵
@@ -91,7 +262,11 @@ export default function GameAudioMode({ challenge }: ModeComponentProps) {
                   <p className={`text-sm font-display flex-1 truncate ${correct ? 'text-correct' : 'text-slate-300'}`}>
                     {g.value}
                   </p>
-                  <span className={`text-[11px] font-sans px-2 py-0.5 rounded-full border shrink-0 ${correct ? 'bg-correct/20 text-correct border-correct/30' : 'bg-wrong/20 text-wrong border-wrong/30'}`}>
+                  <span className={`text-[11px] font-sans px-2 py-0.5 rounded-full border shrink-0 ${
+                    correct
+                      ? 'bg-correct/20 text-correct border-correct/30'
+                      : 'bg-wrong/20 text-wrong border-wrong/30'
+                  }`}>
                     {correct ? '✓ Acertou' : '✗ Errou'}
                   </span>
                 </div>
